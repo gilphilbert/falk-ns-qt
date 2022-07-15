@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/falk-white.png</file>
+        <file>fonts/Kentledge-Heavy.otf</file>
+        <file>fonts/Poppins-Light.otf</file>
+        <file>fonts/Poppins-Medium.otf</file>
+    </qresource>
+</RCC>
