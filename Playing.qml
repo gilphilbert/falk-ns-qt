@@ -15,20 +15,41 @@ Rectangle {
 
     // -------- PLAYING SONG INFO-------- //
     Image {
+        id: mediaArt
+        source: "image://AsyncImage/" + "http://" + settings.host + queue[playPosition].discart + "?size=" + Math.ceil(appWindow.width * 0.2)
+        height: playingArt.height
+        width: playingArt.width
+        x: playingArt.x + (appWindow.width * 0.035)
+        y: playingArt.y
+        fillMode: Image.PreserveAspectCrop
+        smooth: true
+        visible: true
+        /*
+        RotationAnimator on rotation {
+            id: discRotate
+            from: 0
+            to: 360
+            duration: 3000
+            loops: Animation.Infinite
+        }
+        */
+    }
+
+    Image {
         id: playingArt
-        source: "image://AsyncImage/" + playArt
-        height: 200
-        width: 200
-        x: 50
-        y: 50
+        source: "image://AsyncImage/" + "http://" + settings.host + queue[playPosition].art + "?size=" + Math.ceil(appWindow.width * 0.2)
+        height: appWindow.width * 0.2
+        width: appWindow.width * 0.2
+        x: appWindow.width * 0.05
+        y: appWindow.width * 0.05
         fillMode: Image.PreserveAspectCrop
         smooth: true
         visible: false
     }
     Rectangle {
         id: playingArtMask
-        height: 200
-        width: 200
+        height: appWindow.width * 0.2
+        width: appWindow.width * 0.2
         radius: 10
         visible: false
     }
@@ -37,244 +58,183 @@ Rectangle {
         source: playingArt
         maskSource: playingArtMask
     }
+
     Text {
         id: homeTitle
-        x: 310
-        y: 92
-        color: "white"
-        font.pixelSize: 45
+        x: appWindow.width * 0.3
+        y: appWindow.height * 0.115
+        color: white
+        font.pixelSize: appWindow.width * 0.0439
         font.family: poppins.name
         font.weight: Font.Light
-        text: appWindow.playTitle
+        text: queue[playPosition].title
     }
     Text {
-        id: homeArtist
-        x: 310
-        y: 165
-        color: "#c0c0c0"
-        font.pixelSize: 22
+        id: homeAlbum
+        x: appWindow.width * 0.3
+        y: appWindow.height * 0.23
+        color: white
+        opacity: 0.7
+        font.pixelSize: appWindow.width * 0.021
         font.family: poppins.name
         font.weight: Font.Medium
-        text: appWindow.playArtist
+        text: "From " + queue[playPosition].album
     }
+
+    Text {
+        id: homeArtist
+        x: appWindow.width * 0.3
+        y: appWindow.height * 0.3
+        color: white
+        opacity: 0.7
+        font.pixelSize: appWindow.width * 0.021
+        font.family: poppins.name
+        font.weight: Font.Medium
+        text: "By " + queue[playPosition].artist
+    }
+    Rectangle {
+        color: yellow
+        Text {
+            text: queue[playPosition].shortformat
+            font.pixelSize: appWindow.width * 0.013
+            font.family: poppins.name
+            font.weight: Font.Medium
+            color: appWindow.color
+            leftPadding: appWindow.height * 0.0172
+            rightPadding: this.leftPadding
+            topPadding: this.leftPadding / 2.05
+            bottomPadding: this.topPadding
+        }
+        width: childrenRect.width
+        height: childrenRect.height
+        radius: childrenRect.height
+
+        x: appWindow.width * 0.3
+        y: appWindow.height * 0.37
+    }
+
+    //> --------------------------- why isn't this working?
 
 
     // -------- PROGRESS BAR -------- //
     Rectangle {
         id: progressBar
-        height: 3
-        width: parent.width - 100
-        color: "#4b6281"
-        y: 300
+        height: appWindow.height * 0.0045
+        width: appWindow.width * 0.90
+        color: blue_light
+        y: appWindow.height * 0.55
         anchors.horizontalCenter: parent.horizontalCenter
         Rectangle {
-            height: 3
+            height: parent.height
             width: (parent.width / appWindow.playDuration) * appWindow.playElapsed//parent.width / 2
-            color: "#E3B505"
+            color: yellow
             x: 0
             y: 0
         }
     }
     Text {
         anchors.left: progressBar.left
-        y: 310
-        color: "#c0c0c0"
-        font.pixelSize: 14
+        y: appWindow.height * 0.57
+        color: white
+        opacity: 0.7
+        font.pixelSize: appWindow.width * 0.014
         text: getPrettyTime(appWindow.playElapsed) //"1:30"
         font.family: kentledge.name
     }
     Text {
         anchors.right: progressBar.right
-        y: 310
-        color: "#c0c0c0"
-        font.pixelSize: 14
+        y: appWindow.height * 0.57
+        color: white
+        opacity: 0.7
+        font.pixelSize: appWindow.width * 0.014
         text: getPrettyTime(appWindow.playDuration)
         font.family: kentledge.name
     }
 
-    // -------- PREV BUTTON -------- //
-    Rectangle {
-        height: 80
-        width: 80
-        color: 'transparent'
-        radius: 40
-        border.color: 'white'
-        border.width: 3
-        x: (parent.width / 2) - 195
-        y: 375
-        Rectangle {
-            height: 66
-            width: 66
-            color: 'transparent'
-            radius: 52
-            border.color: "#4b6281"
-            border.width: 3
-            anchors.centerIn: parent
+    Grid {
+        width: parent.width
+        height: appWindow.height * 0.04
+        x: 0
+        y: appWindow.height * 0.70
+        horizontalItemAlignment: Grid.AlignHCenter
+        verticalItemAlignment: Grid.AlignVCenter
 
-            Rectangle {
-                height: 16
-                width: 15
-                anchors.centerIn: parent
-                color: "transparent"
+        columns: 5
+        rows: 1
 
-                Rectangle {
-                    height: parent.height
-                    width: 3
-                    color: "white"
-                    anchors.top: parent.top
-                    anchors.left: parent.left
+        Item {
+            width: parent.width / parent.columns
+            height: appWindow.height * 0.04
+        }
+
+        // -------- PREV BUTTON -------- //
+        Item {
+            width: parent.width / parent.columns
+            height: appWindow.height * 0.04
+
+            Image {
+                source: 'icons/skip-back.svg'
+                height: parent.height
+                width: parent.height
+                sourceSize.width: this.width
+                sourceSize.height: this.height
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        apiRequest("prev")
+                    }
                 }
 
-                Shape {
-                    width: 12
-                    height: 16
-                    anchors.top: parent.top
-                    anchors.right: parent.right
-                    ShapePath {
-                        fillColor: "white"
-                        fillRule: ShapePath.WindingFill
-                        startX: 12; startY: 0
-                        PathLine { x: 0; y: 8 }
-                        PathLine { x: 12; y: 16 }
-                        PathLine { x: 12; y: 0 }
+            }
+        }
+
+        // -------- PAUSE/PLAY BUTTON -------- //
+        Item {
+            width: parent.width / parent.columns
+            height: appWindow.height * 0.05
+            Image {
+                source: appWindow.playPaused ? 'icons/play.svg' : 'icons/pause.svg'
+                height: parent.height
+                width: parent.height
+                sourceSize.width: this.width
+                sourceSize.height: this.height
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        apiRequest("toggle")
                     }
                 }
             }
         }
 
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                apiRequest("prev")
-            }
-        }
-    }
+        // -------- SKIP BUTTON -------- //
+        Item {
+            width: parent.width / parent.columns
+            height: appWindow.height * 0.04
+            Image {
+                source: "icons/skip-forward.svg"
+                height: parent.height
+                width: parent.height
+                sourceSize.width: this.width
+                sourceSize.height: this.height
+                anchors.horizontalCenter: parent.horizontalCenter
 
-    // -------- PAUSE/PLAY BUTTON -------- //
-    Rectangle {
-        height: 110
-        width: 110
-        color: 'transparent'
-        radius: 55
-        border.color: 'white'
-        border.width: 3
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: 360
-        Rectangle {
-            height: 96
-            width: 96
-            color: 'transparent'
-            radius: 52
-            border.color: "#4b6281"
-            border.width: 3
-            anchors.centerIn: parent
-
-
-            // -------- PAUSE ICON -------- //
-            Rectangle {
-                height: 28
-                width: 18
-                anchors.centerIn: parent
-                color: "transparent"
-                visible: ! appWindow.playPaused
-
-                Rectangle {
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    height: parent.height
-                    width: 5
-                    color: "white"
-                }
-
-                Rectangle {
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    height: parent.height
-                    width: 5
-                    color: "white"
-                }
-            }
-
-            // -------- PLAY ICON -------- //
-            Shape {
-                width: 24
-                height: 28
-                anchors.centerIn: parent
-                visible: appWindow.playPaused
-                ShapePath {
-                    fillColor: "white"
-                    fillRule: ShapePath.WindingFill
-                    startX: 0; startY: 0
-                    PathLine { x: 24; y: 14 }
-                    PathLine { x: 0; y: 28 }
-                    PathLine { x: 0; y: 0 }
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    apiRequest("toggle")
-                }
-            }
-        }
-    }
-
-    // -------- SKIP BUTTON -------- //
-    Rectangle {
-        height: 80
-        width: 80
-        color: 'transparent'
-        radius: 40
-        border.color: 'white'
-        border.width: 3
-        x: (parent.width / 2) + 110
-        y: 375
-        Rectangle {
-            height: 66
-            width: 66
-            color: 'transparent'
-            radius: 52
-            border.color: "#4b6281"
-            border.width: 3
-            anchors.centerIn: parent
-
-            Rectangle {
-                height: 16
-                width: 15
-                anchors.centerIn: parent
-                color: "transparent"
-
-                Shape {
-                    width: 12
-                    height: 16
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    ShapePath {
-                        fillColor: "white"
-                        fillRule: ShapePath.WindingFill
-                        startX: 0; startY: 0
-                        PathLine { x: 12; y: 8 }
-                        PathLine { x: 0; y: 16 }
-                        PathLine { x: 0; y: 0 }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        apiRequest("next")
                     }
                 }
-
-                Rectangle {
-                    height: parent.height
-                    width: 3
-                    color: "white"
-                    anchors.top: parent.top
-                    anchors.right: parent.right
-                }
             }
         }
 
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                apiRequest("skip")
-            }
+        Item {
+            width: parent.width / parent.columns
+            height: appWindow.height * 0.04
         }
     }
 }

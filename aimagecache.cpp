@@ -31,11 +31,10 @@ void AsyncImageResponse::onResponseFinished() {
     }
 
     output.setFileName("art/" + filename);
-    if (!output.open(QIODevice::WriteOnly)) {
-        return;
+    if (output.open(QIODevice::WriteOnly)) {
+        output.write(myImageData);
+        output.close();
     }
-    output.write(myImageData);
-    output.close();
 
     emit finished();
 }

@@ -11,13 +11,21 @@ import "components"
 //Component.onCompleted: NSScript.createTiles()
 
 Window {
-    width: 1024
-    height: 600
+    width: 1800
+    height: 1200
     //title: qsTr("NS Viewer")
-    color: "#222c3b"
+    color: blue_dark //"#222c3b"
     id: appWindow
     visible: true
     //flags: Qt.FramelessWindowHint
+    //visibility: "FullScreen"
+
+    readonly property color yellow: "#E3B505"
+    readonly property color white: "#FFFFFF"
+    readonly property color blue_light: "#4B6281"
+    readonly property color blue_dark: "#465b7a"
+
+    property real footerHeight: this.height * 0.133333333
 
     //Image {
         //source: "image://CachedImageProvider/https://www.musicdirect.com/Portals/0/Hotcakes/Data/products/8cb25687-cad5-40ca-87ab-17dcb55ebbce/medium/LDM31011_.jpg"
@@ -50,6 +58,10 @@ Window {
     }
 
     property var queue: []
+    property bool playPaused: true
+    property int playPosition: 0
+    property int playElapsed: 0
+    property int playDuration: 0
 
     ListModel {
         id: queueList
@@ -64,14 +76,17 @@ Window {
 
                 if (evtName === "queue") {
                     queue = evtData.queue
-                    playArt = "http://" + settings.host + queue[playPosition].art + "?size=300"
-                    playTitle = queue[playPosition].title
-                    playArtist = queue[playPosition].artist
-                    playDuration = queue[playPosition].duration
                     queueList.clear()
                     queue.forEach(item => {
                         queueList.append(item)
                     })
+
+                    let _state = evtData.state
+                    playPaused = _state.paused
+                    playPosition = _state.position
+                    playDuration = queue[playPosition].duration
+                    playElapsed = _state.elapsed
+
                 }
                 else if (evtName === "status") {
                     playPaused = evtData.paused
@@ -86,7 +101,7 @@ Window {
     }
 
     Component.onCompleted: {
-        settings.host = "192.168.68.104"
+        settings.host = "127.0.0.1:8080"
         sse.onEventData.connect(signalHandling)
         sse.onDisconnected.connect(serverDisconnect)
         sse.setServer("http://" + settings.host + "/events")
@@ -94,7 +109,6 @@ Window {
 
     function apiRequest(urlComponent, callback) {
         const fullURL = "http://" + settings.host + "/api/" + urlComponent
-        console.error(fullURL);
         var xhr = new XMLHttpRequest()
         xhr.onreadystatechange = (function (myxhr) {
             return function () {
@@ -103,20 +117,14 @@ Window {
                         try {
                             callback(JSON.parse(xhr.responseText))
                         } catch (e) {
-                            console.info(e)
-                            console.info(xhr.responseText)
+                            console.error(e)
+                            console.error(xhr.responseText)
                         }
                     }
             }
         })(xhr)
         xhr.open("GET", fullURL, true)
         xhr.send('')
-    }
-
-    function getArt(uri, size = 150) {
-        if (uri !== "")
-          return "http://" + settings.host + uri + "?size=" + size
-        return ""
     }
 
     function str_pad_left(string,pad,length) {
@@ -134,134 +142,9 @@ Window {
         return ((hours > 0) ? hours + ":" : "") + ((hours > 0) ? str_pad_left(minutes, '0', 2) : minutes) + ':' + str_pad_left(seconds, '0', 2)
     }
 
-
-    property bool playPaused: true
-    property int playPosition: 0
-    property int playElapsed: 0
-    property int playDuration: 0
-    property string playArt: ""
-    property string playTitle: ""
-    property string playArtist: ""
-
     Settings {
         id: settings
         property string host: "192.168.68.104"
-    }
-
-     /*
-    property variant pagesList: [
-        {
-            "page": "home",
-            "name": "PLAYING",
-            "file": "home",
-        },
-        {
-            "page": "queue",
-            "name": "QUEUE",
-            "file": "queue",
-        },
-        {
-            "page": "",
-            "name": "",
-            "file": "",
-        },
-        {
-            "page": "playlists",
-            "name": "PLAYLISTS",
-            "file": "library",
-        },
-        {
-            "page": "artists",
-            "name": "ARTISTS",
-            "file": "library",
-        },
-        {
-            "page": "albums",
-            "name": "ALBUMS",
-            "file": "library",
-        },
-        {
-            "page": "genres",
-            "name": "GENRES",
-            "file": "library",
-        },
-        {
-            "page": "",
-            "name": "",
-            "file": "",
-        }
-    ];
-    property string currentPage: "home"
-
-    Component {
-        id: footerItem
-        Rectangle {
-            width: footer.width / pagesList.length;
-            height: footer.height
-            color: (( currentPage === "home" ) ? "transparent" : "#3d4d66")
-            clip: true
-
-            Text {
-                id: pageTitle
-                anchors.centerIn: parent
-                font.family: kentledge.name
-                color: (( modelData.page === appWindow.currentPage) ? "#ffffff" : "#c0c0c0")
-                text: modelData.name
-            }
-            Glow {
-                anchors.fill: pageTitle
-                radius: 8
-                opacity: 0.25
-                samples: 17
-                color: (( modelData.page === appWindow.currentPage ) ? "white" : "transparent")
-                source: pageTitle
-            }
-            Rectangle {
-                id: divider
-                x: 0
-                y: 0
-                height: 3
-                width: parent.width
-                color: (( modelData.page === appWindow.currentPage ) ? "#E3B505" : "#4b6281")
-            }
-            Glow {
-                anchors.fill: divider
-                radius: 15
-                samples: 17
-                color: (( modelData.page === appWindow.currentPage ) ? "#E3B505" : "transparent")
-                source: divider
-            }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: { if (modelData.page !== "") { appWindow.currentPage = modelData.page } }
-            }
-        }
-    }
-    */
-
-    Image {
-        id: backgroundArt
-        source: playArt
-        height: parent.height
-        width: parent.width
-        x: 0
-        y: 0
-        fillMode: Image.PreserveAspectCrop
-        clip: true
-        visible: playArt !== ""
-        Rectangle {
-            width: parent.width
-            height: parent.height
-            x: 0
-            y: 0
-            color: "#283445"
-            opacity: 0.92
-        }
-    }
-    FastBlur {
-        anchors.fill: backgroundArt
-        source: backgroundArt
-        radius: 45
     }
 
     function loadNext(data) {
@@ -285,7 +168,9 @@ Window {
     property string pageName: "Playing"
     Loader {
         id: pageLoader
-        anchors.fill: parent
+        //anchors.fill: parent
+        width: parent.width
+        height: parent.height - footerHeight
         source: "Playing.qml"
         onLoaded: function() {
             switch (pageLoader.source.toString()) {
@@ -312,21 +197,15 @@ Window {
     Rectangle {
         id: footer
         x: 0
-        y: parent.height - 80
+        anchors.bottom: parent.bottom
         width: parent.width
-        height: 80
-        color: "transparent"
+        height: footerHeight
+        color: "#4A6FA5"
 
-        Rectangle {
-            width: parent.width
-            height: parent.height
-            x: 0
-            y: 0
-            color: "#506687"
-            opacity: 0.3
-        }
+        Grid {
+            id: footerGrid
+            columns: 8
 
-        Row {
             FooterItem {
                 title: qsTr("Playing")
                 onClick: { pageHandler(page) }

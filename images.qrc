@@ -4,5 +4,9 @@
         <file>fonts/Kentledge-Heavy.otf</file>
         <file>fonts/Poppins-Light.otf</file>
         <file>fonts/Poppins-Medium.otf</file>
+        <file>icons/play.svg</file>
+        <file>icons/pause.svg</file>
+        <file>icons/skip-back.svg</file>
+        <file>icons/skip-forward.svg</file>
     </qresource>
 </RCC>

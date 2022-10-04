@@ -3,7 +3,7 @@
 #include <QQmlContext>
 #include "networkmanager.h"
 //#include "downloadmanager.h"
-#include "imagecache.h"
+//#include "imagecache.h"
 #include "aimagecache.h"
 
 #include <QtPlugin>
@@ -25,6 +25,10 @@ int main(int argc, char *argv[]) {
 
     //engine.addImageProvider("CachedImageProvider", new CachedImageProvider());
     engine.addImageProvider("AsyncImage", new AsyncImageCache());
+
+    if (! QDir("art").exists() ) {
+        QDir().mkdir("art");
+    }
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, &app, [url](QObject *obj, const QUrl &objUrl) {

@@ -5,7 +5,7 @@ import QtQuick.Shapes 1.15
 import QtQml.Models 2.3
 
 Rectangle {
-    color: "#222c3b"
+    color: "transparent"
     height: 520
     width: 1024
 
@@ -70,7 +70,7 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         text: name
-                        color: "white"
+                        color: white
                         font.family: poppins.name
                         font.pixelSize: 25
                         wrapMode: Text.WordWrap
@@ -160,7 +160,7 @@ Rectangle {
 
             Text {
                 text: "A-Z"
-                color: "white"
+                color: white
                 font.family: kentledge.name
                 font.pixelSize: 22
                 anchors.centerIn: parent
@@ -188,7 +188,7 @@ Rectangle {
 
             Text {
                 text: "X"
-                color: "white"
+                color: white
                 font.family: kentledge.name
                 font.pixelSize: 22
                 anchors.centerIn: parent
@@ -204,7 +204,7 @@ Rectangle {
             }
         }
 
-        border.color: "white"
+        border.color: white
         border.width: 3
 
     }
@@ -233,7 +233,7 @@ Rectangle {
                 height: 120
                 width: 120
                 Rectangle {
-                    color: "white"
+                    color: white
                     opacity: 0.05
                     anchors.fill: parent
                 }
@@ -243,7 +243,7 @@ Rectangle {
                     anchors.centerIn: parent
                     font.family: poppins.name
                     font.pixelSize: 28
-                    color: "white"
+                    color: white
                 }
 
                 MouseArea {

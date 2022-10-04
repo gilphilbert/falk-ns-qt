@@ -7,26 +7,19 @@ Rectangle {
 
     signal click(string page)
 
-    width: 128
-    height: 80
-    color: appWindow.pageName === "Playing" ? "transparent" : "#3d4d66"
+    width: appWindow.width / 8 //128
+    height: footerHeight
+    color: "transparent"
     clip: true
 
     Text {
         id: pageTitle
         anchors.centerIn: parent
         font.family: kentledge.name
-        color: isCurrent ? "#ffffff" : "#c0c0c0"
+        font.pixelSize: appWindow.height * 0.026666667
+        color: white
+        opacity: ((isCurrent) ? 1 : 0.6)
         text: title.toUpperCase()
-    }
-
-    Glow {
-        anchors.fill: pageTitle
-        radius: 8
-        opacity: 0.25
-        samples: 17
-        color: isCurrent ? "white" : "transparent"
-        source: pageTitle
     }
     Rectangle {
         id: divider
@@ -34,13 +27,13 @@ Rectangle {
         y: 0
         height: 3
         width: parent.width
-        color: isCurrent ? "#E3B505" : "#4b6281"
+        color: isCurrent ? yellow : blue_light
     }
     Glow {
         anchors.fill: divider
         radius: 15
         samples: 17
-        color: isCurrent ? "#E3B505" : "transparent"
+        color: isCurrent ? yellow : "transparent"
         source: divider
     }
 
