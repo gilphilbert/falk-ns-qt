@@ -3,11 +3,8 @@
         <file>main.qml</file>
         <file>Playing.qml</file>
         <file>Queue.qml</file>
-        <file>Albums.qml</file>
         <file>components/FooterItem.qml</file>
         <file>components/LibraryList.qml</file>
-        <file>Genres.qml</file>
-        <file>Genre.qml</file>
         <file>Album.qml</file>
     </qresource>
 </RCC>
