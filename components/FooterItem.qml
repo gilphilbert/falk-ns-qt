@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtGraphicalEffects 1.12
 
-Rectangle {
+Item {
     property bool isCurrent: title.startsWith(appWindow.pageName) && title !== ""
     property string title: ""
 
@@ -9,7 +9,6 @@ Rectangle {
 
     width: appWindow.width / 8 //128
     height: footerHeight
-    color: "transparent"
     clip: true
 
     Text {
@@ -27,14 +26,15 @@ Rectangle {
         y: 0
         height: 3
         width: parent.width
-        color: isCurrent ? yellow : blue_light
+        color: isCurrent ? yellow : blue
     }
     Glow {
         anchors.fill: divider
         radius: 15
         samples: 17
-        color: isCurrent ? yellow : "transparent"
+        color: yellow
         source: divider
+        visible: isCurrent
     }
 
     MouseArea {

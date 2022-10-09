@@ -2,16 +2,20 @@ import QtQuick 2.15
 import QtQml.Models 2.15
 import QtQuick.Shapes 1.15
 import QtGraphicalEffects 1.12
+import QtQuick.Window 2.15
 
 Rectangle {
     property string page
 
-    property int pageMargin: queueScreen.width * (25 / 1024)
 
     id: queueScreen
-    width: parent.width
-    height: parent.height - 80
+    width: Window.width
+    height: Window.height - 80
     color: "transparent"
+
+    property int pageMargin: queueScreen.width * (25 / 1024)
+
+    readonly property int titleTextSize: Math.round(this.height * 0.048888889)
 
     Component {
         id: queueDelegate
@@ -33,45 +37,6 @@ Rectangle {
                     }
                 }
             }
-            /*
-            Rectangle {
-                id: rowBackground
-                color: "transparent"
-                width: queueScreen.width - pageMargin * 2
-                height: parent.height
-                //radius: appWindow.height * 0.013333333
-
-                Rectangle {
-                    color: white
-                    anchors.fill: parent
-                    opacity: index === queueListView.currentIndex ? 0.18 : 0.07
-                }
-                Rectangle {
-                    anchors.bottom: parent.bottom
-                    width: (parent.width / appWindow.playDuration) * appWindow.playElapsed
-                    height: 5
-                    color: yellow
-                    opacity: 1
-                    visible: index === queueListView.currentIndex
-                }
-
-                layer.enabled: true
-                layer.effect: OpacityMask {
-                    maskSource: Item {
-                        width: rowBackground.width
-                        height: rowBackground.height
-                        Rectangle {
-                            //anchors.centerIn: rowBackground
-                            width: rowBackground.width
-                            height: rowBackground.height
-                            radius: 8
-                        }
-                    }
-                }
-
-
-            }
-            */
 
             Row {
                 leftPadding: parent.height * 0.1
@@ -114,8 +79,7 @@ Rectangle {
                         color: white
                         text: title
                         font.family: poppins.name
-                        //font.weight: Font.Light
-                        font.pixelSize: appWindow.width * 0.024414062
+                        font.pixelSize: titleTextSize
                     }
                     Text {
                         text: artist + " - " + getPrettyTime(duration)
@@ -158,7 +122,6 @@ Rectangle {
                     width: highlightBox.width
                     height: highlightBox.height
                     Rectangle {
-                        //anchors.centerIn: rowBackground
                         width: highlightBox.width
                         height: highlightBox.height
                         radius: appWindow.height * 0.013333333

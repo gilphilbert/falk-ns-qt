@@ -8,5 +8,8 @@
         <file>icons/pause.svg</file>
         <file>icons/skip-back.svg</file>
         <file>icons/skip-forward.svg</file>
+        <file>icons/x.svg</file>
+        <file>icons/x-blue.svg</file>
+        <file>icons/arrow-right-circle.svg</file>
     </qresource>
 </RCC>

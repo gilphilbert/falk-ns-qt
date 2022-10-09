@@ -8,5 +8,6 @@
         <file>components/LibraryList.qml</file>
         <file>Genres.qml</file>
         <file>Genre.qml</file>
+        <file>Album.qml</file>
     </qresource>
 </RCC>

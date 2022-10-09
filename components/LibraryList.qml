@@ -3,6 +3,8 @@ import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.12
 import QtQuick.Shapes 1.15
 import QtQml.Models 2.3
+import QtQuick.Window 2.15
+
 
 Rectangle {
     color: "transparent"
@@ -16,15 +18,19 @@ Rectangle {
         id: libraryModel
     }
     property int padding: 20
+
+    readonly property int titleTextSize: Math.round((Window.height - 80) * 0.048888889)
+    readonly property int subtitleTextSize: Math.round((Window.height - 80) * 0.0289)
+
     Component {
         id: libraryDelegate
         Item {
             id: wrapper
-            height: 100
+            height: Window.height * 0.166666667
 
             Rectangle {
                 id: rowBackground
-                height: 100
+                height: parent.height
                 width: 1024 - (padding * 2)
                 color: "transparent"
                 opacity: 0.15
@@ -72,15 +78,16 @@ Rectangle {
                         text: name
                         color: white
                         font.family: poppins.name
-                        font.pixelSize: 25
+                        font.pixelSize: titleTextSize
                         wrapMode: Text.WordWrap
                     }
                     Text {
                         text: artist
                         visible: artist !== ""
                         font.family: poppins.name
-                        color: "#c0c0c0"
-                        font.pixelSize: 18
+                        color: white
+                        opacity: 0.7
+                        font.pixelSize: subtitleTextSize
                         wrapMode: Text.WordWrap
                     }
                 }
@@ -263,7 +270,7 @@ Rectangle {
       //apiRequest(url, processResults)
     }
     onUrlChanged: {
-        console.info("URL CHANGED:: " + url)
+        //console.info("URL CHANGED:: " + url)
         apiRequest(url, processResults)
     }
 

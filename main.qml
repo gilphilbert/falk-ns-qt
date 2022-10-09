@@ -11,9 +11,9 @@ import "components"
 //Component.onCompleted: NSScript.createTiles()
 
 Window {
-    width: 1800
-    height: 1200
-    //title: qsTr("NS Viewer")
+    width: 1350
+    height: 900
+    title: qsTr("FALK NS")
     color: blue_dark //"#222c3b"
     id: appWindow
     visible: true
@@ -22,19 +22,11 @@ Window {
 
     readonly property color yellow: "#E3B505"
     readonly property color white: "#FFFFFF"
+    readonly property color blue: "#4A6FA5"
     readonly property color blue_light: "#4B6281"
     readonly property color blue_dark: "#465b7a"
 
     property real footerHeight: this.height * 0.133333333
-
-    //Image {
-        //source: "image://CachedImageProvider/https://www.musicdirect.com/Portals/0/Hotcakes/Data/products/8cb25687-cad5-40ca-87ab-17dcb55ebbce/medium/LDM31011_.jpg"
-        //source: "image://AsyncImage/https://www.musicdirect.com/Portals/0/Hotcakes/Data/products/8cb25687-cad5-40ca-87ab-17dcb55ebbce/medium/LDM31011_.jpg"
-    //    height: 200
-    //    width: 200
-    //    x: 0
-    //    y: 0
-    //}
 
     FontLoader {
         id: kentledge
@@ -102,13 +94,13 @@ Window {
 
     Component.onCompleted: {
         settings.host = "127.0.0.1:8080"
+        //settings.host = "192.168.68.105"
         sse.onEventData.connect(signalHandling)
         sse.onDisconnected.connect(serverDisconnect)
         sse.setServer("http://" + settings.host + "/events")
     }
 
-    function apiRequest(urlComponent, callback) {
-        const fullURL = "http://" + settings.host + "/api/" + urlComponent
+    function apiRequest(urlComponent, callback, action = "GET", data = "") {
         var xhr = new XMLHttpRequest()
         xhr.onreadystatechange = (function (myxhr) {
             return function () {
@@ -123,8 +115,17 @@ Window {
                     }
             }
         })(xhr)
-        xhr.open("GET", fullURL, true)
-        xhr.send('')
+
+        let fullURL = "http://" + settings.host + "/api/" + urlComponent
+        console.info(fullURL)
+
+        xhr.open(action, fullURL, true)
+
+        if (action === "POST") {
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        }
+
+        xhr.send(data)
     }
 
     function str_pad_left(string,pad,length) {
@@ -144,7 +145,7 @@ Window {
 
     Settings {
         id: settings
-        property string host: "192.168.68.104"
+        property string host: "192.168.68.105"
     }
 
     function loadNext(data) {
@@ -154,10 +155,21 @@ Window {
         case "Genres":
             pageName = "Genre"
             apiURL = "genre/" + _data.name
+            pageLoader.setSource("components/LibraryList.qml")
             break
         case "Artists":
             pageName = "Artist"
             apiURL = "artist/" + _data.name
+            pageLoader.setSource("components/LibraryList.qml")
+            break
+        case "Artist":
+        case "Albums":
+        case "Genre":
+            //pageName = "Album"
+            albumApiURL = "album/" + encodeURIComponent(_data.artist) + "/" + encodeURIComponent(_data.name)
+            albumLoader.setSource("Album.qml")
+            albumLoader.visible = true
+            pageLoader.visible = false
             break
         }
 
@@ -166,6 +178,8 @@ Window {
 
     property string apiURL: ""
     property string pageName: "Playing"
+
+    property string albumApiURL: ""
     Loader {
         id: pageLoader
         //anchors.fill: parent
@@ -179,11 +193,28 @@ Window {
                     pageLoader.item.navigate.connect(loadNext)
                     pageLoader.item.url = apiURL
                     break;
+                case Qt.resolvedUrl("Album.qml"):
+                    pageLoader.item.url = apiURL
+                    break;
             }
         }
     }
 
+    Loader {
+        id: albumLoader
+        width: parent.width
+        height: parent.height - footerHeight
+        source: "Album.qml"
+        visible: false
+        onLoaded: function() {
+            albumLoader.item.url = albumApiURL
+        }
+    }
+
     function pageHandler(page) {
+        albumLoader.visible = false
+        pageLoader.visible = true
+
         if (page === "Playing" || page === "Queue") {
             pageLoader.setSource(page + ".qml")
             pageName = page
