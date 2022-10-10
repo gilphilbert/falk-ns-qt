@@ -5,31 +5,27 @@ import QtGraphicalEffects 1.12
 import QtQuick.Window 2.15
 
 Rectangle {
-    property string page
-
-
+    anchors.fill: parent
     id: queueScreen
-    width: Window.width
-    height: Window.height - 80
-    color: "transparent"
 
-    property int pageMargin: queueScreen.width * (25 / 1024)
+    color: blue_dark
+
+    property int pageMargin: this.width * (25 / 1024)
 
     readonly property int titleTextSize: Math.round(this.height * 0.048888889)
 
     Component {
         id: queueDelegate
         Item {
-            id: wrapper
-            height: appWindow.height * 0.166666667
+            height: queueScreen.height * 0.166666667
+            width: parent.width - pageMargin * 2
+            x: pageMargin
 
             Rectangle {
-                id: rowBackground
                 color: "white"
-                width: queueScreen.width - pageMargin * 2
-                height: parent.height
+                anchors.fill: parent
                 opacity: 0.07
-                radius: appWindow.height * 0.013333333
+                radius: this.height / 10
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
@@ -40,15 +36,12 @@ Rectangle {
 
             Row {
                 leftPadding: parent.height * 0.1
-                height: parent.height
-                width: parent.width
-                id: queueRow
+                anchors.fill: parent
 
-                Rectangle {
+                Item {
                     height: parent.height * 0.8
                     width: parent.height * 0.8
                     anchors.verticalCenter: parent.verticalCenter
-                    color: "transparent"
 
                     Image {
                         id: artImage
@@ -72,8 +65,8 @@ Rectangle {
                 }
 
                 Column {
-                    leftPadding: appWindow.width * 0.014648438
-                    bottomPadding: appWindow.height * 0.008333333
+                    leftPadding: queueScreen.width * 0.014648438
+                    bottomPadding: queueScreen.height * 0.008333333
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         color: white
@@ -86,7 +79,7 @@ Rectangle {
                         font.family: poppins.name
                         color: white
                         opacity: 0.7
-                        font.pixelSize: appWindow.width * 0.017578125
+                        font.pixelSize: queueScreen.width * 0.017578125
                     }
                 }
             }
@@ -124,7 +117,7 @@ Rectangle {
                     Rectangle {
                         width: highlightBox.width
                         height: highlightBox.height
-                        radius: appWindow.height * 0.013333333
+                        radius: queueScreen.height * 0.013333333
                     }
                 }
             }
@@ -133,19 +126,23 @@ Rectangle {
 
     ListView {
         id: queueListView
+
         anchors.fill: parent
+
+        clip: true
+
         topMargin: pageMargin
         bottomMargin: pageMargin
-        leftMargin: pageMargin
-        rightMargin: pageMargin
-        spacing: appWindow.height * 0.03
+
+        spacing: queueScreen.height * 0.03
+
         model: queueList
         delegate: queueDelegate
         focus: true
         currentIndex: playPosition
         snapMode: ListView.SnapToItem
 
-        highlight: highlightBar
+        //highlight: highlightBar
         highlightFollowsCurrentItem: false
     }
 }

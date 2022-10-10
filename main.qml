@@ -148,81 +148,18 @@ Window {
         property string host: "192.168.68.105"
     }
 
-    function loadNext(data) {
-        const _data = JSON.parse(data)
-
-        switch (pageName) {
-        case "Genres":
-            pageName = "Genre"
-            apiURL = "genre/" + _data.name
-            pageLoader.setSource("components/LibraryList.qml")
-            break
-        case "Artists":
-            pageName = "Artist"
-            apiURL = "artist/" + _data.name
-            pageLoader.setSource("components/LibraryList.qml")
-            break
-        case "Artist":
-        case "Albums":
-        case "Genre":
-            //pageName = "Album"
-            albumApiURL = "album/" + encodeURIComponent(_data.artist) + "/" + encodeURIComponent(_data.name)
-            albumLoader.setSource("Album.qml")
-            albumLoader.visible = true
-            pageLoader.visible = false
-            break
-        }
-
-        pageLoader.setSource("components/LibraryList.qml")
+    StackView {
+        id: stack
+        initialItem: "Playing.qml"
+        anchors.fill: parent
     }
 
-    property string apiURL: ""
-    property string pageName: "Playing"
-
-    property string albumApiURL: ""
-    Loader {
-        id: pageLoader
-        //anchors.fill: parent
+    Drawer {
+        id: queueDrawer
         width: parent.width
-        height: parent.height - footerHeight
-        source: "Playing.qml"
-        onLoaded: function() {
-            switch (pageLoader.source.toString()) {
-
-                case Qt.resolvedUrl("/components/LibraryList.qml"):
-                    pageLoader.item.navigate.connect(loadNext)
-                    pageLoader.item.url = apiURL
-                    break;
-                case Qt.resolvedUrl("Album.qml"):
-                    pageLoader.item.url = apiURL
-                    break;
-            }
-        }
-    }
-
-    Loader {
-        id: albumLoader
-        width: parent.width
-        height: parent.height - footerHeight
-        source: "Album.qml"
-        visible: false
-        onLoaded: function() {
-            albumLoader.item.url = albumApiURL
-        }
-    }
-
-    function pageHandler(page) {
-        albumLoader.visible = false
-        pageLoader.visible = true
-
-        if (page === "Playing" || page === "Queue") {
-            pageLoader.setSource(page + ".qml")
-            pageName = page
-        } else {
-            apiURL = page.toLowerCase()
-            pageName = page
-            pageLoader.setSource("components/LibraryList.qml")
-        }
+        height: parent.height * 0.80
+        edge: Qt.BottomEdge
+        Queue { }
     }
 
     Rectangle {
@@ -239,29 +176,42 @@ Window {
 
             FooterItem {
                 title: qsTr("Playing")
-                onClick: { pageHandler(page) }
+                onClick: { stack.pop(null) }
             }
             FooterItem {
                 title: qsTr("Queue")
-                onClick: { pageHandler(page) }
+                onClick: { queueDrawer.open() }
             }
             FooterItem {
                 title: qsTr("")
             }
             FooterItem {
                 title: qsTr("playlists")
+                onClick: {
+                    stack.pop(null)
+                    stack.push("Library.qml", { "url": "playlist" })
+                }
             }
             FooterItem {
                 title: qsTr("Artists")
-                onClick: { pageHandler(page) }
+                onClick: {
+                    stack.pop(null)
+                    stack.push("Library.qml", { "url": "artists" })
+                }
             }
             FooterItem {
                 title: qsTr("Albums")
-                onClick: { pageHandler(page) }
+                onClick: {
+                    stack.pop(null)
+                    stack.push("Library.qml", { "url": "albums" })
+                }
             }
             FooterItem {
                 title: qsTr("Genres")
-                onClick: { pageHandler(page) }
+                onClick: {
+                    stack.pop(null)
+                    stack.push("Library.qml", { "url": "genres" })
+                }
             }
             FooterItem {
                 title: qsTr("")

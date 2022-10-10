@@ -5,8 +5,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.15
 
 
-Rectangle {
-    color: blue_dark
+Item {
     width: Window.width
     height: Window.height - footerHeight
 
@@ -400,6 +399,20 @@ Rectangle {
                 onClicked: {
                     additionalOptions.close()
                 }
+            }
+        }
+    }
+
+    Rectangle {
+        color: "pink"
+        height: 50
+        width: 50
+        x: 10
+        y: 10
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                stack.pop()
             }
         }
     }

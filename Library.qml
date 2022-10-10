@@ -6,12 +6,11 @@ import QtQml.Models 2.3
 import QtQuick.Window 2.15
 
 
-Rectangle {
-    color: "transparent"
-    anchors.fill: parent
+Item {
+    width: Window.width
+    height: Window.height - footerHeight
 
     property string url
-    signal navigate(string data)
 
     ListModel {
         id: libraryModel
@@ -99,17 +98,19 @@ Rectangle {
             MouseArea {
                 anchors.fill: rowBackground
                 onClicked: {
-                    //const data = JSON.stringify({ "name": name, "artist": artist })
-                    //navigate(data)
                     let nav = ""
                     if (url == "artists") nav = "artist/" + encodeURIComponent(name)
                     else if (url == "genres") nav = "genre/" + encodeURIComponent(name)
 
                     if (nav != "") {
-                        stack.push("LibraryList.qml", { "url": nav })
+                        stack.push("Library.qml", { "url": nav })
                     } else {
-                        // load an album
-                        stack.push("/Album.qml", { "url": "album/" + encodeURIComponent(artist) + "/" + encodeURIComponent(name) })
+                        if (url != "playlist") {
+                            // load an album
+                            stack.push("Album.qml", { "url": "album/" + encodeURIComponent(artist) + "/" + encodeURIComponent(name) })
+                        } else {
+                            // load the playlist
+                        }
                     }
                 }
             }
@@ -191,7 +192,9 @@ Rectangle {
                 anchors.fill: parent
                 // do something here with a virtual keyboard sort-of-thing
                 onClicked: {
-                    textSearch.visible = true
+                    //textSearch.visible = true
+                    console.info('here')
+                    drawer.open()
                 }
             }
 
@@ -230,6 +233,7 @@ Rectangle {
     }
 
     property var alphaNumeric: [ "123", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" ]
+    /*
     Rectangle {
         id: textSearch
         anchors.fill: parent
@@ -277,15 +281,80 @@ Rectangle {
             }
         }
     }
+    */
+    Drawer {
+        id: drawer
+        width: 0.55 * appWindow.width
+        height: appWindow.height
+        edge: Qt.RightEdge
+
+        Rectangle {
+            anchors.fill: parent
+            color: blue
+
+            GridView {
+                id: letterView
+                width: this.cellWidth * 5
+                height: this.cellWidth * 6
+                anchors.centerIn: parent
+                cellWidth: parent.width * 0.19
+                cellHeight: this.cellWidth
+
+                model: alphaNumeric
+
+                delegate: Item {
+                        height: letterView.cellWidth
+                        width: this.height
+                        Rectangle {
+                            height: parent.width - (parent.width * 0.1)
+                            width: height
+                            //anchors.fill: parent
+                            anchors.centerIn: parent
+                            color: white
+                            opacity: 0.2
+                            radius: this.height * 0.08
+                        }
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: model.modelData.toUpperCase()
+                            font.family: poppins.name
+                            font.pixelSize: 28
+                            color: white
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+
+                            onClicked: {
+                                drawer.close()
+                                grid.textFilter = model.modelData
+                            }
+                        }
+
+
+
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        color: "pink"
+        height: 50
+        width: 50
+        x: 0
+        y: 0
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                stack.pop()
+            }
+        }
+    }
 
     // this loads the page for the first time (once we know which page we are)
     Component.onCompleted: {
       apiRequest(url, processResults)
-      //console.info(parent.url)
-    }
-    onUrlChanged: {
-        //console.info("URL CHANGED:: " + url)
-        //apiRequest(url, processResults)
     }
 
     function processResults(data) {

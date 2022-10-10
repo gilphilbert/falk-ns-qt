@@ -4,7 +4,7 @@
         <file>Playing.qml</file>
         <file>Queue.qml</file>
         <file>components/FooterItem.qml</file>
-        <file>components/LibraryList.qml</file>
         <file>Album.qml</file>
+        <file>Library.qml</file>
     </qresource>
 </RCC>

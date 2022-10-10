@@ -5,7 +5,7 @@ Item {
     property bool isCurrent: title.startsWith(appWindow.pageName) && title !== ""
     property string title: ""
 
-    signal click(string page)
+    signal click()
 
     width: appWindow.width / 8 //128
     height: footerHeight
@@ -40,7 +40,7 @@ Item {
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            click(title)
+            click()
         }
     }
 

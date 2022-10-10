@@ -6,13 +6,9 @@ import QtGraphicalEffects 1.12
 import QtQuick.Layouts 1.15
 
 /* HOME SCREEN */
-Rectangle {
-    color: 'transparent'
-    property string page
-
+Item {
     width: Window.width
-    height: Window.height - 80
-    id: homeScreen
+    height: Window.height - footerHeight
 
     // main grid properties
     readonly property real gridWidth: this.width * 0.9
