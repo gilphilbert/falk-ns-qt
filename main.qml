@@ -14,7 +14,7 @@ Window {
     width: 1350
     height: 900
     title: qsTr("FALK NS")
-    color: blue_dark //"#222c3b"
+    color: white // blue_dark
     id: appWindow
     visible: true
     //flags: Qt.FramelessWindowHint
@@ -25,20 +25,28 @@ Window {
     readonly property color blue: "#4A6FA5"
     readonly property color blue_light: "#4B6281"
     readonly property color blue_dark: "#465b7a"
+    readonly property color black: "#444"
+    readonly property color gray_light: "#cccccc"
+    readonly property color gray_lighter: "#eeeeee"
+
+    readonly property color primary_color: blue
+    readonly property color secondary_color: yellow
+    readonly property color text_color: black
+    readonly property color secondary_text_color: blue
 
     property real footerHeight: this.height * 0.133333333
 
     FontLoader {
         id: kentledge
+        source: "fonts/Kentledge-Regular.otf"
+    }
+    FontLoader {
+        id: kentledgeBold
+        source: "fonts/Kentledge-Bold.otf"
+    }
+    FontLoader {
+        id: kentledgeHeavy
         source: "fonts/Kentledge-Heavy.otf"
-    }
-    FontLoader {
-        id: poppins
-        source: "fonts/Poppins-Light.otf"
-    }
-    FontLoader {
-        id: poppinsMedium
-        source: "fonts/Poppins-Medium.otf"
     }
 
     Timer {
@@ -46,17 +54,27 @@ Window {
         interval: 1000
         running: !playPaused
         repeat: true
-        onTriggered: if (playDuration > 0 && playElapsed < playDuration) playElapsed++
+        onTriggered: if (currentTrack.duration > 0 && playElapsed < currentTrack.duration) playElapsed++
     }
 
     property var queue: []
     property bool playPaused: true
-    property int playPosition: 0
+    property int playPosition: -1
     property int playElapsed: 0
-    property int playDuration: 0
+
+    property var currentTrack: { "title":"", "artist":"", "duration":0, "album":"", "art":"", "discart":"", "playing":false, "shortformat":"" }
 
     ListModel {
         id: queueList
+    }
+
+    function processState(_state) {
+        playPaused = _state.paused
+        playElapsed = _state.elapsed
+        if (queue.length > 0) {
+            playPosition = _state.position
+            currentTrack = queue[_state.position]
+        }
     }
 
     function signalHandling(event){
@@ -68,26 +86,28 @@ Window {
 
                 if (evtName === "queue") {
                     queue = evtData.queue
+
+                    if (queue.length === queueList.count + 1) {
+                        rect.opacity = 1
+                        rect.y = 50
+                        testAnimation.start()
+                    }
+
                     queueList.clear()
                     queue.forEach(item => {
                         queueList.append(item)
                     })
 
-                    let _state = evtData.state
-                    playPaused = _state.paused
-                    playPosition = _state.position
-                    playDuration = queue[playPosition].duration
-                    playElapsed = _state.elapsed
-
+                    processState(evtData.state)
                 }
                 else if (evtName === "status") {
-                    playPaused = evtData.paused
-                    playPosition = evtData.position
-                    playElapsed = evtData.elapsed
+                    processState(evtData)
                 }
             }
+
         })
     }
+
     function serverDisconnect(event){
         //server connection lost (couldn't connect/reconnect)
     }
@@ -159,6 +179,9 @@ Window {
         width: parent.width
         height: parent.height * 0.80
         edge: Qt.BottomEdge
+        background: Rectangle {
+            color: gray_lighter
+        }
         Queue { }
     }
 
@@ -168,7 +191,7 @@ Window {
         anchors.bottom: parent.bottom
         width: parent.width
         height: footerHeight
-        color: "#4A6FA5"
+        color: gray_lighter
 
         Grid {
             id: footerGrid
@@ -217,5 +240,44 @@ Window {
                 title: qsTr("")
             }
         }
+
+
+        Rectangle {
+            id: rect
+            width: 50
+            height: 50
+            color: primary_color
+            x: (appWindow.width / 8) * 2 - 50
+            y: footerHeight / 2 - this.height / 2
+            opacity: 0
+            radius: this.width / 2
+
+            Text {
+                text: "+1"
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: 2
+                color: white
+                font.pixelSize: 22
+                font.family: kentledge.name
+                font.weight: Font.ExtraBold
+            }
+
+            ParallelAnimation {
+                id: testAnimation
+                NumberAnimation {
+                    target: rect
+                    property: "y"
+                    to: 0
+                    duration: 500
+                }
+                NumberAnimation {
+                    target: rect
+                    property: "opacity"
+                    to: 0
+                    duration: 500
+                }
+            }
+        }
+
     }
 }

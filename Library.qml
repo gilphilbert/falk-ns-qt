@@ -78,16 +78,18 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         text: name
-                        color: white
-                        font.family: poppins.name
+                        color: text_color
+                        font.family: kentledge.name
+                        font.weight: Font.ExtraBold
                         font.pixelSize: titleTextSize
                         wrapMode: Text.WordWrap
                     }
                     Text {
                         text: artist
                         visible: artist !== ""
-                        font.family: poppins.name
-                        color: white
+                        font.family: kentledge.name
+                        font.weight: Font.Bold
+                        color: text_color
                         opacity: 0.7
                         font.pixelSize: subtitleTextSize
                         wrapMode: Text.WordWrap
@@ -181,7 +183,7 @@ Item {
 
             Text {
                 text: "A-Z"
-                color: white
+                color: text_color
                 font.family: kentledge.name
                 font.pixelSize: 22
                 anchors.centerIn: parent
@@ -211,7 +213,7 @@ Item {
 
             Text {
                 text: "X"
-                color: white
+                color: text_color
                 font.family: kentledge.name
                 font.pixelSize: 22
                 anchors.centerIn: parent
@@ -227,7 +229,7 @@ Item {
             }
         }
 
-        border.color: white
+        border.color: text_color
         border.width: 3
 
     }
@@ -265,7 +267,7 @@ Item {
                 Text {
                     text: model.modelData.toUpperCase()
                     anchors.centerIn: parent
-                    font.family: poppins.name
+                    font.family: kentledge.name
                     font.pixelSize: 28
                     color: white
                 }
@@ -308,9 +310,8 @@ Item {
                         Rectangle {
                             height: parent.width - (parent.width * 0.1)
                             width: height
-                            //anchors.fill: parent
                             anchors.centerIn: parent
-                            color: white
+                            color: text_color
                             opacity: 0.2
                             radius: this.height * 0.08
                         }
@@ -318,9 +319,9 @@ Item {
                         Text {
                             anchors.centerIn: parent
                             text: model.modelData.toUpperCase()
-                            font.family: poppins.name
+                            font.family: kentledge.name
                             font.pixelSize: 28
-                            color: white
+                            color: text_color
                         }
                         MouseArea {
                             anchors.fill: parent

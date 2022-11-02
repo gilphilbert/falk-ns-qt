@@ -6,5 +6,6 @@
         <file>components/FooterItem.qml</file>
         <file>Album.qml</file>
         <file>Library.qml</file>
+        <file>Settings.qml</file>
     </qresource>
 </RCC>

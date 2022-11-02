@@ -15,8 +15,9 @@ Item {
         id: pageTitle
         anchors.centerIn: parent
         font.family: kentledge.name
+        font.weight: Font.ExtraBold
         font.pixelSize: appWindow.height * 0.026666667
-        color: white
+        color: black
         opacity: ((isCurrent) ? 1 : 0.6)
         text: title.toUpperCase()
     }
@@ -26,7 +27,7 @@ Item {
         y: 0
         height: 3
         width: parent.width
-        color: isCurrent ? yellow : blue
+        color: isCurrent ? yellow : gray_lighter
     }
     Glow {
         anchors.fill: divider

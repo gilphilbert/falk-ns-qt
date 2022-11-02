@@ -6,9 +6,6 @@ QT += quick
 
 SOURCES += \
         aimagecache.cpp \
-        downloader.cpp \
-        downloadmanager.cpp \
-        imagecache.cpp \
         main.cpp \
         networkmanager.cpp
 
@@ -28,9 +25,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     aimagecache.h \
-    downloader.h \
-    downloadmanager.h \
-    imagecache.h \
     networkmanager.h
 
 QTPLUGIN += qlinuxfb

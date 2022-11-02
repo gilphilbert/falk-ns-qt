@@ -37,18 +37,18 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         y: gridVSpacing
 
-        Row {
+        RowLayout {
             width: parent.width
             spacing: gridVSpacing
 
             Item {
-                height: artSize
-                width: artSize
+                Layout.preferredHeight: artSize
+                Layout.preferredWidth: artSize
 
                 /*
                 Image {
                     id: mediaArt
-                    source: "image://AsyncImage/" + "http://" + settings.host + queue[playPosition].discart + "?size=" + Math.ceil(appWindow.width * 0.2)
+                    source: "image://AsyncImage/" + "http://" + settings.host + currentTrack.discart + "?size=" + Math.ceil(appWindow.width * 0.2)
                     height: artSize
                     width: artSize
                     fillMode: Image.PreserveAspectCrop
@@ -58,7 +58,7 @@ Item {
 
                 Image {
                     id: playingArt
-                    source: queue.length >= playPosition - 1 ? "image://AsyncImage/" + "http://" + settings.host + queue[playPosition].art + "?size=" + Math.ceil(appWindow.width * 0.2) : ''
+                    source: "image://AsyncImage/" + "http://" + settings.host + currentTrack.art
                     height: artSize
                     width: artSize
                     fillMode: Image.PreserveAspectCrop
@@ -69,7 +69,7 @@ Item {
                     id: playingArtMask
                     height: artSize
                     width: artSize
-                    radius: 10
+                    radius: this.width * 0.1
                     visible: false
                 }
                 OpacityMask {
@@ -85,43 +85,46 @@ Item {
 
                 Text {
                     id: homeTitle
-                    color: white
+                    color: text_color
                     font.pixelSize: titleFont
-                    font.family: poppins.name
-                    font.weight: Font.Light
-                    text: queue[playPosition].title
+                    font.family: kentledge.name
+                    font.weight: Font.Bold
+                    text: currentTrack.title
+                    elide: Text.ElideRight
+                    width: gridWidth - artSize - gridVSpacing
+
                 }
                 Text {
-                    id: homeAlbum
-                    color: white
-                    opacity: 0.7
+                    color: text_color
                     font.pixelSize: mainFont
-                    font.family: poppins.name
-                    font.weight: Font.Medium
-                    text: "From " + queue[playPosition].album
+                    font.family: kentledge.name
+                    font.weight: Font.ExtraBold
+                    text: "From " + currentTrack.album
+                    elide: Text.ElideRight
+                    width: gridWidth - artSize - gridVSpacing
                 }
 
                 Text {
-                    id: homeArtist
-                    color: white
-                    opacity: 0.7
+                    color: text_color
                     font.pixelSize: mainFont
-                    font.family: poppins.name
-                    font.weight: Font.Medium
-                    text: "By " + queue[playPosition].artist
+                    font.family: kentledge.name
+                    font.weight: Font.ExtraBold
+                    text: "By " + currentTrack.artist
+                    elide: Text.ElideRight
+                    width: gridWidth - artSize - gridVSpacing
                 }
                 Rectangle {
-                    color: yellow
+                    color: primary_color
                     Text {
-                        text: queue[playPosition].shortformat
+                        text: currentTrack.shortformat
                         font.pixelSize: qualityFont
-                        font.family: poppins.name
-                        font.weight: Font.Medium
+                        font.family: kentledge.name
+                        font.weight: Font.ExtraBold
                         color: appWindow.color
                         leftPadding: appWindow.height * 0.0172
                         rightPadding: this.leftPadding
-                        topPadding: this.leftPadding / 2.05
-                        bottomPadding: this.topPadding
+                        topPadding: this.leftPadding / 1.8
+                        bottomPadding: this.topPadding - 3
                     }
                     width: childrenRect.width
                     height: childrenRect.height
@@ -133,37 +136,45 @@ Item {
 
         // -------- PROGRESS BAR -------- //
         Rectangle {
+            id: progressBar
             Layout.columnSpan: 2
             Layout.topMargin: gridVSpacing
             Layout.preferredHeight: progressBarHeight
             Layout.preferredWidth: gridWidth
-            color: blue_light
+            color: gray_lighter
             Rectangle {
                 height: parent.height
-                width: (parent.width / appWindow.playDuration) * appWindow.playElapsed//parent.width / 2
-                color: yellow
+                width: parent.width * (playElapsed / currentTrack.duration) //parent.width / 2
+                color: blue
                 x: 0
                 y: 0
             }
         }
 
+        Rectangle {
+            Layout.columnSpan: 2
 
-        Text {
-            color: white
-            opacity: 0.7
-            font.pixelSize: appWindow.width * 0.017
-            text: getPrettyTime(appWindow.playElapsed)
-            font.family: kentledge.name
-            horizontalAlignment: Text.AlignLeft
+            Layout.preferredWidth: gridWidth
+            Layout.preferredHeight: childrenRect.height
+
+            Text {
+                color: text_color
+                font.pixelSize: appWindow.width * 0.017
+                text: getPrettyTime(appWindow.playElapsed)
+                font.family: kentledge.name
+                font.weight: Font.ExtraBold
+                anchors.left: parent.left
+            }
+            Text {
+                color: text_color
+                font.pixelSize: appWindow.width * 0.017
+                text: getPrettyTime(currentTrack.duration)
+                font.family: kentledge.name
+                font.weight: Font.ExtraBold
+                anchors.right: parent.right
+            }
         }
-        Text {
-            color: white
-            opacity: 0.7
-            font.pixelSize: appWindow.width * 0.017
-            text: getPrettyTime(appWindow.playDuration)
-            font.family: kentledge.name
-            horizontalAlignment: Text.AlignRight
-        }
+
 
         RowLayout {
             Layout.columnSpan: 2
@@ -185,6 +196,7 @@ Item {
                 Layout.fillHeight: true
 
                 Image {
+                    id: iconPrev
                     source: 'icons/skip-back.svg'
                     height: iconSize
                     width: iconSize
@@ -199,6 +211,13 @@ Item {
                         }
                     }
                 }
+
+                ColorOverlay{
+                    anchors.fill: iconPrev
+                    source: iconPrev
+                    color: primary_color
+                    antialiasing: true
+                }
             }
 
             Item  {
@@ -206,6 +225,7 @@ Item {
                 Layout.fillHeight: true
 
                 Image {
+                    id: iconPlayPause
                     source: appWindow.playPaused ? 'icons/play.svg' : 'icons/pause.svg'
                     height: playIconSize
                     width: playIconSize
@@ -221,6 +241,13 @@ Item {
                     }
                 }
 
+                ColorOverlay{
+                    anchors.fill: iconPlayPause
+                    source: iconPlayPause
+                    color: primary_color
+                    antialiasing: true
+                }
+
             }
 
             Item {
@@ -228,6 +255,7 @@ Item {
                 Layout.fillHeight: true
 
                 Image {
+                    id: iconNext
                     source: "icons/skip-forward.svg"
                     height: iconSize
                     width: iconSize
@@ -241,6 +269,12 @@ Item {
                             apiRequest("next")
                         }
                     }
+                }
+                ColorOverlay{
+                    anchors.fill: iconNext
+                    source: iconNext
+                    color: primary_color
+                    antialiasing: true
                 }
             }
 

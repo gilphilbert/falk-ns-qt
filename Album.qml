@@ -96,16 +96,17 @@ Item {
                     bottomPadding: appWindow.height * 0.008333333
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
-                        color: white
+                        color: text_color
                         text: title
-                        font.family: poppins.name
+                        font.family: kentledge.name
+                        font.weight: Font.ExtraBold
                         font.pixelSize: titleTextSize
                     }
                     Text {
                         text: artist + " - " + getPrettyTime(duration)
-                        font.family: poppins.name
-                        color: white
-                        opacity: 0.7
+                        font.family: kentledge.name
+                        font.weight: Font.Bold
+                        color: text_color
                         font.pixelSize: subtitleTextSize
                     }
                 }
@@ -154,23 +155,25 @@ Item {
                 id: textContent
                 Text {
                     text: title
-                    color: white
-                    font.family: poppins.name
+                    color: text_color
+                    font.family: kentledge.name
+                    font.weight: Font.ExtraBold
                     font.pixelSize: titleTextSize
                     wrapMode: Text.WordWrap
                 }
                 Text {
                     text: artist
-                    color: white
-                    font.family: poppins.name
+                    color: text_color
+                    font.family: kentledge.name
+                    font.weight: Font.Bold
                     font.pixelSize: subtitleTextSize
                     wrapMode: Text.WordWrap
-                    opacity: 0.7
                 }
                 Text {
                     text: year
-                    color: white
-                    font.family: poppins.name
+                    color: text_color
+                    font.family: kentledge.name
+                    font.weight: Font.Bold
                     font.pixelSize: subtitleTextSize
                     wrapMode: Text.WordWrap
                     opacity: 0.7
@@ -180,9 +183,9 @@ Item {
                     Text {
                         text: shortformat
                         font.pixelSize: qualityFont
-                        font.family: poppins.name
-                        font.weight: Font.Medium
-                        color: blue_dark
+                        font.family: kentledge.name
+                        font.weight: Font.ExtraBold
+                        color: appWindow.color
                         leftPadding: qualityPadding
                         rightPadding: qualityPadding
                         topPadding: qualityPadding / 2.05
@@ -213,7 +216,7 @@ Item {
                         color: yellow
                         text: 'Enqueue'
                         font.pixelSize: qualityFont
-                        font.family: poppins.name
+                        font.family: kentledge.name
                         font.weight: Font.Medium
                         leftPadding: qualityPadding
                         rightPadding: qualityPadding
@@ -235,7 +238,7 @@ Item {
                         color: yellow
                         text: 'Play'
                         font.pixelSize: qualityFont
-                        font.family: poppins.name
+                        font.family: kentledge.name
                         font.weight: Font.Medium
                         leftPadding: qualityPadding
                         rightPadding: qualityPadding

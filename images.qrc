@@ -11,5 +11,8 @@
         <file>icons/x.svg</file>
         <file>icons/x-blue.svg</file>
         <file>icons/arrow-right-circle.svg</file>
+        <file>fonts/Kentledge-Bold.otf</file>
+        <file>fonts/Kentledge-Regular.otf</file>
+        <file>fonts/Poppins-Bold.otf</file>
     </qresource>
 </RCC>

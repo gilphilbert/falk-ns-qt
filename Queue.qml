@@ -4,11 +4,9 @@ import QtQuick.Shapes 1.15
 import QtGraphicalEffects 1.12
 import QtQuick.Window 2.15
 
-Rectangle {
+Item {
     anchors.fill: parent
     id: queueScreen
-
-    color: blue_dark
 
     property int pageMargin: this.width * (25 / 1024)
 
@@ -22,10 +20,10 @@ Rectangle {
             x: pageMargin
 
             Rectangle {
-                color: "white"
+                color: "black"
                 anchors.fill: parent
                 opacity: 0.07
-                radius: this.height / 10
+                radius: this.height * 0.1
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
@@ -54,7 +52,7 @@ Rectangle {
                     Rectangle {
                         id: artMask
                         anchors.fill: parent
-                        radius: 8
+                        radius: parent.height * 0.1
                         visible: false
                     }
                     OpacityMask {
@@ -69,16 +67,17 @@ Rectangle {
                     bottomPadding: queueScreen.height * 0.008333333
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
-                        color: white
+                        color: text_color
                         text: title
-                        font.family: poppins.name
+                        font.family: kentledge.name
+                        font.weight: Font.ExtraBold
                         font.pixelSize: titleTextSize
                     }
                     Text {
                         text: artist + " - " + getPrettyTime(duration)
-                        font.family: poppins.name
-                        color: white
-                        opacity: 0.7
+                        font.family: kentledge.name
+                        font.weight: Font.Bold
+                        color: text_color
                         font.pixelSize: queueScreen.width * 0.017578125
                     }
                 }
@@ -91,8 +90,9 @@ Rectangle {
         Rectangle {
             id: highlightBox
             color: "transparent"
-            width: parent.width
+            width: queueListView.currentItem.width
             height: queueListView.currentItem.height
+            x: queueListView.currentItem.x
             y: queueListView.currentItem.y
             Behavior on y { SmoothedAnimation { duration: 300 } }
 
@@ -142,7 +142,7 @@ Rectangle {
         currentIndex: playPosition
         snapMode: ListView.SnapToItem
 
-        //highlight: highlightBar
+        highlight: highlightBar
         highlightFollowsCurrentItem: false
     }
 }
