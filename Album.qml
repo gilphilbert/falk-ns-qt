@@ -44,7 +44,7 @@ Item {
     }
 
     onUrlChanged: {
-        apiRequest(url, processResults)
+        musicAPIRequest(url, processResults)
     }
 
     function processResults(data) {
@@ -67,17 +67,14 @@ Item {
             height: rowHeight
             width: parent.width
 
-            Rectangle {
-                color: 'white'
+            Item {
                 width: parent.width
                 height: parent.height
-                opacity: 0.07
-                radius: rowRadius
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
                         const apiData = JSON.stringify({ tracks: [ id ] })
-                        apiRequest("enqueue", null, "POST", apiData)
+                        musicAPIRequest("enqueue", null, "POST", apiData)
                     }
                     onPressAndHold: {
                         //additionalOptions.visible = true
@@ -153,6 +150,10 @@ Item {
 
             Column {
                 id: textContent
+                //anchors.verticalCenter: parent.verticalCenter
+                spacing: this.height * 0.03
+                height: childrenRect.height
+
                 Text {
                     text: title
                     color: text_color
@@ -179,7 +180,7 @@ Item {
                     opacity: 0.7
                 }
                 Rectangle {
-                    color: yellow
+                    color: primary_color
                     Text {
                         text: shortformat
                         font.pixelSize: qualityFont
@@ -203,17 +204,23 @@ Item {
 
                 layoutDirection: Qt.RightToLeft
 
+                Text {
+                    text: "ellipses"
+                }
+
+                /*
+
                 Rectangle {
                     width: childrenRect.width
                     height: childrenRect.height
                     radius: childrenRect.height
 
                     color: blue_dark
-                    border.color: yellow
+                    border.color: primary_color
                     border.width: 2
 
                     Text {
-                        color: yellow
+                        color: primary_color
                         text: 'Enqueue'
                         font.pixelSize: qualityFont
                         font.family: kentledge.name
@@ -231,11 +238,11 @@ Item {
                     radius: childrenRect.height
 
                     color: blue_dark
-                    border.color: yellow
+                    border.color: primary_color
                     border.width: 2
 
                     Text {
-                        color: yellow
+                        color: primary_color
                         text: 'Play'
                         font.pixelSize: qualityFont
                         font.family: kentledge.name
@@ -246,6 +253,7 @@ Item {
                         bottomPadding: this.topPadding
                     }
                 }
+                */
             }
 
         }
@@ -267,6 +275,8 @@ Item {
                 delegate: trackDelegate
                 focus: true
                 snapMode: ListView.SnapToItem
+
+                //how to stop this being flickable?
             }
         }
     }
@@ -331,7 +341,7 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        apiRequest('replaceAndPlay', null, "POST", JSON.stringify({ tracks: [ additionalTrackID ], index: 0  }))
+                        musicAPIRequest('replaceAndPlay', null, "POST", JSON.stringify({ tracks: [ additionalTrackID ], index: 0  }))
                         additionalOptions.close()
                     }
                 }
@@ -353,7 +363,7 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        apiRequest('playNext', null, "POST", JSON.stringify({ tracks: [ additionalTrackID ] }))
+                        musicAPIRequest('playNext', null, "POST", JSON.stringify({ tracks: [ additionalTrackID ] }))
                         additionalOptions.close()
                     }
                 }
@@ -405,20 +415,6 @@ Item {
             }
         }
     }
-
-    Rectangle {
-        color: "pink"
-        height: 50
-        width: 50
-        x: 10
-        y: 10
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                stack.pop()
-            }
-        }
-    }
 /*
     function playlistHandler(data) {
         console.info(JSON.stringify(data))
@@ -429,7 +425,7 @@ Item {
     }
 
     Component.onCompleted: {
-        apiRequest("playlist", playlistHandler)
+        musicAPIRequest("playlist", playlistHandler)
     }
 */
 }

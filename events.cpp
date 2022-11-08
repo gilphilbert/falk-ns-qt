@@ -14,7 +14,13 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Qt-SSE-Demo.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "networkmanager.h"
+#include "events.h"
+
+#include <QJsonDocument>
+#include <QJsonObject>
+
+#include <QJsonValue>
+#include <QJsonArray>
 
 Network::Manager *Network::Manager::m_instance = nullptr;
 
@@ -29,6 +35,8 @@ Network::Manager::Manager(QObject *parent): QObject(parent) {
     );
 
     m_retries = 0;
+    _paused = 0;
+    _position = 0;
 }
 
 
@@ -63,6 +71,43 @@ void Network::Manager::streamReceived() {
     QString event = QString(m_reply->readAll()).simplified().replace("data: ", "");
     m_retries = 0;
     emit eventData(event);
+
+    QStringList eventList;
+    eventList = event.split("event: ");
+    for (int i = 0; i < eventList.size(); i++) {
+        QString _evt = eventList.at(i);
+
+        int _spacePos = _evt.indexOf(" ");
+        QString _evtName = _evt.left(_spacePos).trimmed();
+
+        if (_evtName.length() > 0) {
+            _evt.remove(0, _spacePos).trimmed();
+            //qInfo() << _evtName;
+            //qInfo() << _evt;
+
+            if (_evtName == "status") {
+                QByteArray json_bytes = _evt.toLocal8Bit();
+                auto json_doc = QJsonDocument::fromJson(json_bytes);
+                QJsonObject object = json_doc.object();
+
+                bool __paused = object.value("paused").toBool();
+                if (__paused != _paused) {
+                    _paused = __paused;
+                    emit paused(_paused);
+                }
+
+                bool __position = object.value("position").toInt();
+                if (__position != _position) {
+                    _position = __position;
+                    emit position(_position);
+                }
+                //qInfo() << paused.toBool(); //.toString();
+                //QVariantMap json_map = json_obj.toVariantMap();
+                //qDebug()<< json_map["paused"].toString();
+            }
+        }
+    }
+
 }
 
 

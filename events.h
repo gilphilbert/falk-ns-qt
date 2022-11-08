@@ -15,8 +15,8 @@
  *   along with Qt-SSE-Demo.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NETWORKMANAGER_H
-#define NETWORKMANAGER_H
+#ifndef EVENTS_H
+#define EVENTS_H
 
 #include <QtCore/QList>
 #include <QtCore/QObject>
@@ -45,6 +45,8 @@ namespace Network {
     signals:
         void eventData(QString message);
         void disconnected();
+        void paused(bool state);
+        void position(int position);
 
     public slots:
         void setServer(const QUrl &url);
@@ -64,7 +66,10 @@ namespace Network {
         void setQNAM(QNetworkAccessManager *value);
         static Manager *manager();
         static void setManager(const Manager *manager);
+
+        bool _paused;
+        int _position;
     };
 }
 
-#endif // NETWORKMANAGER_H
+#endif // EVENTS_H

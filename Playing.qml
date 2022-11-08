@@ -15,7 +15,7 @@ Item {
     readonly property real gridVSpacing: this.height * 0.115
 
     // top row properties
-    readonly property real artSize: this.width * 0.2
+    readonly property real artSize: this.width * 0.26
     readonly property real titleFont: this.width * 0.0439
     readonly property real mainFont: this.width * 0.021
     readonly property real qualityFont: this.width * 0.013
@@ -39,7 +39,7 @@ Item {
 
         RowLayout {
             width: parent.width
-            spacing: gridVSpacing
+            spacing: gridVSpacing * 0.6
 
             Item {
                 Layout.preferredHeight: artSize
@@ -63,19 +63,6 @@ Item {
                     width: artSize
                     fillMode: Image.PreserveAspectCrop
                     smooth: true
-                    visible: false
-                }
-                Rectangle {
-                    id: playingArtMask
-                    height: artSize
-                    width: artSize
-                    radius: this.width * 0.1
-                    visible: false
-                }
-                OpacityMask {
-                    anchors.fill: playingArt
-                    source: playingArt
-                    maskSource: playingArtMask
                 }
             }
 
@@ -88,7 +75,7 @@ Item {
                     color: text_color
                     font.pixelSize: titleFont
                     font.family: kentledge.name
-                    font.weight: Font.Bold
+                    font.weight: Font.ExtraBold
                     text: currentTrack.title
                     elide: Text.ElideRight
                     width: gridWidth - artSize - gridVSpacing
@@ -99,17 +86,7 @@ Item {
                     font.pixelSize: mainFont
                     font.family: kentledge.name
                     font.weight: Font.ExtraBold
-                    text: "From " + currentTrack.album
-                    elide: Text.ElideRight
-                    width: gridWidth - artSize - gridVSpacing
-                }
-
-                Text {
-                    color: text_color
-                    font.pixelSize: mainFont
-                    font.family: kentledge.name
-                    font.weight: Font.ExtraBold
-                    text: "By " + currentTrack.artist
+                    text: currentTrack.artist + " - " + currentTrack.album
                     elide: Text.ElideRight
                     width: gridWidth - artSize - gridVSpacing
                 }
@@ -130,50 +107,52 @@ Item {
                     height: childrenRect.height
                     radius: childrenRect.height
                 }
+
+                Column {
+                    width: gridWidth - artSize - gridVSpacing * 0.6
+                    height: childrenRect.height
+                    spacing: gridVSpacing * 0.1
+                    // -------- PROGRESS BAR -------- //
+                    Rectangle {
+                        id: progressBar
+                        height: progressBarHeight
+                        width: parent.width
+                        color: gray_lighter
+                        Rectangle {
+                            height: parent.height
+                            width: parent.width * (playElapsed / currentTrack.duration)
+                            color: primary_color
+                            x: 0
+                            y: 0
+                        }
+                    }
+
+                    Item {
+                        width: parent.width
+                        height: childrenRect.height
+
+                        Text {
+                            color: text_color
+                            font.pixelSize: appWindow.width * 0.017
+                            text: getPrettyTime(playElapsed)
+                            font.family: kentledge.name
+                            font.weight: Font.ExtraBold
+                            anchors.left: parent.left
+                        }
+                        Text {
+                            color: text_color
+                            font.pixelSize: appWindow.width * 0.017
+                            text: getPrettyTime(currentTrack.duration)
+                            font.family: kentledge.name
+                            font.weight: Font.ExtraBold
+                            anchors.right: parent.right
+                        }
+                    }
+                    /* END PROGRESS BAR */
+                }
+
             } // Column
-
         } // Row
-
-        // -------- PROGRESS BAR -------- //
-        Rectangle {
-            id: progressBar
-            Layout.columnSpan: 2
-            Layout.topMargin: gridVSpacing
-            Layout.preferredHeight: progressBarHeight
-            Layout.preferredWidth: gridWidth
-            color: gray_lighter
-            Rectangle {
-                height: parent.height
-                width: parent.width * (playElapsed / currentTrack.duration) //parent.width / 2
-                color: blue
-                x: 0
-                y: 0
-            }
-        }
-
-        Rectangle {
-            Layout.columnSpan: 2
-
-            Layout.preferredWidth: gridWidth
-            Layout.preferredHeight: childrenRect.height
-
-            Text {
-                color: text_color
-                font.pixelSize: appWindow.width * 0.017
-                text: getPrettyTime(appWindow.playElapsed)
-                font.family: kentledge.name
-                font.weight: Font.ExtraBold
-                anchors.left: parent.left
-            }
-            Text {
-                color: text_color
-                font.pixelSize: appWindow.width * 0.017
-                text: getPrettyTime(currentTrack.duration)
-                font.family: kentledge.name
-                font.weight: Font.ExtraBold
-                anchors.right: parent.right
-            }
-        }
 
 
         RowLayout {
@@ -207,7 +186,7 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            apiRequest("prev")
+                            musicAPIRequest("prev")
                         }
                     }
                 }
@@ -215,7 +194,7 @@ Item {
                 ColorOverlay{
                     anchors.fill: iconPrev
                     source: iconPrev
-                    color: primary_color
+                    color: secondary_color
                     antialiasing: true
                 }
             }
@@ -236,7 +215,7 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            apiRequest("toggle")
+                            musicAPIRequest("toggle")
                         }
                     }
                 }
@@ -244,7 +223,7 @@ Item {
                 ColorOverlay{
                     anchors.fill: iconPlayPause
                     source: iconPlayPause
-                    color: primary_color
+                    color: secondary_color
                     antialiasing: true
                 }
 
@@ -266,14 +245,14 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            apiRequest("next")
+                            musicAPIRequest("next")
                         }
                     }
                 }
                 ColorOverlay{
                     anchors.fill: iconNext
                     source: iconNext
-                    color: primary_color
+                    color: secondary_color
                     antialiasing: true
                 }
             }

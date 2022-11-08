@@ -27,7 +27,7 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        apiRequest("jump/" + index)
+                        musicAPIRequest("jump/" + index)
                     }
                 }
             }

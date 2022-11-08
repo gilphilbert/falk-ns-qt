@@ -9,6 +9,7 @@ import QtQuick.Window 2.15
 Item {
     width: Window.width
     height: Window.height - footerHeight
+    clip: true
 
     property string url
 
@@ -150,9 +151,11 @@ Item {
 
     }
 
+
     ListView {
         id: grid
-        anchors.fill: parent
+        width: parent.width
+        height: parent.height
         spacing: 10
         model: displayDelegateModel
         leftMargin: padding
@@ -163,29 +166,24 @@ Item {
         onTextFilterChanged: displayDelegateModel.filter()
     }
 
-    Rectangle {
-        color: "transparent"
+    Item {
         height: 70
         width: 70
-        radius: 35
         anchors.verticalCenter: parent.verticalCenter
         x: parent.width - 80
 
         Rectangle {
-            anchors.centerIn: parent
-            height: 58
-            width: 58
-            border.color: "#506687"
-            border.width: 3
-            color: "transparent"
-            radius: 29
+            anchors.fill: parent
+            radius: 35
+            color: white
             visible: grid.textFilter === ""
 
             Text {
                 text: "A-Z"
-                color: text_color
+                color: primary_color
                 font.family: kentledge.name
                 font.pixelSize: 22
+                font.weight: Font.ExtraBold
                 anchors.centerIn: parent
                 topPadding: 3
             }
@@ -202,88 +200,32 @@ Item {
 
         }
         Rectangle {
-            anchors.centerIn: parent
-            height: 58
-            width: 58
-            border.color: "#506687"
-            border.width: 3
-            color: "transparent"
-            radius: 29
+            anchors.fill: parent
+            radius: 35
+            color: primary_color
             visible: grid.textFilter !== ""
 
             Text {
                 text: "X"
-                color: text_color
+                color: white
                 font.family: kentledge.name
                 font.pixelSize: 22
+                font.weight: Font.ExtraBold
                 anchors.centerIn: parent
                 topPadding: 3
             }
 
             MouseArea {
                 anchors.fill: parent
-                // do something here with a virtual keyboard sort-of-thing
                 onClicked: {
                     grid.textFilter = ""
                 }
             }
         }
-
-        border.color: text_color
-        border.width: 3
-
     }
 
     property var alphaNumeric: [ "123", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" ]
-    /*
-    Rectangle {
-        id: textSearch
-        anchors.fill: parent
-        visible: false
-        color: "#222c3b"
 
-        GridView {
-            width: parent.width
-            height: parent.height
-            x: 0
-            y: 0
-            leftMargin: 16
-            rightMargin: 16
-            topMargin: 14
-            cellWidth: 124
-            cellHeight: 124
-
-            model: alphaNumeric
-
-            delegate: Item {
-                height: 120
-                width: 120
-                Rectangle {
-                    color: white
-                    opacity: 0.05
-                    anchors.fill: parent
-                }
-
-                Text {
-                    text: model.modelData.toUpperCase()
-                    anchors.centerIn: parent
-                    font.family: kentledge.name
-                    font.pixelSize: 28
-                    color: white
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-
-                    onClicked: {
-                        textSearch.visible = false
-                        grid.textFilter = model.modelData
-                    }
-                }
-            }
-        }
-    }
-    */
     Drawer {
         id: drawer
         width: 0.55 * appWindow.width
@@ -292,7 +234,7 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            color: blue
+            color: background_pop_color
 
             GridView {
                 id: letterView
@@ -305,57 +247,41 @@ Item {
                 model: alphaNumeric
 
                 delegate: Item {
-                        height: letterView.cellWidth
-                        width: this.height
-                        Rectangle {
-                            height: parent.width - (parent.width * 0.1)
-                            width: height
-                            anchors.centerIn: parent
-                            color: text_color
-                            opacity: 0.2
-                            radius: this.height * 0.08
+                    height: letterView.cellWidth
+                    width: this.height
+                    Rectangle {
+                        height: parent.width - (parent.width * 0.1)
+                        width: height
+                        anchors.centerIn: parent
+                        color: white
+                        radius: this.height * 0.08
+                    }
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: model.modelData.toUpperCase()
+                        font.family: kentledge.name
+                        font.pixelSize: 28
+                        font.weight: Font.ExtraBold
+                        color: primary_color
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+
+                        onClicked: {
+                            drawer.close()
+                            grid.textFilter = model.modelData
                         }
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: model.modelData.toUpperCase()
-                            font.family: kentledge.name
-                            font.pixelSize: 28
-                            color: text_color
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-
-                            onClicked: {
-                                drawer.close()
-                                grid.textFilter = model.modelData
-                            }
-                        }
-
-
-
+                    }
                 }
             }
         }
     }
 
-    Rectangle {
-        color: "pink"
-        height: 50
-        width: 50
-        x: 0
-        y: 0
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                stack.pop()
-            }
-        }
-    }
 
     // this loads the page for the first time (once we know which page we are)
     Component.onCompleted: {
-      apiRequest(url, processResults)
+        musicAPIRequest(url, processResults)
     }
 
     function processResults(data) {

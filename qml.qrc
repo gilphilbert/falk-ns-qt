@@ -7,5 +7,9 @@
         <file>Album.qml</file>
         <file>Library.qml</file>
         <file>Settings.qml</file>
+        <file>Player.qml</file>
+        <file>workout/Add.qml</file>
+        <file>workout/Creator.qml</file>
+        <file>workout/Workout.qml</file>
     </qresource>
 </RCC>

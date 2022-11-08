@@ -1,10 +1,9 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include "networkmanager.h"
-//#include "downloadmanager.h"
-//#include "imagecache.h"
+#include "events.h"
 #include "aimagecache.h"
+#include "workoutdb.h"
 
 #include <QtPlugin>
 
@@ -22,6 +21,8 @@ int main(int argc, char *argv[]) {
 
     Network::Manager *manager = Network::Manager::getInstance();
     engine.rootContext()->setContextProperty("sse", manager);
+
+    DbManager database("people.db");
 
     //engine.addImageProvider("CachedImageProvider", new CachedImageProvider());
     engine.addImageProvider("AsyncImage", new AsyncImageCache());

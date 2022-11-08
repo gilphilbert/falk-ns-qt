@@ -1,4 +1,5 @@
 QT += quick
+QT += sql
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -6,8 +7,9 @@ QT += quick
 
 SOURCES += \
         aimagecache.cpp \
+        events.cpp \
         main.cpp \
-        networkmanager.cpp
+        workoutdb.cpp
 
 RESOURCES += qml.qrc \
     images.qrc
@@ -25,7 +27,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     aimagecache.h \
-    networkmanager.h
+    events.h \
+    workoutdb.h
 
 QTPLUGIN += qlinuxfb
 CONFIG += static

@@ -14,26 +14,31 @@ Window {
     width: 1350
     height: 900
     title: qsTr("FALK NS")
-    color: white // blue_dark
+    color: background_color
     id: appWindow
     visible: true
     //flags: Qt.FramelessWindowHint
     //visibility: "FullScreen"
 
-    readonly property color yellow: "#E3B505"
+    readonly property color yellow: "#e3e444" //"#E3B505"
     readonly property color white: "#FFFFFF"
     readonly property color blue: "#4A6FA5"
-    readonly property color blue_light: "#4B6281"
-    readonly property color blue_dark: "#465b7a"
+    readonly property color blue_light: "#353a50"
+    readonly property color blue_lighter: "#454c63"
+    readonly property color blue_dark: "#2a2e43"
     readonly property color black: "#444"
     readonly property color gray_light: "#cccccc"
     readonly property color gray_lighter: "#eeeeee"
+    readonly property color pink: "#e4447c"
 
-    readonly property color primary_color: blue
-    readonly property color secondary_color: yellow
-    readonly property color text_color: black
-    readonly property color secondary_text_color: blue
+    readonly property color background_color: blue_dark
+    readonly property color background_pop_color: blue_light
+    readonly property color primary_color: pink
+    readonly property color secondary_color: white
+    readonly property color text_color: white
+    readonly property color secondary_text_color: white
 
+    property real windowHeight: this.height * 0.866666667
     property real footerHeight: this.height * 0.133333333
 
     FontLoader {
@@ -49,14 +54,6 @@ Window {
         source: "fonts/Kentledge-Heavy.otf"
     }
 
-    Timer {
-        id: playTimer
-        interval: 1000
-        running: !playPaused
-        repeat: true
-        onTriggered: if (currentTrack.duration > 0 && playElapsed < currentTrack.duration) playElapsed++
-    }
-
     property var queue: []
     property bool playPaused: true
     property int playPosition: -1
@@ -69,7 +66,7 @@ Window {
     }
 
     function processState(_state) {
-        playPaused = _state.paused
+        //playPaused = _state.paused
         playElapsed = _state.elapsed
         if (queue.length > 0) {
             playPosition = _state.position
@@ -77,7 +74,7 @@ Window {
         }
     }
 
-    function signalHandling(event){
+    function eventHandler(event){
         let rawevents = event.split("event: ")
         rawevents.forEach(evt => {
             if (evt !== "") {
@@ -108,176 +105,46 @@ Window {
         })
     }
 
-    function serverDisconnect(event){
+    Timer {
+        id: playTimer
+        interval: 1000
+        running: !playPaused
+        repeat: true
+        onTriggered: if (currentTrack.duration > 0 && playElapsed < currentTrack.duration) playElapsed++
+    }
+
+    function eventDisconnect(event){
         //server connection lost (couldn't connect/reconnect)
-    }
-
-    Component.onCompleted: {
-        settings.host = "127.0.0.1:8080"
-        //settings.host = "192.168.68.105"
-        sse.onEventData.connect(signalHandling)
-        sse.onDisconnected.connect(serverDisconnect)
-        sse.setServer("http://" + settings.host + "/events")
-    }
-
-    function apiRequest(urlComponent, callback, action = "GET", data = "") {
-        var xhr = new XMLHttpRequest()
-        xhr.onreadystatechange = (function (myxhr) {
-            return function () {
-                if (xhr.readyState === XMLHttpRequest.DONE)
-                    if (callback) {
-                        try {
-                            callback(JSON.parse(xhr.responseText))
-                        } catch (e) {
-                            console.error(e)
-                            console.error(xhr.responseText)
-                        }
-                    }
-            }
-        })(xhr)
-
-        let fullURL = "http://" + settings.host + "/api/" + urlComponent
-        console.info(fullURL)
-
-        xhr.open(action, fullURL, true)
-
-        if (action === "POST") {
-            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        }
-
-        xhr.send(data)
-    }
-
-    function str_pad_left(string,pad,length) {
-        return (new Array(length+1).join(pad)+string).slice(-length);
-    }
-    function getPrettyTime(t_seconds) {
-        let seconds = t_seconds
-
-        const hours = Math.floor(seconds / 3600)
-        seconds = seconds - hours * 3600
-
-        const minutes = Math.floor(seconds / 60)
-        seconds = seconds - minutes * 60
-
-        return ((hours > 0) ? hours + ":" : "") + ((hours > 0) ? str_pad_left(minutes, '0', 2) : minutes) + ':' + str_pad_left(seconds, '0', 2)
     }
 
     Settings {
         id: settings
-        property string host: "192.168.68.105"
+        property string host: "127.0.0.1:8080"
+    }
+
+    Component.onCompleted: {
+        //settings.host = "127.0.0.1:8080"
+        //settings.host = "192.168.68.105"
+        sse.onEventData.connect(eventHandler)
+        sse.onDisconnected.connect(eventDisconnect)
+        sse.onPaused.connect(function (state) { playPaused = state })
+        sse.onPosition.connect(function (position) { playPosition = position })
+        sse.setServer("http://" + settings.host + "/events")
     }
 
     StackView {
-        id: stack
-        initialItem: "Playing.qml"
-        anchors.fill: parent
-    }
-
-    Drawer {
-        id: queueDrawer
+        id: stackView
+        initialItem: "Player.qml"
         width: parent.width
-        height: parent.height * 0.80
-        edge: Qt.BottomEdge
-        background: Rectangle {
-            color: gray_lighter
-        }
-        Queue { }
+        height: windowHeight
+        clip: true
     }
 
     Rectangle {
-        id: footer
-        x: 0
-        anchors.bottom: parent.bottom
-        width: parent.width
         height: footerHeight
-        color: gray_lighter
-
-        Grid {
-            id: footerGrid
-            columns: 8
-
-            FooterItem {
-                title: qsTr("Playing")
-                onClick: { stack.pop(null) }
-            }
-            FooterItem {
-                title: qsTr("Queue")
-                onClick: { queueDrawer.open() }
-            }
-            FooterItem {
-                title: qsTr("")
-            }
-            FooterItem {
-                title: qsTr("playlists")
-                onClick: {
-                    stack.pop(null)
-                    stack.push("Library.qml", { "url": "playlist" })
-                }
-            }
-            FooterItem {
-                title: qsTr("Artists")
-                onClick: {
-                    stack.pop(null)
-                    stack.push("Library.qml", { "url": "artists" })
-                }
-            }
-            FooterItem {
-                title: qsTr("Albums")
-                onClick: {
-                    stack.pop(null)
-                    stack.push("Library.qml", { "url": "albums" })
-                }
-            }
-            FooterItem {
-                title: qsTr("Genres")
-                onClick: {
-                    stack.pop(null)
-                    stack.push("Library.qml", { "url": "genres" })
-                }
-            }
-            FooterItem {
-                title: qsTr("")
-            }
-        }
-
-
-        Rectangle {
-            id: rect
-            width: 50
-            height: 50
-            color: primary_color
-            x: (appWindow.width / 8) * 2 - 50
-            y: footerHeight / 2 - this.height / 2
-            opacity: 0
-            radius: this.width / 2
-
-            Text {
-                text: "+1"
-                anchors.centerIn: parent
-                anchors.verticalCenterOffset: 2
-                color: white
-                font.pixelSize: 22
-                font.family: kentledge.name
-                font.weight: Font.ExtraBold
-            }
-
-            ParallelAnimation {
-                id: testAnimation
-                NumberAnimation {
-                    target: rect
-                    property: "y"
-                    to: 0
-                    duration: 500
-                }
-                NumberAnimation {
-                    target: rect
-                    property: "opacity"
-                    to: 0
-                    duration: 500
-                }
-            }
-        }
-
+        width: parent.width
+        anchors.bottom: parent.bottom
+        color: "#222"
     }
+
 }
