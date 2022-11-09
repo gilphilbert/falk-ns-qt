@@ -84,10 +84,13 @@ Window {
                 if (evtName === "queue") {
                     queue = evtData.queue
 
+                                      // <!------------------------------- super rudimentary, we need to actually check the items to make sure it's an enqueue
                     if (queue.length === queueList.count + 1) {
-                        rect.opacity = 1
-                        rect.y = 50
-                        testAnimation.start()
+                        try {
+                            stackView.currentItem.animateEnqueue()
+                        } catch (e) {
+                            // don't really need this, it means that the player isn't active
+                        }
                     }
 
                     queueList.clear()
@@ -108,7 +111,7 @@ Window {
     Timer {
         id: playTimer
         interval: 1000
-        running: !playPaused
+        running: false
         repeat: true
         onTriggered: if (currentTrack.duration > 0 && playElapsed < currentTrack.duration) playElapsed++
     }
@@ -127,8 +130,8 @@ Window {
         //settings.host = "192.168.68.105"
         sse.onEventData.connect(eventHandler)
         sse.onDisconnected.connect(eventDisconnect)
-        sse.onPaused.connect(function (state) { playPaused = state })
-        sse.onPosition.connect(function (position) { playPosition = position })
+        sse.onPaused.connect(function (state) { playPaused = state; playTimer.running = !state })
+        //sse.onPosition.connect(function (position) { playPosition = position })
         sse.setServer("http://" + settings.host + "/events")
     }
 

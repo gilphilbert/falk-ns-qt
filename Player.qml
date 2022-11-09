@@ -54,9 +54,13 @@ Item {
         return ((hours > 0) ? hours + ":" : "") + ((hours > 0) ? str_pad_left(minutes, '0', 2) : minutes) + ':' + str_pad_left(seconds, '0', 2)
     }
 
+    property string currentPage: "artists"
     function setLibraryPage (page) {
-        stack.pop(null)
-        stack.push("Library.qml", { "url": page })
+        if (page !== currentPage) {
+            stack.clear()
+            stack.push("Library.qml", { "url": page })
+            currentPage = page
+        }
     }
 
     Column {
@@ -66,10 +70,27 @@ Item {
             width: parent.width
             height: parent.height * 0.14
 
-            Rectangle {
-                color: pink
+            Item {
+                //color: pink
                 width: parent.height
                 height: parent.height
+                visible: stack.depth > 1
+
+                Image {
+                    source: "icons/chevron-left.svg"
+                    height: parent.height * 0.5
+                    width: this.height
+                    anchors.centerIn: parent
+                    ColorOverlay{
+                        anchors.fill: parent
+                        source: parent
+                        color: primary_color
+                        antialiasing: true
+                    }
+                }
+
+
+
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
@@ -85,25 +106,23 @@ Item {
                 anchors.centerIn: parent
                 spacing: this.height * 0.3
 
-                Item {
-                    height: parent.height * 0.5
-                    anchors.verticalCenter: parent.verticalCenter
+                Rectangle {
+                    color: currentPage === "playlist" ? primary_color : background_pop_color
                     Text {
                         text: "Playlists"
-                        anchors.centerIn: parent
-                        font.pixelSize: parent.height * 0.4
+                        font.pixelSize: parent.parent.height * 0.26
                         font.family: kentledge.name
                         font.weight: Font.ExtraBold
-                        color: white
-                        leftPadding: this.width * 0.15
-                        rightPadding: this.width * 0.15
-                        topPadding: (parent.height * 0.4) * 0.2
-
-                        Rectangle {
-                            anchors.fill: parent
-                            color: pink
-                        }
+                        color: text_color
+                        leftPadding: parent.parent.height * 0.22
+                        rightPadding: this.leftPadding
+                        topPadding: this.leftPadding / 1.8
+                        bottomPadding: this.topPadding - 3
                     }
+                    width: childrenRect.width
+                    height: childrenRect.height
+                    radius: childrenRect.height * 0.18
+                    anchors.verticalCenter: parent.verticalCenter
 
                     MouseArea {
                         anchors.fill: parent
@@ -114,22 +133,23 @@ Item {
                 }
 
                 Rectangle {
-                    color: background_pop_color
-                    height: parent.height * 0.5
-                    radius: this.height * 0.18
-                    anchors.verticalCenter: parent.verticalCenter
-                    //width: childrenRect.width
+                    color: currentPage === "artists" ? primary_color : background_pop_color
                     Text {
                         text: "Artists"
-                        anchors.centerIn: parent
-                        font.pixelSize: parent.height * 0.4
+                        font.pixelSize: parent.parent.height * 0.26
                         font.family: kentledge.name
                         font.weight: Font.ExtraBold
-                        color: white
-                        //leftPadding: this.width * 0.15
-                        //rightPadding: this.width * 0.15
-                        topPadding: (parent.height * 0.4) * 0.2
+                        color: text_color
+                        leftPadding: parent.parent.height * 0.22
+                        rightPadding: this.leftPadding
+                        topPadding: this.leftPadding / 1.8
+                        bottomPadding: this.topPadding - 3
                     }
+                    width: childrenRect.width
+                    height: childrenRect.height
+                    radius: childrenRect.height * 0.18
+                    anchors.verticalCenter: parent.verticalCenter
+
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
@@ -139,22 +159,23 @@ Item {
                 }
 
                 Rectangle {
-                    color: background_pop_color
-                    height: parent.height * 0.5
-                    radius: this.height * 0.18
-                    anchors.verticalCenter: parent.verticalCenter
-                    //width: childrenRect.width
+                    color: currentPage === "albums" ? primary_color : background_pop_color
                     Text {
                         text: "Albums"
-                        anchors.centerIn: parent
-                        font.pixelSize: parent.height * 0.4
+                        font.pixelSize: parent.parent.height * 0.26
                         font.family: kentledge.name
                         font.weight: Font.ExtraBold
-                        color: white
-                        //leftPadding: this.width * 0.15
-                        //rightPadding: this.width * 0.15
-                        topPadding: (parent.height * 0.4) * 0.2
+                        color: text_color
+                        leftPadding: parent.parent.height * 0.22
+                        rightPadding: this.leftPadding
+                        topPadding: this.leftPadding / 1.8
+                        bottomPadding: this.topPadding - 3
                     }
+                    width: childrenRect.width
+                    height: childrenRect.height
+                    radius: childrenRect.height * 0.18
+                    anchors.verticalCenter: parent.verticalCenter
+
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
@@ -164,22 +185,23 @@ Item {
                 }
 
                 Rectangle {
-                    color: background_pop_color
-                    height: parent.height * 0.5
-                    radius: this.height * 0.18
-                    anchors.verticalCenter: parent.verticalCenter
-                    //width: childrenRect.width
+                    color: currentPage === "genres" ? primary_color : background_pop_color
                     Text {
                         text: "Genres"
-                        anchors.centerIn: parent
-                        font.pixelSize: parent.height * 0.4
+                        font.pixelSize: parent.parent.height * 0.26
                         font.family: kentledge.name
                         font.weight: Font.ExtraBold
-                        color: white
-                        //leftPadding: this.width * 0.15
-                        //rightPadding: this.width * 0.15
-                        topPadding: (parent.height * 0.4) * 0.2
+                        color: text_color
+                        leftPadding: parent.parent.height * 0.22
+                        rightPadding: this.leftPadding
+                        topPadding: this.leftPadding / 1.8
+                        bottomPadding: this.topPadding - 3
                     }
+                    width: childrenRect.width
+                    height: childrenRect.height
+                    radius: childrenRect.height * 0.18
+                    anchors.verticalCenter: parent.verticalCenter
+
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
@@ -204,16 +226,22 @@ Item {
         stack.push("Library.qml", { "url": "artists" })
     }
 
+    Queue {
+      id: mainQueue
+    }
+    /*
     Drawer {
         id: queueDrawer
         width: parent.width
-        height: parent.height * 0.80
+        height: parent.height * 0.5
         edge: Qt.BottomEdge
+        y: Window.height
         background: Rectangle {
             color: background_pop_color
         }
-        Queue { }
+
     }
+    */
 
     Item {
         height: playerFooter
@@ -306,7 +334,6 @@ Item {
                 anchors.horizontalCenterOffset: 0 - ((parent.height * 0.6) * 1.3)
 
                 Image {
-                    id: iconBack
                     source: "icons/skip-back.svg"
                     height: parent.height * 0.45
                     width: this.height
@@ -314,18 +341,19 @@ Item {
                     sourceSize.height: this.height
                     anchors.centerIn: parent
 
+                    ColorOverlay{
+                        anchors.fill: parent
+                        source: parent
+                        color: primary_color
+                        antialiasing: true
+                    }
+
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
                             musicAPIRequest("prev")
                         }
                     }
-                }
-                ColorOverlay{
-                    anchors.fill: iconBack
-                    source: iconBack
-                    color: primary_color
-                    antialiasing: true
                 }
             }
 
@@ -337,7 +365,6 @@ Item {
                 anchors.centerIn: parent
 
                 Image {
-                    id: iconPlayPause
                     source: appWindow.playPaused ? 'icons/play.svg' : 'icons/pause.svg'
                     height: parent.height * 0.45
                     width: this.height
@@ -345,19 +372,20 @@ Item {
                     sourceSize.height: this.height
                     anchors.centerIn: parent
 
-                    MouseArea {
+                    ColorOverlay{
                         anchors.fill: parent
-                        onClicked: {
-                            musicAPIRequest("toggle")
-                        }
+                        source: parent
+                        color: primary_color
+                        antialiasing: true
                     }
                 }
 
-                ColorOverlay{
-                    anchors.fill: iconPlayPause
-                    source: iconPlayPause
-                    color: primary_color
-                    antialiasing: true
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        musicAPIRequest("toggle")
+                    }
                 }
             }
 
@@ -368,13 +396,19 @@ Item {
                 anchors.horizontalCenterOffset: (parent.height * 0.6) * 1.3
 
                 Image {
-                    id: iconNext
                     source: "icons/skip-forward.svg"
                     height: parent.height * 0.45
                     width: this.height
                     sourceSize.width: this.width
                     sourceSize.height: this.height
                     anchors.centerIn: parent
+
+                    ColorOverlay{
+                        anchors.fill: parent
+                        source: parent
+                        color: primary_color
+                        antialiasing: true
+                    }
 
                     MouseArea {
                         anchors.fill: parent
@@ -383,65 +417,78 @@ Item {
                         }
                     }
                 }
-                ColorOverlay{
-                    anchors.fill: iconNext
-                    source: iconNext
-                    color: primary_color
-                    antialiasing: true
-                }
             }
 
-            Rectangle {
-                color: pink
+            Item {
+                id: queueButton
                 height: parent.height
                 width: parent.height
                 anchors.right: parent.right
+
+                Image {
+                    source: "icons/list.svg"
+                    height: parent.height * 0.32
+                    width: this.height
+                    anchors.centerIn: parent
+                    ColorOverlay{
+                        anchors.fill: parent
+                        source: parent
+                        color: mainQueue.isOpen() ? primary_color : text_color
+                        antialiasing: true
+                    }
+                }
+
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        queueDrawer.open()
+                        mainQueue.toggle()
+                    }
+                }
+            }
+
+
+            Rectangle {
+                id: enqueueReaction
+                width: 30
+                height: 30
+                color: primary_color
+                anchors.left: queueButton.left
+                y: queueButton.y
+                opacity: 0
+                radius: this.width / 2
+
+                Text {
+                    text: "+1"
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 2
+                    color: white
+                    font.pixelSize: 22
+                    font.family: kentledge.name
+                    font.weight: Font.ExtraBold
+                }
+
+                ParallelAnimation {
+                    id: enqueueAnimation
+                    NumberAnimation {
+                        target: enqueueReaction
+                        property: "y"
+                        to: 0
+                        duration: 500
+                    }
+                    NumberAnimation {
+                        target: enqueueReaction
+                        property: "opacity"
+                        to: 0
+                        duration: 500
                     }
                 }
             }
         }
     }
 
-    /*
-        Rectangle {
-            id: rect
-            width: 50
-            height: 50
-            color: primary_color
-            x: (appWindow.width / 8) * 2 - 50
-            y: footerHeight / 2 - this.height / 2
-            opacity: 0
-            radius: this.width / 2
-
-            Text {
-                text: "+1"
-                anchors.centerIn: parent
-                anchors.verticalCenterOffset: 2
-                color: white
-                font.pixelSize: 22
-                font.family: kentledge.name
-                font.weight: Font.ExtraBold
-            }
-
-            ParallelAnimation {
-                id: testAnimation
-                NumberAnimation {
-                    target: rect
-                    property: "y"
-                    to: 0
-                    duration: 500
-                }
-                NumberAnimation {
-                    target: rect
-                    property: "opacity"
-                    to: 0
-                    duration: 500
-                }
-            }
-        }
-    */
+    function animateEnqueue() {
+        enqueueReaction.opacity = 1
+        enqueueReaction.y = 50
+        enqueueAnimation.start()
+    }
 }

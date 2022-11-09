@@ -8,8 +8,7 @@ QT += sql
 SOURCES += \
         aimagecache.cpp \
         events.cpp \
-        main.cpp \
-        workoutdb.cpp
+        main.cpp
 
 RESOURCES += qml.qrc \
     images.qrc
@@ -27,8 +26,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     aimagecache.h \
-    events.h \
-    workoutdb.h
+    events.h
 
 QTPLUGIN += qlinuxfb
 CONFIG += static

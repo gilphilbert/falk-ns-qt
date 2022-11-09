@@ -35,7 +35,7 @@ Network::Manager::Manager(QObject *parent): QObject(parent) {
     );
 
     m_retries = 0;
-    _paused = 0;
+    _paused = 1;
     _position = 0;
 }
 
@@ -104,7 +104,26 @@ void Network::Manager::streamReceived() {
                 //qInfo() << paused.toBool(); //.toString();
                 //QVariantMap json_map = json_obj.toVariantMap();
                 //qDebug()<< json_map["paused"].toString();
+            }  else if (_evtName == "queue") {
+                QByteArray json_bytes = _evt.toLocal8Bit();
+                auto json_doc = QJsonDocument::fromJson(json_bytes);
+                QJsonObject object = json_doc.object();
+
+                QJsonObject status = object["state"].toObject();
+
+                bool __paused = status["paused"].toBool();
+                if (__paused != _paused) {
+                    _paused = __paused;
+                    emit paused(_paused);
+                }
+
+                bool __position = status["position"].toInt();
+                if (__position != _position) {
+                    _position = __position;
+                    emit position(_position);
+                }
             }
+
         }
     }
 

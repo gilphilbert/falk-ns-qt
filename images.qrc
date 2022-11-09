@@ -14,5 +14,7 @@
         <file>fonts/Kentledge-Bold.otf</file>
         <file>fonts/Kentledge-Regular.otf</file>
         <file>fonts/Poppins-Bold.otf</file>
+        <file>icons/chevron-left.svg</file>
+        <file>icons/list.svg</file>
     </qresource>
 </RCC>

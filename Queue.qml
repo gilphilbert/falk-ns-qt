@@ -4,10 +4,42 @@ import QtQuick.Shapes 1.15
 import QtGraphicalEffects 1.12
 import QtQuick.Window 2.15
 
-Item {
-    anchors.fill: parent
+Rectangle {
+    //anchors.fill: parent
+    height: parent.height
+    width: parent.width
+
     id: queueScreen
 
+    color: background_color
+
+    property bool isActive: false
+
+    x: 0
+    y: isActive ? 0 : this.height
+
+    function open() {
+        isActive = true
+    }
+    function close() {
+        isActive = false
+    }
+    function toggle() {
+        isActive = !isActive
+    }
+    function isOpen() {
+        return isActive
+    }
+
+    Behavior on y {
+        NumberAnimation {
+            easing.type: Easing.InOutCubic
+            duration: 300
+        }
+    }
+
+    property int pageHeight: this.height
+    property int pageWidth: this.width
     property int pageMargin: this.width * (25 / 1024)
 
     readonly property int titleTextSize: Math.round(this.height * 0.048888889)
@@ -15,12 +47,12 @@ Item {
     Component {
         id: queueDelegate
         Item {
-            height: queueScreen.height * 0.166666667
-            width: parent.width - pageMargin * 2
+            height: pageHeight * 0.166666667
+            width: pageWidth - pageMargin * 2
             x: pageMargin
 
             Rectangle {
-                color: "black"
+                color: playing ? white : "transparent"
                 anchors.fill: parent
                 opacity: 0.07
                 radius: this.height * 0.1
@@ -85,45 +117,6 @@ Item {
         }
     }
 
-    Component {
-        id: highlightBar
-        Rectangle {
-            id: highlightBox
-            color: "transparent"
-            width: queueListView.currentItem.width
-            height: queueListView.currentItem.height
-            x: queueListView.currentItem.x
-            y: queueListView.currentItem.y
-            Behavior on y { SmoothedAnimation { duration: 300 } }
-
-            Rectangle {
-                color: white
-                opacity: 0.07
-                anchors.fill: parent
-            }
-
-            Rectangle {
-                anchors.bottom: parent.bottom
-                width: (parent.width / appWindow.playDuration) * appWindow.playElapsed
-                height: 5
-                color: yellow
-            }
-
-            layer.enabled: true
-            layer.effect: OpacityMask {
-                maskSource: Item {
-                    width: highlightBox.width
-                    height: highlightBox.height
-                    Rectangle {
-                        width: highlightBox.width
-                        height: highlightBox.height
-                        radius: queueScreen.height * 0.013333333
-                    }
-                }
-            }
-        }
-    }
-
     ListView {
         id: queueListView
 
@@ -139,10 +132,9 @@ Item {
         model: queueList
         delegate: queueDelegate
         focus: true
-        currentIndex: playPosition
+        currentIndex: playPosition > -1 ? playPosition : 0
         snapMode: ListView.SnapToItem
 
-        highlight: highlightBar
         highlightFollowsCurrentItem: false
     }
 }
