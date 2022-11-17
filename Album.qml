@@ -13,9 +13,6 @@ Item {
 
     readonly property int rowHeight: Math.round(this.height * 0.166666667)
     readonly property int rowPadding: Math.round(this.width * 0.05)
-    readonly property int titleTextSize: Math.round(this.height * 0.048888889)
-    readonly property int subtitleTextSize: Math.round(this.height * 0.03)
-    readonly property real qualityFont: this.width * 0.013
 
     readonly property int qualityPadding: this.height * 0.0172
 
@@ -97,14 +94,14 @@ Item {
                         text: title
                         font.family: kentledge.name
                         font.weight: Font.ExtraBold
-                        font.pixelSize: titleTextSize
+                        font.pixelSize: text_h2
                     }
                     Text {
                         text: artist + " - " + getPrettyTime(duration)
                         font.family: kentledge.name
                         font.weight: Font.Bold
                         color: text_color
-                        font.pixelSize: subtitleTextSize
+                        font.pixelSize: text_h3
                     }
                 }
             }
@@ -152,7 +149,6 @@ Item {
             }
 
             Column {
-                id: textContent
                 //anchors.verticalCenter: parent.verticalCenter
                 spacing: this.height * 0.03
                 height: childrenRect.height
@@ -162,7 +158,7 @@ Item {
                     color: text_color
                     font.family: kentledge.name
                     font.weight: Font.ExtraBold
-                    font.pixelSize: titleTextSize
+                    font.pixelSize: text_h1
                     wrapMode: Text.WordWrap
                 }
                 Text {
@@ -170,7 +166,7 @@ Item {
                     color: text_color
                     font.family: kentledge.name
                     font.weight: Font.Bold
-                    font.pixelSize: subtitleTextSize
+                    font.pixelSize: text_h2
                     wrapMode: Text.WordWrap
                 }
                 Text {
@@ -178,15 +174,14 @@ Item {
                     color: text_color
                     font.family: kentledge.name
                     font.weight: Font.Bold
-                    font.pixelSize: subtitleTextSize
+                    font.pixelSize: text_h2
                     wrapMode: Text.WordWrap
-                    opacity: 0.7
                 }
                 Rectangle {
                     color: primary_color
                     Text {
                         text: shortformat
-                        font.pixelSize: qualityFont
+                        font.pixelSize: text_h3
                         font.family: kentledge.name
                         font.weight: Font.ExtraBold
                         color: appWindow.color
@@ -200,69 +195,10 @@ Item {
                     radius: childrenRect.height
                 }
             }
-
-            Row {
-                width: parent.width - parent.height - textContent.width - pageItemPadding * 2
-                height: parent.height
-
-                layoutDirection: Qt.RightToLeft
-
-                Text {
-                    text: "ellipses"
-                }
-
-                /*
-
-                Rectangle {
-                    width: childrenRect.width
-                    height: childrenRect.height
-                    radius: childrenRect.height
-
-                    color: blue_dark
-                    border.color: primary_color
-                    border.width: 2
-
-                    Text {
-                        color: primary_color
-                        text: 'Enqueue'
-                        font.pixelSize: qualityFont
-                        font.family: kentledge.name
-                        font.weight: Font.Medium
-                        leftPadding: qualityPadding
-                        rightPadding: qualityPadding
-                        topPadding: qualityPadding / 2.05
-                        bottomPadding: this.topPadding
-                    }
-                }
-
-                Rectangle {
-                    width: childrenRect.width
-                    height: childrenRect.height
-                    radius: childrenRect.height
-
-                    color: blue_dark
-                    border.color: primary_color
-                    border.width: 2
-
-                    Text {
-                        color: primary_color
-                        text: 'Play'
-                        font.pixelSize: qualityFont
-                        font.family: kentledge.name
-                        font.weight: Font.Medium
-                        leftPadding: qualityPadding
-                        rightPadding: qualityPadding
-                        topPadding: qualityPadding / 2.05
-                        bottomPadding: this.topPadding
-                    }
-                }
-                */
-            }
-
         }
 
         Row {
-            height: parent.height * 0.7 - pageItemPadding
+            height: childrenRect.height
             width: parent.width - pageItemPadding * 2
 
             bottomPadding: pageItemPadding
@@ -271,13 +207,15 @@ Item {
 
             ListView {
                 id: trackListView
-                height: parent.height
+                height: childrenRect.height
                 width: parent.width
                 spacing: appWindow.height * 0.03
                 model: trackList
                 delegate: trackDelegate
                 focus: true
                 snapMode: ListView.SnapToItem
+
+                interactive: false
 
                 //how to stop this being flickable?
             }

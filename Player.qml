@@ -109,7 +109,7 @@ Item {
                     color: currentPage === "playlist" ? primary_color : background_pop_color
                     Text {
                         text: "Playlists"
-                        font.pixelSize: parent.parent.height * 0.26
+                        font.pixelSize: text_h2
                         font.family: kentledge.name
                         font.weight: Font.ExtraBold
                         color: text_color
@@ -135,7 +135,7 @@ Item {
                     color: currentPage === "artists" ? primary_color : background_pop_color
                     Text {
                         text: "Artists"
-                        font.pixelSize: parent.parent.height * 0.26
+                        font.pixelSize: text_h2
                         font.family: kentledge.name
                         font.weight: Font.ExtraBold
                         color: text_color
@@ -161,7 +161,7 @@ Item {
                     color: currentPage === "albums" ? primary_color : background_pop_color
                     Text {
                         text: "Albums"
-                        font.pixelSize: parent.parent.height * 0.26
+                        font.pixelSize: text_h2
                         font.family: kentledge.name
                         font.weight: Font.ExtraBold
                         color: text_color
@@ -187,7 +187,7 @@ Item {
                     color: currentPage === "genres" ? primary_color : background_pop_color
                     Text {
                         text: "Genres"
-                        font.pixelSize: parent.parent.height * 0.26
+                        font.pixelSize: text_h2
                         font.family: kentledge.name
                         font.weight: Font.ExtraBold
                         color: text_color
@@ -307,7 +307,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         color: text_color
-                        font.pixelSize: parent.parent.height * 0.2
+                        font.pixelSize: text_h3
                         font.family: kentledge.name
                         font.weight: Font.ExtraBold
                         text: currentTrack.title
@@ -316,7 +316,7 @@ Item {
                     }
                     Text {
                         color: text_color
-                        font.pixelSize: parent.parent.height * 0.14
+                        font.pixelSize: text_h4
                         font.family: kentledge.name
                         font.weight: Font.Bold
                         text: currentTrack.artist
@@ -461,7 +461,7 @@ Item {
                     anchors.centerIn: parent
                     anchors.verticalCenterOffset: 2
                     color: white
-                    font.pixelSize: 22
+                    font.pixelSize: text_h3
                     font.family: kentledge.name
                     font.weight: Font.ExtraBold
                 }

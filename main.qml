@@ -38,6 +38,11 @@ Window {
     readonly property color text_color: white
     readonly property color secondary_text_color: white
 
+    readonly property int text_h1: Math.round(this.height * 0.042)
+    readonly property int text_h2: Math.round(this.height * 0.028)
+    readonly property int text_h3: Math.round(this.height * 0.022)
+    readonly property int text_h4: Math.round(this.height * 0.018)
+
     property real windowHeight: this.height * 0.866666667
     property real footerHeight: this.height * 0.133333333
 

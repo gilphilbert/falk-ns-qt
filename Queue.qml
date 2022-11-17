@@ -44,8 +44,6 @@ Rectangle {
     property int pageWidth: this.width
     property int pageMargin: this.width * (25 / 1024)
 
-    readonly property int titleTextSize: Math.round(this.height * 0.048888889)
-
     Component {
         id: queueDelegate
         Item {
@@ -104,14 +102,14 @@ Rectangle {
                         text: title
                         font.family: kentledge.name
                         font.weight: Font.ExtraBold
-                        font.pixelSize: titleTextSize
+                        font.pixelSize: text_h2
                     }
                     Text {
                         text: artist + " - " + getPrettyTime(duration)
                         font.family: kentledge.name
                         font.weight: Font.Bold
                         color: text_color
-                        font.pixelSize: queueScreen.width * 0.017578125
+                        font.pixelSize: text_h3
                     }
                 }
             }
@@ -129,7 +127,7 @@ Rectangle {
                     text: "X"
                     color: pink
                     font.family: kentledge.name
-                    font.pixelSize: 22
+                    font.pixelSize: text_h2
                     font.weight: Font.ExtraBold
                     anchors.centerIn: parent
                     topPadding: 3
@@ -160,7 +158,7 @@ Rectangle {
                 color: text_color
                 font.family: kentledge.name
                 font.weight: Font.ExtraBold
-                font.pixelSize: titleTextSize
+                font.pixelSize: text_h1
             }
 
             Rectangle {

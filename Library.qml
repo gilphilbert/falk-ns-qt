@@ -8,7 +8,7 @@ import QtQuick.Window 2.15
 
 Item {
     width: Window.width
-    height: Window.height - footerHeight
+    height: playerHeight
     clip: true
 
     property string url
@@ -67,7 +67,7 @@ Item {
                     color: text_color
                     font.family: kentledge.name
                     font.weight: Font.ExtraBold
-                    font.pixelSize: (parent.height * 0.2) * 0.4
+                    font.pixelSize: text_h2 //(parent.height * 0.2) * 0.4
                     width: parent.width
                     elide: Text.ElideRight
                     horizontalAlignment: Text.AlignHCenter
@@ -79,7 +79,7 @@ Item {
                     color: text_color
                     font.family: kentledge.name
                     font.weight: Font.Normal
-                    font.pixelSize: (parent.height * 0.2) * 0.3
+                    font.pixelSize: text_h3
                     width: parent.width
                     elide: Text.ElideRight
                     horizontalAlignment: Text.AlignHCenter
@@ -177,7 +177,7 @@ Item {
                 text: "A-Z"
                 color: primary_color
                 font.family: kentledge.name
-                font.pixelSize: 22
+                font.pixelSize: text_h2
                 font.weight: Font.ExtraBold
                 anchors.centerIn: parent
                 topPadding: 3
@@ -204,7 +204,7 @@ Item {
                 text: "X"
                 color: white
                 font.family: kentledge.name
-                font.pixelSize: 22
+                font.pixelSize: text_h2
                 font.weight: Font.ExtraBold
                 anchors.centerIn: parent
                 topPadding: 3
@@ -256,7 +256,7 @@ Item {
                         anchors.centerIn: parent
                         text: model.modelData.toUpperCase()
                         font.family: kentledge.name
-                        font.pixelSize: 28
+                        font.pixelSize: text_h1
                         font.weight: Font.ExtraBold
                         color: primary_color
                     }
