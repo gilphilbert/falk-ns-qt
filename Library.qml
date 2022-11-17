@@ -18,9 +18,6 @@ Item {
     }
     property int padding: 20
 
-    readonly property int titleTextSize: Math.round((Window.height - 80) * 0.048888889)
-    readonly property int subtitleTextSize: Math.round((Window.height - 80) * 0.0289)
-
     function setURL(_url) {
         url = _url
     }
@@ -28,29 +25,22 @@ Item {
     Component {
         id: libraryDelegate
         Item {
-            id: wrapper
-            height: Window.height * 0.166666667
+            width: grid.cellWidth
+            height: grid.cellHeight
 
-            Rectangle {
-                id: rowBackground
-                height: parent.height
-                width: 1024 - (padding * 2)
-                color: "transparent"
-                opacity: 0.15
-                radius: 5
-            }
+            Column {
+                anchors.fill: parent
+                Item {
+                    height: parent.height * 0.7
+                    width: this.height
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-
-            Row {
-                id: libraryRow
-                height: parent.height
-                padding: 10
-
-                Rectangle {
-                    height: libraryRow.height - 20
-                    width: libraryRow.height - 20
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: "transparent"
+                    Rectangle {
+                        anchors.fill: parent
+                        color: white
+                        opacity: 0.15
+                        radius: this.height * 0.13
+                    }
 
                     Image {
                         id: artImage
@@ -63,7 +53,7 @@ Item {
                     Rectangle {
                         id: artMask
                         anchors.fill: parent
-                        radius: 8
+                        radius: this.height * 0.13
                         visible: false
                     }
                     OpacityMask {
@@ -72,34 +62,34 @@ Item {
                         maskSource: artMask
                     }
                 }
+                Text {
+                    text: name
+                    color: text_color
+                    font.family: kentledge.name
+                    font.weight: Font.ExtraBold
+                    font.pixelSize: (parent.height * 0.2) * 0.4
+                    width: parent.width
+                    elide: Text.ElideRight
+                    horizontalAlignment: Text.AlignHCenter
+                    topPadding: parent.height * 0.04
+                }
 
-                Column {
-                    leftPadding: 15
-                    bottomPadding: 5
-                    anchors.verticalCenter: parent.verticalCenter
-                    Text {
-                        text: name
-                        color: text_color
-                        font.family: kentledge.name
-                        font.weight: Font.ExtraBold
-                        font.pixelSize: titleTextSize
-                        wrapMode: Text.WordWrap
-                    }
-                    Text {
-                        text: artist
-                        visible: artist !== ""
-                        font.family: kentledge.name
-                        font.weight: Font.Bold
-                        color: text_color
-                        opacity: 0.7
-                        font.pixelSize: subtitleTextSize
-                        wrapMode: Text.WordWrap
-                    }
+                Text {
+                    text: artist
+                    color: text_color
+                    font.family: kentledge.name
+                    font.weight: Font.Normal
+                    font.pixelSize: (parent.height * 0.2) * 0.3
+                    width: parent.width
+                    elide: Text.ElideRight
+                    horizontalAlignment: Text.AlignHCenter
+
+                    visible: artist !== ""
                 }
             }
 
             MouseArea {
-                anchors.fill: rowBackground
+                anchors.fill: parent
                 onClicked: {
                     let nav = ""
                     if (url == "artists") nav = "artist/" + encodeURIComponent(name)
@@ -117,6 +107,7 @@ Item {
                     }
                 }
             }
+
         }
     }
 
@@ -152,18 +143,22 @@ Item {
     }
 
 
-    ListView {
+    //ListView {
+    GridView {
         id: grid
         width: parent.width
         height: parent.height
-        spacing: 10
         model: displayDelegateModel
         leftMargin: padding
         rightMargin: padding
         topMargin: padding
+        cellWidth: (this.width / 4) * .92 //this actually makes the cells too small, but leaves room for the filter
+        cellHeight: this.cellWidth
         ScrollBar.vertical: ScrollBar { }
         property string textFilter: ""
         onTextFilterChanged: displayDelegateModel.filter()
+        snapMode: GridView.SnapToRow
+
     }
 
     Item {

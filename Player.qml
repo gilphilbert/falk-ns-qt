@@ -71,7 +71,6 @@ Item {
             height: parent.height * 0.14
 
             Item {
-                //color: pink
                 width: parent.height
                 height: parent.height
                 visible: stack.depth > 1
@@ -94,11 +93,11 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        //!<--------------------- only if there are more items in the stack!
                         stack.pop()
                     }
                 }
             }
+
 
             Row {
                 height: parent.height
@@ -484,6 +483,16 @@ Item {
                 }
             }
         }
+
+        /*
+        MouseArea {
+            anchors.fill: parent
+            onPressAndHold: {
+                // this needs to be swipe-up, and it should open the main player.
+                // not sure if this is really needed just yet though
+            }
+        }
+        */
     }
 
     function animateEnqueue() {

@@ -3,15 +3,17 @@ import QtQml.Models 2.15
 import QtQuick.Shapes 1.15
 import QtGraphicalEffects 1.12
 import QtQuick.Window 2.15
+import QtQuick.Layouts 1.15
+
 
 Rectangle {
     //anchors.fill: parent
-    height: parent.height
+    height: parent.height - playerFooter
     width: parent.width
 
     id: queueScreen
 
-    color: background_color
+    color: background_pop_color
 
     property bool isActive: false
 
@@ -47,9 +49,8 @@ Rectangle {
     Component {
         id: queueDelegate
         Item {
-            height: pageHeight * 0.166666667
-            width: pageWidth - pageMargin * 2
-            x: pageMargin
+            height: pageHeight * 0.1667
+            width: queueListView.width
 
             Rectangle {
                 color: playing ? white : "transparent"
@@ -114,27 +115,101 @@ Rectangle {
                     }
                 }
             }
+
+            Rectangle {
+                color: white
+                height: parent.height * 0.4
+                width: this.height
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.rightMargin: this.height * 0.5
+                radius: this.height * 0.5
+
+                Text {
+                    text: "X"
+                    color: pink
+                    font.family: kentledge.name
+                    font.pixelSize: 22
+                    font.weight: Font.ExtraBold
+                    anchors.centerIn: parent
+                    topPadding: 3
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        musicAPIRequest("queue/" + index, null, "DELETE")
+                    }
+                }
+            }
         }
     }
 
-    ListView {
-        id: queueListView
-
+    Column {
         anchors.fill: parent
 
-        clip: true
+        padding: pageMargin
 
-        topMargin: pageMargin
-        bottomMargin: pageMargin
+        RowLayout {
+            height: titleTextSize
+            width: parent.width - pageMargin * 2
+            id: row1
 
-        spacing: queueScreen.height * 0.03
+            Text {
+                text: "Queue"
+                color: text_color
+                font.family: kentledge.name
+                font.weight: Font.ExtraBold
+                font.pixelSize: titleTextSize
+            }
 
-        model: queueList
-        delegate: queueDelegate
-        focus: true
-        currentIndex: playPosition > -1 ? playPosition : 0
-        snapMode: ListView.SnapToItem
+            Rectangle {
+                color: pink
+                height: parent.height
+                width: childrenRect.width
+                radius: this.height * 0.18
 
-        highlightFollowsCurrentItem: false
+                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+
+                Text {
+                    text: "Clear"
+                    color: text_color
+                    font.family: kentledge.name
+                    font.weight: Font.ExtraBold
+                    font.pixelSize: parent.parent.height * 0.5
+                    leftPadding: this.topPadding * 1.3
+                    rightPadding: this.leftPadding
+                    topPadding: (parent.height - this.font.pixelSize) / 2
+                    bottomPadding: topPadding
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        musicAPIRequest("clear")
+                    }
+                }
+            }
+        }
+
+
+        ListView {
+            id: queueListView
+
+            width: parent.width - pageMargin * 2
+            height: parent.height - row1.height - pageMargin * 2
+
+            clip: true
+
+            topMargin: pageMargin * 2
+            spacing: queueScreen.height * 0.03
+
+            model: queueList
+            delegate: queueDelegate
+            focus: true
+            currentIndex: playPosition > -1 ? playPosition : 0
+            snapMode: ListView.SnapToItem
+
+            highlightFollowsCurrentItem: false
+        }
     }
 }

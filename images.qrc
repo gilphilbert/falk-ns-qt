@@ -16,5 +16,10 @@
         <file>fonts/Poppins-Bold.otf</file>
         <file>icons/chevron-left.svg</file>
         <file>icons/list.svg</file>
+        <file>icons/repeat.svg</file>
+        <file>icons/shuffle.svg</file>
+        <file>fonts/Jost-500-Medium.otf</file>
+        <file>fonts/Jost-700-Bold.otf</file>
+        <file>fonts/Jost-800-Hevy.otf</file>
     </qresource>
 </RCC>

@@ -111,11 +111,14 @@ Item {
         }
     }
 
+
+    /// this whole thing needs to scroll..... container?
     Column {
         anchors.fill: parent
         leftPadding: pageItemPadding
         rightPadding: pageItemPadding
         topPadding: pageItemPadding
+
 
         Row {
             height: parent.height * 0.3

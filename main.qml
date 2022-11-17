@@ -85,7 +85,7 @@ Window {
                     queue = evtData.queue
 
                                       // <!------------------------------- super rudimentary, we need to actually check the items to make sure it's an enqueue
-                    if (queue.length === queueList.count + 1) {
+                    if (queue.length === queueList.count + 1 && playPosition > -1) {
                         try {
                             stackView.currentItem.animateEnqueue()
                         } catch (e) {

@@ -11,5 +11,6 @@
         <file>workout/Add.qml</file>
         <file>workout/Creator.qml</file>
         <file>workout/Workout.qml</file>
+        <file>components/Icon.qml</file>
     </qresource>
 </RCC>
