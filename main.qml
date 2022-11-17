@@ -5,8 +5,6 @@ import QtGraphicalEffects 1.12
 import Qt.labs.settings 1.0
 import QtQml.Models 2.15
 
-import "components"
-
 //import "ns-script.js" as NSScript
 //Component.onCompleted: NSScript.createTiles()
 
