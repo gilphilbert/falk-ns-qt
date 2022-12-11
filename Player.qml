@@ -77,6 +77,10 @@ Item {
                     source: "icons/chevron-left.svg"
                     height: parent.height * 0.5
                     width: this.height
+
+                    sourceSize.width: this.width
+                    sourceSize.height: this.height
+
                     anchors.centerIn: parent
                     ColorOverlay{
                         anchors.fill: parent
@@ -108,7 +112,7 @@ Item {
                     Text {
                         text: "Playlists"
                         font.pixelSize: text_h2
-                        font.family: kentledge.name
+                        font.family: inter.name
                         font.weight: Font.ExtraBold
                         color: text_color
                         leftPadding: parent.parent.height * 0.22
@@ -118,7 +122,7 @@ Item {
                     }
                     width: childrenRect.width
                     height: childrenRect.height
-                    radius: childrenRect.height * 0.18
+                    radius: childrenRect.height * radiusPercent
                     anchors.verticalCenter: parent.verticalCenter
 
                     MouseArea {
@@ -134,7 +138,7 @@ Item {
                     Text {
                         text: "Artists"
                         font.pixelSize: text_h2
-                        font.family: kentledge.name
+                        font.family: inter.name
                         font.weight: Font.ExtraBold
                         color: text_color
                         leftPadding: parent.parent.height * 0.22
@@ -144,7 +148,7 @@ Item {
                     }
                     width: childrenRect.width
                     height: childrenRect.height
-                    radius: childrenRect.height * 0.18
+                    radius: childrenRect.height * radiusPercent
                     anchors.verticalCenter: parent.verticalCenter
 
                     MouseArea {
@@ -160,7 +164,7 @@ Item {
                     Text {
                         text: "Albums"
                         font.pixelSize: text_h2
-                        font.family: kentledge.name
+                        font.family: inter.name
                         font.weight: Font.ExtraBold
                         color: text_color
                         leftPadding: parent.parent.height * 0.22
@@ -170,7 +174,7 @@ Item {
                     }
                     width: childrenRect.width
                     height: childrenRect.height
-                    radius: childrenRect.height * 0.18
+                    radius: childrenRect.height * radiusPercent
                     anchors.verticalCenter: parent.verticalCenter
 
                     MouseArea {
@@ -186,7 +190,7 @@ Item {
                     Text {
                         text: "Genres"
                         font.pixelSize: text_h2
-                        font.family: kentledge.name
+                        font.family: inter.name
                         font.weight: Font.ExtraBold
                         color: text_color
                         leftPadding: parent.parent.height * 0.22
@@ -196,7 +200,7 @@ Item {
                     }
                     width: childrenRect.width
                     height: childrenRect.height
-                    radius: childrenRect.height * 0.18
+                    radius: childrenRect.height * radiusPercent
                     anchors.verticalCenter: parent.verticalCenter
 
                     MouseArea {
@@ -290,7 +294,7 @@ Item {
                     Rectangle {
                         id: artMask
                         anchors.fill: playingArt
-                        radius: this.height * 0.07
+                        radius: this.height * radiusPercent
                         visible: true
                     }
                     OpacityMask {
@@ -306,7 +310,7 @@ Item {
                     Text {
                         color: text_color
                         font.pixelSize: text_h3
-                        font.family: kentledge.name
+                        font.family: inter.name
                         font.weight: Font.ExtraBold
                         text: currentTrack.title
                         elide: Text.ElideRight
@@ -315,8 +319,8 @@ Item {
                     Text {
                         color: text_color
                         font.pixelSize: text_h4
-                        font.family: kentledge.name
-                        font.weight: Font.Bold
+                        font.family: inter.name
+                        font.weight: Font.Normal
                         text: currentTrack.artist
                         elide: Text.ElideRight
                         width: parent.width
@@ -426,6 +430,10 @@ Item {
                     source: "icons/list.svg"
                     height: parent.height * 0.32
                     width: this.height
+
+                    sourceSize.width: this.width
+                    sourceSize.height: this.height
+
                     anchors.centerIn: parent
                     ColorOverlay{
                         anchors.fill: parent
@@ -460,7 +468,7 @@ Item {
                     anchors.verticalCenterOffset: 2
                     color: white
                     font.pixelSize: text_h3
-                    font.family: kentledge.name
+                    font.family: inter.name
                     font.weight: Font.ExtraBold
                 }
 
@@ -491,6 +499,20 @@ Item {
             }
         }
         */
+    }
+
+    Rectangle {
+        color: pink
+        height: 50
+        width: 50
+        anchors.right: parent.right
+        anchors.top: parent.top
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                stack.push("Settings.qml")
+            }
+        }
     }
 
     function animateEnqueue() {

@@ -39,7 +39,7 @@ Item {
                         anchors.fill: parent
                         color: white
                         opacity: 0.15
-                        radius: this.height * 0.13
+                        radius: this.height * radiusPercent
                     }
 
                     Image {
@@ -53,7 +53,7 @@ Item {
                     Rectangle {
                         id: artMask
                         anchors.fill: parent
-                        radius: this.height * 0.13
+                        radius: this.height * radiusPercent
                         visible: false
                     }
                     OpacityMask {
@@ -65,7 +65,7 @@ Item {
                 Text {
                     text: name
                     color: text_color
-                    font.family: kentledge.name
+                    font.family: inter.name
                     font.weight: Font.ExtraBold
                     font.pixelSize: text_h2 //(parent.height * 0.2) * 0.4
                     width: parent.width
@@ -77,7 +77,7 @@ Item {
                 Text {
                     text: artist
                     color: text_color
-                    font.family: kentledge.name
+                    font.family: inter.name
                     font.weight: Font.Normal
                     font.pixelSize: text_h3
                     width: parent.width
@@ -103,6 +103,7 @@ Item {
                             stack.push("Album.qml", { "url": "album/" + encodeURIComponent(artist) + "/" + encodeURIComponent(name) })
                         } else {
                             // load the playlist
+                            stack.push("Album.qml", { "url": "playlist/" + id })
                         }
                     }
                 }
@@ -176,7 +177,7 @@ Item {
             Text {
                 text: "A-Z"
                 color: primary_color
-                font.family: kentledge.name
+                font.family: inter.name
                 font.pixelSize: text_h2
                 font.weight: Font.ExtraBold
                 anchors.centerIn: parent
@@ -185,10 +186,7 @@ Item {
 
             MouseArea {
                 anchors.fill: parent
-                // do something here with a virtual keyboard sort-of-thing
                 onClicked: {
-                    //textSearch.visible = true
-                    console.info('here')
                     drawer.open()
                 }
             }
@@ -203,7 +201,7 @@ Item {
             Text {
                 text: "X"
                 color: white
-                font.family: kentledge.name
+                font.family: inter.name
                 font.pixelSize: text_h2
                 font.weight: Font.ExtraBold
                 anchors.centerIn: parent
@@ -255,7 +253,7 @@ Item {
                     Text {
                         anchors.centerIn: parent
                         text: model.modelData.toUpperCase()
-                        font.family: kentledge.name
+                        font.family: inter.name
                         font.pixelSize: text_h1
                         font.weight: Font.ExtraBold
                         color: primary_color
@@ -281,7 +279,9 @@ Item {
 
     function processResults(data) {
         let items
-        if (Object.keys(data).includes("albums")) {
+        const keys = Object.keys(data)
+
+        if (keys.includes("albums")) {
             items = data.albums
         } else {
             items = data
@@ -292,6 +292,7 @@ Item {
                 "name": item.name,
                 "artist": item.artist ? item.artist : data.artist ? data.artist : "",
                 "thumb": "http://" + settings.host + item.art + "?size=150",
+                "id": Object.keys(item).includes("id") ? item.id : ""
             })
         })
     }

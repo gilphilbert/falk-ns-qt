@@ -44,17 +44,20 @@ Window {
     property real windowHeight: this.height * 0.866666667
     property real footerHeight: this.height * 0.133333333
 
+    readonly property real radiusPercent: 0.18
+
+
     FontLoader {
-        id: kentledge
-        source: "fonts/Kentledge-Regular.otf"
+        id: inter
+        source: "fonts/Inter-Regular.otf"
     }
     FontLoader {
-        id: kentledgeBold
-        source: "fonts/Kentledge-Bold.otf"
+        id: interBold
+        source: "fonts/Inter-Bold.otf"
     }
     FontLoader {
-        id: kentledgeHeavy
-        source: "fonts/Kentledge-Heavy.otf"
+        id: interHeavy
+        source: "fonts/Inter-Black.otf"
     }
 
     property var queue: []

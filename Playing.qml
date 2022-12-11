@@ -74,7 +74,7 @@ Item {
                     id: homeTitle
                     color: text_color
                     font.pixelSize: titleFont
-                    font.family: kentledge.name
+                    font.family: inter.name
                     font.weight: Font.ExtraBold
                     text: currentTrack.title
                     elide: Text.ElideRight
@@ -84,7 +84,7 @@ Item {
                 Text {
                     color: text_color
                     font.pixelSize: mainFont
-                    font.family: kentledge.name
+                    font.family: inter.name
                     font.weight: Font.ExtraBold
                     text: currentTrack.artist + " - " + currentTrack.album
                     elide: Text.ElideRight
@@ -95,7 +95,7 @@ Item {
                     Text {
                         text: currentTrack.shortformat
                         font.pixelSize: qualityFont
-                        font.family: kentledge.name
+                        font.family: inter.name
                         font.weight: Font.ExtraBold
                         color: appWindow.color
                         leftPadding: appWindow.height * 0.0172
@@ -135,7 +135,7 @@ Item {
                             color: text_color
                             font.pixelSize: appWindow.width * 0.017
                             text: getPrettyTime(playElapsed)
-                            font.family: kentledge.name
+                            font.family: inter.name
                             font.weight: Font.ExtraBold
                             anchors.left: parent.left
                         }
@@ -143,7 +143,7 @@ Item {
                             color: text_color
                             font.pixelSize: appWindow.width * 0.017
                             text: getPrettyTime(currentTrack.duration)
-                            font.family: kentledge.name
+                            font.family: inter.name
                             font.weight: Font.ExtraBold
                             anchors.right: parent.right
                         }

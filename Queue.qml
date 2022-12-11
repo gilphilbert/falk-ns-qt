@@ -47,14 +47,14 @@ Rectangle {
     Component {
         id: queueDelegate
         Item {
-            height: pageHeight * 0.1667
+            height: windowHeight * 0.1667
             width: queueListView.width
 
             Rectangle {
                 color: playing ? white : "transparent"
                 anchors.fill: parent
                 opacity: 0.07
-                radius: this.height * 0.1
+                radius: this.height * radiusPercent
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
@@ -83,7 +83,7 @@ Rectangle {
                     Rectangle {
                         id: artMask
                         anchors.fill: parent
-                        radius: parent.height * 0.1
+                        radius: parent.height * radiusPercent
                         visible: false
                     }
                     OpacityMask {
@@ -100,14 +100,14 @@ Rectangle {
                     Text {
                         color: text_color
                         text: title
-                        font.family: kentledge.name
+                        font.family: inter.name
                         font.weight: Font.ExtraBold
                         font.pixelSize: text_h2
                     }
                     Text {
                         text: artist + " - " + getPrettyTime(duration)
-                        font.family: kentledge.name
-                        font.weight: Font.Bold
+                        font.family: inter.name
+                        font.weight: Font.Normal
                         color: text_color
                         font.pixelSize: text_h3
                     }
@@ -126,7 +126,7 @@ Rectangle {
                 Text {
                     text: "X"
                     color: pink
-                    font.family: kentledge.name
+                    font.family: inter.name
                     font.pixelSize: text_h2
                     font.weight: Font.ExtraBold
                     anchors.centerIn: parent
@@ -149,36 +149,38 @@ Rectangle {
         padding: pageMargin
 
         RowLayout {
-            height: titleTextSize
+            height: text_h1
             width: parent.width - pageMargin * 2
             id: row1
 
             Text {
                 text: "Queue"
                 color: text_color
-                font.family: kentledge.name
+                font.family: inter.name
                 font.weight: Font.ExtraBold
                 font.pixelSize: text_h1
             }
 
             Rectangle {
                 color: pink
-                height: parent.height
+                height: childrenRect.height
                 width: childrenRect.width
-                radius: this.height * 0.18
+                radius: this.height * radiusPercent
 
                 Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
 
                 Text {
                     text: "Clear"
                     color: text_color
-                    font.family: kentledge.name
+                    font.family: inter.name
                     font.weight: Font.ExtraBold
                     font.pixelSize: parent.parent.height * 0.5
+
+                    topPadding: (parent.parent.height - this.font.pixelSize) / 2
+                    bottomPadding: topPadding
+
                     leftPadding: this.topPadding * 1.3
                     rightPadding: this.leftPadding
-                    topPadding: (parent.height - this.font.pixelSize) / 2
-                    bottomPadding: topPadding
                 }
                 MouseArea {
                     anchors.fill: parent

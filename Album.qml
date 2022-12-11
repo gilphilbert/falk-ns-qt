@@ -7,12 +7,11 @@ import QtQuick.Layouts 1.15
 
 Item {
     width: Window.width
-    height: Window.height - footerHeight
+    height: playerHeight
 
     property string url
 
-    readonly property int rowHeight: Math.round(this.height * 0.166666667)
-    readonly property int rowPadding: Math.round(this.width * 0.05)
+    readonly property int rowHeight: Math.round(this.height * 0.1)
 
     readonly property int qualityPadding: this.height * 0.0172
 
@@ -32,6 +31,8 @@ Item {
     property string genre: ''
     property string shortformat: ''
 
+    property bool isPlaylist: false
+
     ListModel {
         id: trackList
     }
@@ -45,12 +46,25 @@ Item {
     }
 
     function processResults(data) {
-        title = data.title
-        artist = data.artist
-        art = data.art
-        genre = data.genre
-        year = data.year
-        shortformat = data.shortformat
+
+        if (Object.keys(data).includes("id")) {
+            isPlaylist = true
+
+            title = data.name
+            art = data.coverart
+
+            let _d = new Date(data.added)
+            year = _d.getFullYear()
+            shortformat = "Mixed"
+        }
+        else {
+            title = data.title
+            artist = data.artist
+            art = data.art
+            genre = data.genre
+            year = data.year
+            shortformat = data.shortformat
+        }
 
         trackList.clear()
         data.tracks.forEach(item => {
@@ -60,9 +74,10 @@ Item {
 
     Component {
         id: trackDelegate
-        Item {
-            height: rowHeight
-            width: parent.width
+        Rectangle {
+            height: windowHeight * 0.1666
+            width: Window.width
+            color: 'transparent'
 
             Item {
                 width: parent.width
@@ -85,142 +100,173 @@ Item {
                 height: parent.height
                 width: parent.width
 
+                Item {
+                    height: parent.height * 0.8
+                    width: parent.height * 0.8
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    visible: isPlaylist
+
+                    Image {
+                        id: artImage
+                        source: "image://AsyncImage/" + "http://" + settings.host + coverart
+                        anchors.fill: parent
+                        fillMode: Image.PreserveAspectCrop
+                        smooth: true
+                        visible: false
+                    }
+                    Rectangle {
+                        id: artMask
+                        anchors.fill: parent
+                        radius: parent.height * radiusPercent
+                        visible: false
+                    }
+                    OpacityMask {
+                        anchors.fill: artImage
+                        source: artImage
+                        maskSource: artMask
+                    }
+                }
+
                 Column {
                     leftPadding: appWindow.width * 0.014648438
                     bottomPadding: appWindow.height * 0.008333333
                     anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width
+
                     Text {
                         color: text_color
                         text: title
-                        font.family: kentledge.name
+                        font.family: inter.name
                         font.weight: Font.ExtraBold
                         font.pixelSize: text_h2
+                        width: parent.parent.width
                     }
                     Text {
                         text: artist + " - " + getPrettyTime(duration)
-                        font.family: kentledge.name
-                        font.weight: Font.Bold
+                        font.family: inter.name
+                        font.weight: Font.Normal
                         color: text_color
                         font.pixelSize: text_h3
+                        width: parent.parent.width
                     }
                 }
             }
+
         }
     }
 
 
-    /// this whole thing needs to scroll..... container?
-    Column {
-        anchors.fill: parent
+    ScrollView {
+        id: flickContainer
+        width: parent.width
+        height: parent.height
+
+        // fix direction to vertical only (no horizontal direction) <------------------------------
+
         leftPadding: pageItemPadding
         rightPadding: pageItemPadding
-        topPadding: pageItemPadding
+        bottomPadding: playerFooter + pageItemPadding
 
-
-        Row {
-            height: parent.height * 0.3
+        ColumnLayout {
             width: parent.width
+            RowLayout {
+                Item {
+                    Layout.preferredWidth: this.height
+                    Layout.preferredHeight: flickContainer.height * 0.3
 
-            Item {
-                width: parent.height
-                height: parent.height
-
-                Image {
-                    id: artImage
-                    source: "image://AsyncImage/" + "http://" + settings.host + art + "?size=" + Math.ceil(this.height)
-                    height: parent.height * 0.8
-                    width: parent.height * 0.8
-                    fillMode: Image.PreserveAspectCrop
-                    smooth: true
-                    visible: false
-                }
-
-                Rectangle {
-                    id: artMask
-                    anchors.fill: artImage
-                    radius: rowRadius
-                    visible: false
-                }
-                OpacityMask {
-                    anchors.fill: artImage
-                    source: artImage
-                    maskSource: artMask
-                }
-            }
-
-            Column {
-                //anchors.verticalCenter: parent.verticalCenter
-                spacing: this.height * 0.03
-                height: childrenRect.height
-
-                Text {
-                    text: title
-                    color: text_color
-                    font.family: kentledge.name
-                    font.weight: Font.ExtraBold
-                    font.pixelSize: text_h1
-                    wrapMode: Text.WordWrap
-                }
-                Text {
-                    text: artist
-                    color: text_color
-                    font.family: kentledge.name
-                    font.weight: Font.Bold
-                    font.pixelSize: text_h2
-                    wrapMode: Text.WordWrap
-                }
-                Text {
-                    text: year
-                    color: text_color
-                    font.family: kentledge.name
-                    font.weight: Font.Bold
-                    font.pixelSize: text_h2
-                    wrapMode: Text.WordWrap
-                }
-                Rectangle {
-                    color: primary_color
-                    Text {
-                        text: shortformat
-                        font.pixelSize: text_h3
-                        font.family: kentledge.name
-                        font.weight: Font.ExtraBold
-                        color: appWindow.color
-                        leftPadding: qualityPadding
-                        rightPadding: qualityPadding
-                        topPadding: qualityPadding / 2.05
-                        bottomPadding: this.topPadding
+                    Image {
+                        id: artImage
+                        source: "image://AsyncImage/" + "http://" + settings.host + art + "?size=" + Math.ceil(this.height)
+                        height: parent.height * 0.8
+                        width: parent.height * 0.8
+                        fillMode: Image.PreserveAspectCrop
+                        smooth: true
+                        visible: false
                     }
-                    width: childrenRect.width
-                    height: childrenRect.height
-                    radius: childrenRect.height
+
+                    Rectangle {
+                        id: artMask
+                        anchors.fill: artImage
+                        radius: rowRadius
+                        visible: false
+                    }
+                    OpacityMask {
+                        anchors.fill: artImage
+                        source: artImage
+                        maskSource: artMask
+                    }
+                }
+
+                Column {
+                    Layout.fillWidth: true
+                    spacing: this.height * 0.03
+
+                    Text {
+                        text: title
+                        color: text_color
+                        font.family: inter.name
+                        font.weight: Font.ExtraBold
+                        font.pixelSize: text_h1
+                    }
+                    Text {
+                        text: artist
+                        color: text_color
+                        font.family: inter.name
+                        font.weight: Font.Bold
+                        font.pixelSize: text_h2
+                    }
+                    Text {
+                        text: year
+                        color: text_color
+                        font.family: inter.name
+                        font.weight: Font.Bold
+                        font.pixelSize: text_h3
+                        //wrapMode: Text.WordWrap
+                        //Layout.fillWidth: true
+                    }
+
+                    Rectangle {
+                        color: primary_color
+                        Text {
+                            text: shortformat
+                            font.pixelSize: text_h3
+                            font.family: inter.name
+                            font.weight: Font.ExtraBold
+                            color: appWindow.color
+                            leftPadding: qualityPadding
+                            rightPadding: qualityPadding
+                            topPadding: qualityPadding / 2.05
+                            bottomPadding: this.topPadding
+                        }
+                        width: childrenRect.width
+                        height: childrenRect.height
+                        radius: childrenRect.height
+                    }
+
                 }
             }
-        }
 
-        Row {
-            height: childrenRect.height
-            width: parent.width - pageItemPadding * 2
-
-            bottomPadding: pageItemPadding
-
-            clip: true
-
-            ListView {
-                id: trackListView
+            RowLayout {
                 height: childrenRect.height
                 width: parent.width
-                spacing: appWindow.height * 0.03
-                model: trackList
-                delegate: trackDelegate
-                focus: true
-                snapMode: ListView.SnapToItem
+                clip: true
+                ListView {
+                    id: trackListView
+                    Layout.preferredHeight:  childrenRect.height
+                    Layout.preferredWidth: parent.width
+                    spacing: rowHeight * .1
+                    model: trackList
+                    delegate: trackDelegate
+                    focus: true
+                    snapMode: ListView.SnapToItem
 
-                interactive: false
-
-                //how to stop this being flickable?
+                    interactive: false
+                }
             }
+
         }
-    }
+    } // scrollview
 
     /*
     Component {
@@ -256,7 +302,6 @@ Item {
             color: blue
             radius: 20
         }
-
 
         GridLayout {
             height: parent.height
@@ -309,23 +354,21 @@ Item {
                     }
                 }
             }
-/*
-            ListView {
-                id: playlistButtons
 
-                Layout.columnSpan: 2
 
-                Layout.preferredHeight: parent.height * 0.7
-                Layout.preferredWidth: parent.width
+//            ListView {
+//                Layout.columnSpan: 2
 
-                spacing: appWindow.height * 0.03
+//                Layout.preferredHeight: parent.height * 0.7
+//                Layout.preferredWidth: parent.width
 
-                model: playlistList
-                delegate: playlistButton
-                focus: true
-                snapMode: ListView.SnapToItem
-            }
-*/
+//                spacing: appWindow.height * 0.03
+
+//                model: playlistList
+//                delegate: playlistButton
+//                focus: true
+//                snapMode: ListView.SnapToItem
+//            }
         }
 
         Rectangle {

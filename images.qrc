@@ -1,9 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>images/falk-white.png</file>
-        <file>fonts/Kentledge-Heavy.otf</file>
-        <file>fonts/Poppins-Light.otf</file>
-        <file>fonts/Poppins-Medium.otf</file>
         <file>icons/play.svg</file>
         <file>icons/pause.svg</file>
         <file>icons/skip-back.svg</file>
@@ -11,15 +8,12 @@
         <file>icons/x.svg</file>
         <file>icons/x-blue.svg</file>
         <file>icons/arrow-right-circle.svg</file>
-        <file>fonts/Kentledge-Bold.otf</file>
-        <file>fonts/Kentledge-Regular.otf</file>
-        <file>fonts/Poppins-Bold.otf</file>
         <file>icons/chevron-left.svg</file>
         <file>icons/list.svg</file>
         <file>icons/repeat.svg</file>
         <file>icons/shuffle.svg</file>
-        <file>fonts/Jost-500-Medium.otf</file>
-        <file>fonts/Jost-700-Bold.otf</file>
-        <file>fonts/Jost-800-Hevy.otf</file>
+        <file>fonts/Inter-Black.otf</file>
+        <file>fonts/Inter-Bold.otf</file>
+        <file>fonts/Inter-Regular.otf</file>
     </qresource>
 </RCC>
