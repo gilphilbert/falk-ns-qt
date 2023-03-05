@@ -26,7 +26,6 @@ Item {
         })(xhr)
 
         let fullURL = "http://" + settings.host + "/api/" + urlComponent
-        //console.info(fullURL)
 
         xhr.open(action, fullURL, true)
 

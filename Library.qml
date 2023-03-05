@@ -120,7 +120,6 @@ Item {
         model: libraryModel
 
         function filter(filterLetter) {
-            console.info("filter")
             for (let i = 0; i < items.count; i++) {
 
                 let item = items.get(i)

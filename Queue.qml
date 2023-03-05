@@ -185,7 +185,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        musicAPIRequest("clear")
+                        musicAPIRequest("queue", null, "DELETE")
                     }
                 }
             }

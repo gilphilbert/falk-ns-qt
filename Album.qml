@@ -58,6 +58,7 @@ Item {
             shortformat = "Mixed"
         }
         else {
+            console.info(JSON.stringify(data))
             title = data.title
             artist = data.artist
             art = data.art

@@ -128,12 +128,12 @@ Window {
 
     Settings {
         id: settings
-        property string host: "127.0.0.1:8080"
+        property string host: "192.168.50.7"
     }
 
     Component.onCompleted: {
         //settings.host = "127.0.0.1:8080"
-        //settings.host = "192.168.68.105"
+        settings.host = "192.168.50.7"
         sse.onEventData.connect(eventHandler)
         sse.onDisconnected.connect(eventDisconnect)
         sse.onPaused.connect(function (state) { playPaused = state; playTimer.running = !state })
