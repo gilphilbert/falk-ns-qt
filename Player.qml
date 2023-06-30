@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
-import QtGraphicalEffects 1.12
 
 Item {
     id: player
@@ -81,12 +80,12 @@ Item {
                     sourceSize.height: this.height
 
                     anchors.centerIn: parent
-                    ColorOverlay{
-                        anchors.fill: parent
-                        source: parent
-                        color: primary_color
-                        antialiasing: true
-                    }
+//                    ColorOverlay{
+//                        anchors.fill: parent
+//                        source: parent
+//                        color: primary_color
+//                        antialiasing: true
+//                    }
                 }
 
 
@@ -226,22 +225,40 @@ Item {
         stack.push("Library.qml", { "url": "artists" })
     }
 
+
+    Item {
+        //color: pink
+        height: 50
+        width: 50
+        anchors.right: parent.right
+        anchors.top: parent.top
+
+        Image {
+            source: "image://IconLoader/settings"
+            height: parent.height * 0.45
+            width: this.height
+            anchors.centerIn: parent
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    musicAPIRequest("prev")
+                }
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+               //stack.push("Settings.qml")
+               mainSettings.open()
+            }
+        }
+    }
+
     Queue {
       id: mainQueue
     }
-    /*
-    Drawer {
-        id: queueDrawer
-        width: parent.width
-        height: parent.height * 0.5
-        edge: Qt.BottomEdge
-        y: Window.height
-        background: Rectangle {
-            color: background_pop_color
-        }
-
-    }
-    */
 
     Item {
         height: playerFooter
@@ -265,7 +282,6 @@ Item {
             }
         }
 
-
         Item {
             width: parent.width
             height: parent.height * 0.96
@@ -280,26 +296,35 @@ Item {
                 Item {
                     height: parent.height
                     width: this.height * 0.7
-                    Image {
-                        id: playingArt
-                        source: "image://AsyncImage/" + "http://" + settings.host + currentTrack.art
+
+                    Item {
                         height: parent.height * 0.7
                         width: this.height
                         anchors.verticalCenter: parent.verticalCenter
-                        fillMode: Image.PreserveAspectCrop
-                        smooth: true
-                        visible: false
-                    }
-                    Rectangle {
-                        id: artMask
-                        anchors.fill: playingArt
-                        radius: this.height * radiusPercent
-                        visible: true
-                    }
-                    OpacityMask {
-                        anchors.fill: playingArt
-                        source: playingArt
-                        maskSource: artMask
+
+                        Image {
+                            id: playingArt
+                            anchors.fill: parent
+                            source: "image://AsyncImage/" + "http://" + settings.host + currentTrack.art
+                            fillMode: Image.PreserveAspectCrop
+                        }
+
+                        Canvas {
+                            anchors.fill: parent
+                            antialiasing: true
+                            onPaint: {
+                                var ctx = getContext("2d")
+                                ctx.fillStyle = background_pop_color
+                                ctx.beginPath()
+                                ctx.rect(0, 0, width, height)
+                                ctx.fill()
+
+                                ctx.beginPath()
+                                ctx.globalCompositeOperation = 'source-out'
+                                ctx.roundedRect(0, 0, width, height, parent.height * radiusPercent, parent.height * radiusPercent)
+                                ctx.fill()
+                            }
+                        }
                     }
                 }
                 Column {
@@ -311,7 +336,7 @@ Item {
                         font.pixelSize: text_h3
                         font.family: inter.name
                         font.weight: Font.ExtraBold
-                        text: currentTrack.title
+                        text: currentTrack.title // needs to have default text
                         elide: Text.ElideRight
                         width: parent.width
                     }
@@ -334,19 +359,10 @@ Item {
                 anchors.horizontalCenterOffset: 0 - ((parent.height * 0.6) * 1.3)
 
                 Image {
-                    source: "icons/skip-back.svg"
+                    source: "image://IconLoader/skip-back"
                     height: parent.height * 0.45
                     width: this.height
-                    sourceSize.width: this.width
-                    sourceSize.height: this.height
                     anchors.centerIn: parent
-
-                    ColorOverlay{
-                        anchors.fill: parent
-                        source: parent
-                        color: primary_color
-                        antialiasing: true
-                    }
 
                     MouseArea {
                         anchors.fill: parent
@@ -365,21 +381,11 @@ Item {
                 anchors.centerIn: parent
 
                 Image {
-                    source: appWindow.playPaused ? 'icons/play.svg' : 'icons/pause.svg'
+                    source: appWindow.playPaused ? 'image://IconLoader/play/' + primary_color : 'image://IconLoader/pause'
                     height: parent.height * 0.45
                     width: this.height
-                    sourceSize.width: this.width
-                    sourceSize.height: this.height
                     anchors.centerIn: parent
-
-                    ColorOverlay{
-                        anchors.fill: parent
-                        source: parent
-                        color: primary_color
-                        antialiasing: true
-                    }
                 }
-
 
                 MouseArea {
                     anchors.fill: parent
@@ -396,19 +402,10 @@ Item {
                 anchors.horizontalCenterOffset: (parent.height * 0.6) * 1.3
 
                 Image {
-                    source: "icons/skip-forward.svg"
+                    source: "image://IconLoader/skip-forward"
                     height: parent.height * 0.45
                     width: this.height
-                    sourceSize.width: this.width
-                    sourceSize.height: this.height
                     anchors.centerIn: parent
-
-                    ColorOverlay{
-                        anchors.fill: parent
-                        source: parent
-                        color: primary_color
-                        antialiasing: true
-                    }
 
                     MouseArea {
                         anchors.fill: parent
@@ -434,12 +431,12 @@ Item {
                     sourceSize.height: this.height
 
                     anchors.centerIn: parent
-                    ColorOverlay{
-                        anchors.fill: parent
-                        source: parent
-                        color: mainQueue.isOpen() ? primary_color : text_color
-                        antialiasing: true
-                    }
+//                    ColorOverlay{
+//                        anchors.fill: parent
+//                        source: parent
+//                        color: mainQueue.isOpen() ? primary_color : text_color
+//                        antialiasing: true
+//                    }
                 }
 
                 MouseArea {
@@ -500,18 +497,8 @@ Item {
         */
     }
 
-    Rectangle {
-        color: pink
-        height: 50
-        width: 50
-        anchors.right: parent.right
-        anchors.top: parent.top
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                stack.push("Settings.qml")
-            }
-        }
+    Settings {
+      id: mainSettings
     }
 
     function animateEnqueue() {

@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQml.Models 2.15
 import QtQuick.Shapes 1.15
-import QtGraphicalEffects 1.12
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 
@@ -72,24 +71,33 @@ Rectangle {
                     width: parent.height * 0.8
                     anchors.verticalCenter: parent.verticalCenter
 
-                    Image {
-                        id: artImage
-                        source: "image://AsyncImage/" + "http://" + settings.host + art + "?size=" + Math.ceil(appWindow.height * 0.2)
+                    Item {
                         anchors.fill: parent
-                        fillMode: Image.PreserveAspectCrop
-                        smooth: true
-                        visible: false
-                    }
-                    Rectangle {
-                        id: artMask
-                        anchors.fill: parent
-                        radius: parent.height * radiusPercent
-                        visible: false
-                    }
-                    OpacityMask {
-                        anchors.fill: artImage
-                        source: artImage
-                        maskSource: artMask
+
+                        Image {
+                            id: artImage
+                            source: "image://AsyncImage/" + "http://" + settings.host + art + "?size=" + Math.ceil(appWindow.height * 0.2)
+                            anchors.fill: parent
+                            fillMode: Image.PreserveAspectCrop
+                            smooth: true
+                        }
+
+                        Canvas {
+                            anchors.fill: parent
+                            antialiasing: true
+                            onPaint: {
+                                var ctx = getContext("2d")
+                                ctx.fillStyle = background_pop_color
+                                ctx.beginPath()
+                                ctx.rect(0, 0, width, height)
+                                ctx.fill()
+
+                                ctx.beginPath()
+                                ctx.globalCompositeOperation = 'source-out'
+                                ctx.roundedRect(0, 0, width, height, parent.height * radiusPercent, parent.height * radiusPercent)
+                                ctx.fill()
+                            }
+                        }
                     }
                 }
 

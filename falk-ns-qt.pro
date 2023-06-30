@@ -1,5 +1,4 @@
-QT += quick
-QT += sql
+QT += quick sql svg xml
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -8,10 +7,10 @@ QT += sql
 SOURCES += \
         aimagecache.cpp \
         events.cpp \
+        iconloader.cpp \
         main.cpp
 
-RESOURCES += qml.qrc \
-    images.qrc
+RESOURCES += qml.qrc images.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -26,7 +25,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     aimagecache.h \
-    events.h
+    events.h \
+    iconloader.h
+
+INCLUDEPATH += .
 
 QTPLUGIN += qlinuxfb
 CONFIG += static
+
+DISTFILES +=

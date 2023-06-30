@@ -2,7 +2,6 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Shapes 1.15
-import QtGraphicalEffects 1.12
 import QtQuick.Layouts 1.15
 
 /* HOME SCREEN */
@@ -44,17 +43,6 @@ Item {
             Item {
                 Layout.preferredHeight: artSize
                 Layout.preferredWidth: artSize
-
-                /*
-                Image {
-                    id: mediaArt
-                    source: "image://AsyncImage/" + "http://" + settings.host + currentTrack.discart + "?size=" + Math.ceil(appWindow.width * 0.2)
-                    height: artSize
-                    width: artSize
-                    fillMode: Image.PreserveAspectCrop
-                    smooth: true
-                }
-                */
 
                 Image {
                     id: playingArt
@@ -191,12 +179,12 @@ Item {
                     }
                 }
 
-                ColorOverlay{
-                    anchors.fill: iconPrev
-                    source: iconPrev
-                    color: secondary_color
-                    antialiasing: true
-                }
+//                ColorOverlay{
+//                    anchors.fill: iconPrev
+//                    source: iconPrev
+//                    color: secondary_color
+//                    antialiasing: true
+//                }
             }
 
             Item  {
@@ -220,12 +208,12 @@ Item {
                     }
                 }
 
-                ColorOverlay{
-                    anchors.fill: iconPlayPause
-                    source: iconPlayPause
-                    color: secondary_color
-                    antialiasing: true
-                }
+//                ColorOverlay{
+//                    anchors.fill: iconPlayPause
+//                    source: iconPlayPause
+//                    color: secondary_color
+//                    antialiasing: true
+//                }
 
             }
 
@@ -249,12 +237,12 @@ Item {
                         }
                     }
                 }
-                ColorOverlay{
-                    anchors.fill: iconNext
-                    source: iconNext
-                    color: secondary_color
-                    antialiasing: true
-                }
+//                ColorOverlay{
+//                    anchors.fill: iconNext
+//                    source: iconNext
+//                    color: secondary_color
+//                    antialiasing: true
+//                }
             }
 
             Rectangle {

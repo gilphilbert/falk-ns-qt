@@ -15,5 +15,6 @@
         <file>fonts/Inter-Black.otf</file>
         <file>fonts/Inter-Bold.otf</file>
         <file>fonts/Inter-Regular.otf</file>
+        <file>icons/settings.svg</file>
     </qresource>
 </RCC>

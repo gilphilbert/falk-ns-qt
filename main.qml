@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
-import QtGraphicalEffects 1.12
 import Qt.labs.settings 1.0
 import QtQml.Models 2.15
 
@@ -9,13 +8,11 @@ import QtQml.Models 2.15
 //Component.onCompleted: NSScript.createTiles()
 
 Window {
-    width: 1350
-    height: 900
-    title: qsTr("FALK NS")
+    width: 1024
+    height: 600
     color: background_color
     id: appWindow
     visible: true
-    //flags: Qt.FramelessWindowHint
     //visibility: "FullScreen"
 
     readonly property color yellow: "#e3e444" //"#E3B505"
@@ -38,13 +35,14 @@ Window {
 
     readonly property int text_h1: Math.round(this.height * 0.042)
     readonly property int text_h2: Math.round(this.height * 0.028)
-    readonly property int text_h3: Math.round(this.height * 0.022)
-    readonly property int text_h4: Math.round(this.height * 0.018)
+    readonly property int text_h3: Math.round(this.height * 0.025)
+    readonly property int text_h4: Math.round(this.height * 0.022)
 
-    property real windowHeight: this.height * 0.866666667
-    property real footerHeight: this.height * 0.133333333
+    //property real windowHeight: this.height * 0.866666667
+    //property real footerHeight: this.height * 0.133333333
+    property real windowHeight: this.height
 
-    readonly property real radiusPercent: 0.18
+    readonly property real radiusPercent: 0.12
 
 
     FontLoader {
@@ -147,13 +145,6 @@ Window {
         width: parent.width
         height: windowHeight
         clip: true
-    }
-
-    Rectangle {
-        height: footerHeight
-        width: parent.width
-        anchors.bottom: parent.bottom
-        color: "#222"
     }
 
 }

@@ -1,15 +1,17 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtGraphicalEffects 1.12
 import QtQuick.Shapes 1.15
 import QtQml.Models 2.3
 import QtQuick.Window 2.15
+import QtQuick.Layouts 1.3
 
 
 Item {
     width: Window.width
     height: playerHeight
     clip: true
+
+    property int thumbSize: Math.round(width / 5)
 
     property string url
 
@@ -40,6 +42,7 @@ Item {
                         color: white
                         opacity: 0.15
                         radius: this.height * radiusPercent
+                        visible: thumb === ""
                     }
 
                     Image {
@@ -48,18 +51,25 @@ Item {
                         anchors.fill: parent
                         fillMode: Image.PreserveAspectCrop
                         smooth: true
-                        visible: false
+                        visible: thumb !== ""
                     }
-                    Rectangle {
-                        id: artMask
+
+                    Canvas {
+                        property int _radPerc: url === 'artists' ? parent.height: parent.height * radiusPercent
                         anchors.fill: parent
-                        radius: this.height * radiusPercent
-                        visible: false
-                    }
-                    OpacityMask {
-                        anchors.fill: artImage
-                        source: artImage
-                        maskSource: artMask
+                        antialiasing: true
+                        onPaint: {
+                            var ctx = getContext("2d")
+                            ctx.fillStyle = background_color
+                            ctx.beginPath()
+                            ctx.rect(0, 0, width, height)
+                            ctx.fill()
+
+                            ctx.beginPath()
+                            ctx.globalCompositeOperation = 'source-out'
+                            ctx.roundedRect(0, 0, width, height, _radPerc, _radPerc)
+                            ctx.fill()
+                        }
                     }
                 }
                 Text {
@@ -143,22 +153,18 @@ Item {
     }
 
 
-    //ListView {
     GridView {
         id: grid
-        width: parent.width
+        width: parent.width - padding * 2
         height: parent.height
+        anchors.centerIn: parent
         model: displayDelegateModel
-        leftMargin: padding
-        rightMargin: padding
-        topMargin: padding
-        cellWidth: (this.width / 4) * .92 //this actually makes the cells too small, but leaves room for the filter
+        cellWidth: this.width / 4
         cellHeight: this.cellWidth
         ScrollBar.vertical: ScrollBar { }
         property string textFilter: ""
         onTextFilterChanged: displayDelegateModel.filter()
         snapMode: GridView.SnapToRow
-
     }
 
     Item {
@@ -290,7 +296,7 @@ Item {
             libraryModel.append({
                 "name": item.name,
                 "artist": item.artist ? item.artist : data.artist ? data.artist : "",
-                "thumb": "http://" + settings.host + item.art + "?size=150",
+                "thumb": item.art !== "" ? "http://" + settings.host + item.art + "?size=" + thumbSize : "",
                 "id": Object.keys(item).includes("id") ? item.id : ""
             })
         })
