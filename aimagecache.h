@@ -10,10 +10,12 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
+#include <QSettings>
+
 class AsyncImageResponse : public QQuickImageResponse {
     Q_OBJECT
 public:
-    explicit AsyncImageResponse(const QUrl &id, QSize const& requestedSize);
+    explicit AsyncImageResponse(const QString &id, QSize const& requestedSize);
     QQuickTextureFactory *textureFactory() const override;
 
 public slots:

@@ -70,7 +70,6 @@ Window {
     }
 
     function processState(_state) {
-        //playPaused = _state.paused
         playElapsed = _state.elapsed
         if (queue.length > 0) {
             playPosition = _state.position
@@ -126,22 +125,40 @@ Window {
 
     Settings {
         id: settings
-        property string host: "192.168.50.7"
+        property string host: "127.0.0.1"
+    }
+
+    function setSettings(key, value) {
+        settings.setValue(key, value)
+        settings.sync()
+    }
+
+    function getSettings(key) {
+        return settings.value(key)
+    }
+
+    function connectToServer() {
+        currentTrack = { "title":"", "artist":"", "duration":0, "album":"", "art":"", "discart":"", "playing":false, "shortformat":"" }
+        queue = []
+        playPaused = true
+        playPosition = -1
+        playElapsed = 0
+        stackView.clear();
+        sse.setServer("http://" + getSettings("host") + "/events")
+        stackView.push("Player.qml")
     }
 
     Component.onCompleted: {
-        //settings.host = "127.0.0.1:8080"
-        settings.host = "192.168.50.7"
         sse.onEventData.connect(eventHandler)
         sse.onDisconnected.connect(eventDisconnect)
         sse.onPaused.connect(function (state) { playPaused = state; playTimer.running = !state })
         //sse.onPosition.connect(function (position) { playPosition = position })
-        sse.setServer("http://" + settings.host + "/events")
+        connectToServer()
     }
 
     StackView {
         id: stackView
-        initialItem: "Player.qml"
+        //initialItem: "Player.qml"
         width: parent.width
         height: windowHeight
         clip: true

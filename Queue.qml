@@ -76,7 +76,7 @@ Rectangle {
 
                         Image {
                             id: artImage
-                            source: "image://AsyncImage/" + "http://" + settings.host + art + "?size=" + Math.ceil(appWindow.height * 0.2)
+                            source: "image://AsyncImage/" +  art
                             anchors.fill: parent
                             fillMode: Image.PreserveAspectCrop
                             smooth: true

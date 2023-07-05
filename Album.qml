@@ -108,7 +108,7 @@ Item {
 
                     Image {
                         id: artImage
-                        source: "image://AsyncImage/" + "http://" + settings.host + coverart
+                        source: "image://AsyncImage/" + coverart
                         anchors.fill: parent
                         fillMode: Image.PreserveAspectCrop
                         smooth: true
@@ -185,7 +185,7 @@ Item {
 
                         Image {
                             id: artImage
-                            source: "image://AsyncImage/" + "http://" + settings.host + art + "?size=" + Math.ceil(this.height)
+                            source: art !== "" ? "image://AsyncImage/" + art : ""
                             anchors.fill: parent
                             fillMode: Image.PreserveAspectCrop
                             smooth: true

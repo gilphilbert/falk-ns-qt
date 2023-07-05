@@ -24,7 +24,7 @@ Item {
             }
         })(xhr)
 
-        let fullURL = "http://" + settings.host + "/api/" + urlComponent
+        let fullURL = "http://" + getSettings("host") + "/api/" + urlComponent
 
         xhr.open(action, fullURL, true)
 
@@ -234,7 +234,7 @@ Item {
         anchors.top: parent.top
 
         Image {
-            source: "image://IconLoader/settings"
+            source: "icons/settings.svg"
             height: parent.height * 0.45
             width: this.height
             anchors.centerIn: parent
@@ -250,7 +250,6 @@ Item {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-               //stack.push("Settings.qml")
                mainSettings.open()
             }
         }
@@ -259,6 +258,7 @@ Item {
     Queue {
       id: mainQueue
     }
+
 
     Item {
         height: playerFooter
@@ -305,7 +305,7 @@ Item {
                         Image {
                             id: playingArt
                             anchors.fill: parent
-                            source: "image://AsyncImage/" + "http://" + settings.host + currentTrack.art
+                            source: currentTrack.art !== "" ? "image://AsyncImage/" + currentTrack.art : ""
                             fillMode: Image.PreserveAspectCrop
                         }
 
@@ -359,7 +359,7 @@ Item {
                 anchors.horizontalCenterOffset: 0 - ((parent.height * 0.6) * 1.3)
 
                 Image {
-                    source: "image://IconLoader/skip-back"
+                    source: "icons/skip-back.svg"
                     height: parent.height * 0.45
                     width: this.height
                     anchors.centerIn: parent
@@ -376,15 +376,16 @@ Item {
             Rectangle {
                 height: parent.height * 0.6
                 width: this.height
-                color: white
+                color: appWindow.playPaused ? white : primary_color
                 radius: this.height * 0.5
                 anchors.centerIn: parent
 
                 Image {
-                    source: appWindow.playPaused ? 'image://IconLoader/play/' + primary_color : 'image://IconLoader/pause'
+                    source: appWindow.playPaused ? "icons/play-pink.svg" : "icons/pause.svg"
                     height: parent.height * 0.45
                     width: this.height
                     anchors.centerIn: parent
+
                 }
 
                 MouseArea {
@@ -402,7 +403,7 @@ Item {
                 anchors.horizontalCenterOffset: (parent.height * 0.6) * 1.3
 
                 Image {
-                    source: "image://IconLoader/skip-forward"
+                    source: "icons/skip-forward.svg"
                     height: parent.height * 0.45
                     width: this.height
                     anchors.centerIn: parent
@@ -500,6 +501,7 @@ Item {
     Settings {
       id: mainSettings
     }
+
 
     function animateEnqueue() {
         enqueueReaction.opacity = 1

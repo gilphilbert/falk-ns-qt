@@ -54,7 +54,6 @@ void Network::Manager::setServer(const QUrl &url) {
     connect(m_reply, SIGNAL(readyRead()), this, SLOT(streamReceived()));
 }
 
-
 void Network::Manager::streamFinished(QNetworkReply *reply) {
     if(m_retries < MAX_RETRIES) {
         m_retries++;
@@ -101,9 +100,6 @@ void Network::Manager::streamReceived() {
                     _position = __position;
                     emit position(_position);
                 }
-                //qInfo() << paused.toBool(); //.toString();
-                //QVariantMap json_map = json_obj.toVariantMap();
-                //qDebug()<< json_map["paused"].toString();
             }  else if (_evtName == "queue") {
                 QByteArray json_bytes = _evt.toLocal8Bit();
                 auto json_doc = QJsonDocument::fromJson(json_bytes);

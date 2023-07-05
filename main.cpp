@@ -4,8 +4,6 @@
 #include "events.h"
 #include "aimagecache.h"
 
-#include "iconloader.h"
-
 #include <QtPlugin>
 
 int main(int argc, char *argv[]) {
@@ -13,7 +11,6 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QGuiApplication app(argc, argv);
-
 
     app.setOrganizationName("FALK");
     app.setOrganizationDomain("falk.com");
@@ -24,7 +21,6 @@ int main(int argc, char *argv[]) {
     Network::Manager *manager = Network::Manager::getInstance();
     engine.rootContext()->setContextProperty("sse", manager);
 
-    engine.addImageProvider("IconLoader", new IconLoader());
     engine.addImageProvider("AsyncImage", new AsyncImageCache());
 
     if (! QDir("art").exists() ) {

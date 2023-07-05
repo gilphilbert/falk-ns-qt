@@ -7,7 +7,6 @@ QT += quick sql svg xml
 SOURCES += \
         aimagecache.cpp \
         events.cpp \
-        iconloader.cpp \
         main.cpp
 
 RESOURCES += qml.qrc images.qrc
@@ -25,8 +24,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     aimagecache.h \
-    events.h \
-    iconloader.h
+    events.h
 
 INCLUDEPATH += .
 

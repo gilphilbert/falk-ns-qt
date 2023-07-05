@@ -17,6 +17,9 @@ Item {
 
     ListModel {
         id: libraryModel
+        Component.onCompleted: {
+            musicAPIRequest(url, processResults)
+        }
     }
     property int padding: 20
 
@@ -39,15 +42,14 @@ Item {
 
                     Rectangle {
                         anchors.fill: parent
-                        color: white
-                        opacity: 0.15
-                        radius: this.height * radiusPercent
+                        color: background_pop_color
+                        radius: this.height
                         visible: thumb === ""
                     }
 
                     Image {
                         id: artImage
-                        source: "image://AsyncImage/" + thumb
+                        source: thumb !== "" ? "image://AsyncImage/" + thumb : ""
                         anchors.fill: parent
                         fillMode: Image.PreserveAspectCrop
                         smooth: true
@@ -276,11 +278,7 @@ Item {
         }
     }
 
-
     // this loads the page for the first time (once we know which page we are)
-    Component.onCompleted: {
-        musicAPIRequest(url, processResults)
-    }
 
     function processResults(data) {
         let items
@@ -296,9 +294,10 @@ Item {
             libraryModel.append({
                 "name": item.name,
                 "artist": item.artist ? item.artist : data.artist ? data.artist : "",
-                "thumb": item.art !== "" ? "http://" + settings.host + item.art + "?size=" + thumbSize : "",
+                "thumb": item.art,
                 "id": Object.keys(item).includes("id") ? item.id : ""
             })
         })
+
     }
 }

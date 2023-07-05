@@ -46,7 +46,7 @@ Item {
 
                 Image {
                     id: playingArt
-                    source: "image://AsyncImage/" + "http://" + settings.host + currentTrack.art
+                    source: "image://AsyncImage/" + "http://" + getSettings("host") + currentTrack.art
                     height: artSize
                     width: artSize
                     fillMode: Image.PreserveAspectCrop

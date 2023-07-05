@@ -16,5 +16,7 @@
         <file>fonts/Inter-Bold.otf</file>
         <file>fonts/Inter-Regular.otf</file>
         <file>icons/settings.svg</file>
+        <file>icons/close.svg</file>
+        <file>icons/play-pink.svg</file>
     </qresource>
 </RCC>
