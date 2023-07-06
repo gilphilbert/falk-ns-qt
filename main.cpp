@@ -1,10 +1,11 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QtPlugin>
+
 #include "events.h"
 #include "aimagecache.h"
-
-#include <QtPlugin>
+#include "mouseeventspy.h"
 
 int main(int argc, char *argv[]) {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -22,6 +23,9 @@ int main(int argc, char *argv[]) {
     engine.rootContext()->setContextProperty("sse", manager);
 
     engine.addImageProvider("AsyncImage", new AsyncImageCache());
+
+    MouseEventSpy *mouseSpy = MouseEventSpy::instance();
+    engine.rootContext()->setContextProperty("mouseSpy", mouseSpy);
 
     if (! QDir("art").exists() ) {
         QDir().mkdir("art");

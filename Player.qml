@@ -223,6 +223,21 @@ Item {
     Component.onCompleted: {
         stack.pop(null)
         stack.push("Library.qml", { "url": "artists" })
+        mouseSpy.onMouseEventDetected.connect(resetTouchTimer)
+    }
+
+    function resetTouchTimer() {
+        touchTimer.restart()
+    }
+
+    Timer {
+        id: touchTimer
+        interval: 30000
+        running: true
+        onTriggered: {
+            mainPlaying.open()
+        }
+
     }
 
 
@@ -238,6 +253,9 @@ Item {
             height: parent.height * 0.45
             width: this.height
             anchors.centerIn: parent
+            smooth: true
+            sourceSize.width: 24
+            sourceSize.height: 24
 
             MouseArea {
                 anchors.fill: parent
@@ -314,9 +332,9 @@ Item {
                             antialiasing: true
                             onPaint: {
                                 var ctx = getContext("2d")
-                                ctx.fillStyle = background_pop_color
+                                ctx.fillStyle = background_color
                                 ctx.beginPath()
-                                ctx.rect(0, 0, width, height)
+                                ctx.rect(0, 0, width + 1, height + 1)
                                 ctx.fill()
 
                                 ctx.beginPath()
@@ -363,6 +381,9 @@ Item {
                     height: parent.height * 0.45
                     width: this.height
                     anchors.centerIn: parent
+                    smooth: true
+                    sourceSize.width: this.width
+                    sourceSize.height: this.height
 
                     MouseArea {
                         anchors.fill: parent
@@ -385,7 +406,9 @@ Item {
                     height: parent.height * 0.45
                     width: this.height
                     anchors.centerIn: parent
-
+                    smooth: true
+                    sourceSize.width: this.width
+                    sourceSize.height: this.height
                 }
 
                 MouseArea {
@@ -407,6 +430,9 @@ Item {
                     height: parent.height * 0.45
                     width: this.height
                     anchors.centerIn: parent
+                    smooth: true
+                    sourceSize.width: this.width
+                    sourceSize.height: this.height
 
                     MouseArea {
                         anchors.fill: parent
@@ -500,6 +526,10 @@ Item {
 
     Settings {
       id: mainSettings
+    }
+
+    Playing {
+        id: mainPlaying
     }
 
 

@@ -59,12 +59,13 @@ Item {
                     Canvas {
                         property int _radPerc: url === 'artists' ? parent.height: parent.height * radiusPercent
                         anchors.fill: parent
+
                         antialiasing: true
                         onPaint: {
                             var ctx = getContext("2d")
                             ctx.fillStyle = background_color
                             ctx.beginPath()
-                            ctx.rect(0, 0, width, height)
+                            ctx.rect(0, 0, width + 1, height + 1)
                             ctx.fill()
 
                             ctx.beginPath()
