@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
+import QtGraphicalEffects 1.15
 
 Item {
     id: player
@@ -80,12 +81,6 @@ Item {
                     sourceSize.height: this.height
 
                     anchors.centerIn: parent
-//                    ColorOverlay{
-//                        anchors.fill: parent
-//                        source: parent
-//                        color: primary_color
-//                        antialiasing: true
-//                    }
                 }
 
 
@@ -101,18 +96,20 @@ Item {
 
             Row {
                 height: parent.height
-                //width: childrenRect.width
                 anchors.centerIn: parent
                 spacing: this.height * 0.3
 
                 Rectangle {
-                    color: currentPage === "playlist" ? primary_color : background_pop_color
+                    color: currentPage === "playlists" ? primary_color : background_pop_color
+                    Behavior on color {
+                        ColorAnimation { duration: 200 }
+                    }
                     Text {
                         text: "Playlists"
                         font.pixelSize: text_h2
                         font.family: inter.name
                         font.weight: Font.ExtraBold
-                        color: text_color
+                        color: currentPage === "playlists" ? secondary_text_color: text_color
                         leftPadding: parent.parent.height * 0.22
                         rightPadding: this.leftPadding
                         topPadding: this.leftPadding / 1.8
@@ -126,19 +123,22 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            setLibraryPage("playlist")
+                            setLibraryPage("playlists")
                         }
                     }
                 }
 
                 Rectangle {
                     color: currentPage === "artists" ? primary_color : background_pop_color
+                    Behavior on color {
+                        ColorAnimation { duration: 200 }
+                    }
                     Text {
                         text: "Artists"
                         font.pixelSize: text_h2
                         font.family: inter.name
                         font.weight: Font.ExtraBold
-                        color: text_color
+                        color: currentPage === "artists" ? secondary_text_color: text_color
                         leftPadding: parent.parent.height * 0.22
                         rightPadding: this.leftPadding
                         topPadding: this.leftPadding / 1.8
@@ -159,12 +159,15 @@ Item {
 
                 Rectangle {
                     color: currentPage === "albums" ? primary_color : background_pop_color
+                    Behavior on color {
+                        ColorAnimation { duration: 200 }
+                    }
                     Text {
                         text: "Albums"
                         font.pixelSize: text_h2
                         font.family: inter.name
                         font.weight: Font.ExtraBold
-                        color: text_color
+                        color: currentPage === "albums" ? secondary_text_color: text_color
                         leftPadding: parent.parent.height * 0.22
                         rightPadding: this.leftPadding
                         topPadding: this.leftPadding / 1.8
@@ -185,12 +188,15 @@ Item {
 
                 Rectangle {
                     color: currentPage === "genres" ? primary_color : background_pop_color
+                    Behavior on color {
+                        ColorAnimation { duration: 200 }
+                    }
                     Text {
                         text: "Genres"
                         font.pixelSize: text_h2
                         font.family: inter.name
                         font.weight: Font.ExtraBold
-                        color: text_color
+                        color: currentPage === "genres" ? secondary_text_color: text_color
                         leftPadding: parent.parent.height * 0.22
                         rightPadding: this.leftPadding
                         topPadding: this.leftPadding / 1.8
@@ -226,25 +232,46 @@ Item {
         mouseSpy.onMouseEventDetected.connect(resetTouchTimer)
     }
 
-    function resetTouchTimer() {
-        touchTimer.restart()
-    }
-
     Timer {
         id: touchTimer
         interval: 30000
         running: true
         onTriggered: {
-            mainPlaying.open()
+            if (playPaused) {
+                //nothing is playing, turn off the display
+                display.off()
+                screenCover.visible = true
+            } else {
+                //something is playing so open the playing screen:
+                mainPlaying.open()
+            }
         }
-
     }
 
+    function resetTouchTimer() {
+        touchTimer.restart()
+    }
 
     Item {
-        //color: pink
-        height: 50
-        width: 50
+        height: parent.height * 0.083
+        width: this.height
+        anchors.left: parent.left
+        anchors.top: parent.top
+
+        Image {
+            source: ac ? "icons/battery-charging.svg" : batteryPercent > 83 ? "icons/battery-100.svg" : batteryPercent > 66 ? "icons/battery-75.svg" :  batteryPercent > 33  ? "icons/battery-50.svg" : batteryPercent > 15 ? "icons/battery-25.svg" : "icons/battery-0.svg"
+            height: parent.height * 0.45
+            width: this.height
+            anchors.centerIn: parent
+            smooth: true
+            sourceSize.width: 24
+            sourceSize.height: 24
+        }
+    }
+
+    Item {
+        height: parent.height * 0.083
+        width: this.height
         anchors.right: parent.right
         anchors.top: parent.top
 
@@ -256,13 +283,6 @@ Item {
             smooth: true
             sourceSize.width: 24
             sourceSize.height: 24
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    musicAPIRequest("prev")
-                }
-            }
         }
 
         MouseArea {
@@ -291,7 +311,7 @@ Item {
         Rectangle {
             width: parent.width
             height: parent.height * 0.04
-            color: blue_lighter
+            color: gray_mid
 
             Rectangle {
                 width: parent.width * (playElapsed / currentTrack.duration)
@@ -322,26 +342,22 @@ Item {
 
                         Image {
                             id: playingArt
-                            anchors.fill: parent
-                            source: currentTrack.art !== "" ? "image://AsyncImage/" + currentTrack.art : ""
+                            source: currentTrack.art !== "" ? "image://AsyncImage" + currentTrack.art : ""
                             fillMode: Image.PreserveAspectCrop
+                            width: parent.width - 2
+                            height: parent.height - 2
+                            anchors.centerIn: parent
+                            layer.enabled: true
+                            layer.effect: OpacityMask {
+                                maskSource: mask
+                            }
                         }
 
-                        Canvas {
-                            anchors.fill: parent
-                            antialiasing: true
-                            onPaint: {
-                                var ctx = getContext("2d")
-                                ctx.fillStyle = background_color
-                                ctx.beginPath()
-                                ctx.rect(0, 0, width + 1, height + 1)
-                                ctx.fill()
-
-                                ctx.beginPath()
-                                ctx.globalCompositeOperation = 'source-out'
-                                ctx.roundedRect(0, 0, width, height, parent.height * radiusPercent, parent.height * radiusPercent)
-                                ctx.fill()
-                            }
+                        Rectangle {
+                            id: mask
+                            anchors.fill: playingArt
+                            radius: this.height * radiusPercent
+                            visible: false
                         }
                     }
                 }
@@ -397,18 +413,31 @@ Item {
             Rectangle {
                 height: parent.height * 0.6
                 width: this.height
-                color: appWindow.playPaused ? white : primary_color
+                color: appWindow.playPaused ? gray_mid : primary_color
                 radius: this.height * 0.5
                 anchors.centerIn: parent
 
+                Behavior on color {
+                    ColorAnimation { duration: 200 }
+                }
+
                 Image {
-                    source: appWindow.playPaused ? "icons/play-pink.svg" : "icons/pause.svg"
+                    id: playPauseIcon
+                    source: appWindow.playPaused ? "icons/play.svg" : "icons/pause.svg"
                     height: parent.height * 0.45
                     width: this.height
                     anchors.centerIn: parent
                     smooth: true
                     sourceSize.width: this.width
                     sourceSize.height: this.height
+                }
+
+                ColorOverlay{
+                    anchors.fill: playPauseIcon
+                    source: playPauseIcon
+                    color: appWindow.playPaused ? primary_color : background_pop_color
+                    transform: rotation
+                    antialiasing: true
                 }
 
                 MouseArea {
@@ -458,12 +487,14 @@ Item {
                     sourceSize.height: this.height
 
                     anchors.centerIn: parent
-//                    ColorOverlay{
-//                        anchors.fill: parent
-//                        source: parent
-//                        color: mainQueue.isOpen() ? primary_color : text_color
-//                        antialiasing: true
-//                    }
+                }
+
+                ColorOverlay{
+                    anchors.fill: queueButton
+                    source: queueButton
+                    color: mainQueue.isActive ? primary_color : white
+                    transform: rotation
+                    antialiasing: true
                 }
 
                 MouseArea {
@@ -530,8 +561,22 @@ Item {
 
     Playing {
         id: mainPlaying
+        z: 3
     }
 
+    Rectangle {
+        id: screenCover
+        anchors.fill: parent
+        color: "black"
+        visible: false
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                display.on();
+                screenCover.visible = false
+            }
+        }
+    }
 
     function animateEnqueue() {
         enqueueReaction.opacity = 1

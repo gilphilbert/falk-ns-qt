@@ -3,7 +3,7 @@ import QtQml.Models 2.15
 import QtQuick.Shapes 1.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
-
+import QtGraphicalEffects 1.15
 
 Rectangle {
     //anchors.fill: parent
@@ -76,27 +76,24 @@ Rectangle {
 
                         Image {
                             id: artImage
-                            source: "image://AsyncImage/" +  art
-                            anchors.fill: parent
+                            source: "image://AsyncImage" +  art
+                            width: parent.width - 2
+                            height: parent.height - 2
+                            anchors.centerIn: parent
                             fillMode: Image.PreserveAspectCrop
                             smooth: true
+
+                            layer.enabled: true
+                            layer.effect: OpacityMask {
+                                maskSource: mask
+                            }
                         }
 
-                        Canvas {
-                            anchors.fill: parent
-                            antialiasing: true
-                            onPaint: {
-                                var ctx = getContext("2d")
-                                ctx.fillStyle = background_color
-                                ctx.beginPath()
-                                ctx.rect(0, 0, width + 1, height + 1)
-                                ctx.fill()
-
-                                ctx.beginPath()
-                                ctx.globalCompositeOperation = 'source-out'
-                                ctx.roundedRect(0, 0, width, height, parent.height * radiusPercent, parent.height * radiusPercent)
-                                ctx.fill()
-                            }
+                        Rectangle {
+                            id: mask
+                            anchors.fill: artImage
+                            radius: this.height * radiusPercent
+                            visible: false
                         }
                     }
                 }
@@ -122,23 +119,29 @@ Rectangle {
                 }
             }
 
-            Rectangle {
-                color: white
+            Item {
                 height: parent.height * 0.4
                 width: this.height
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.rightMargin: this.height * 0.5
-                radius: this.height * 0.5
 
-                Text {
-                    text: "X"
-                    color: pink
-                    font.family: inter.name
-                    font.pixelSize: text_h2
-                    font.weight: Font.ExtraBold
+                Image {
+                    id: removeIcon
+                    source: "icons/trash.svg"
+                    height: parent.width * 0.6
+                    width: this.height
+                    fillMode: Image.PreserveAspectCrop
+                    smooth: true
                     anchors.centerIn: parent
-                    topPadding: 3
+                }
+
+                ColorOverlay{
+                    anchors.fill: removeIcon
+                    source: removeIcon
+                    color: white
+                    transform: rotation
+                    antialiasing: true
                 }
 
                 MouseArea {
@@ -170,7 +173,7 @@ Rectangle {
             }
 
             Rectangle {
-                color: pink
+                color: primary_color
                 height: childrenRect.height
                 width: childrenRect.width
                 radius: this.height * radiusPercent
@@ -179,7 +182,7 @@ Rectangle {
 
                 Text {
                     text: "Clear"
-                    color: text_color
+                    color: background_pop_color
                     font.family: inter.name
                     font.weight: Font.ExtraBold
                     font.pixelSize: parent.parent.height * 0.5

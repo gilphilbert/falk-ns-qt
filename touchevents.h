@@ -1,5 +1,5 @@
-#ifndef MOUSEEVENTSPY_H
-#define MOUSEEVENTSPY_H
+#ifndef TOUCHEVENTS_H
+#define TOUCHEVENTS_H
 
 #include <QObject>
 #include <QtQml>
@@ -24,4 +24,4 @@ signals:
 
 };
 
-#endif // MOUSEEVENTSPY_H
+#endif // TOUCHEVENTS_H

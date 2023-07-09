@@ -4,7 +4,7 @@ import QtQuick.Shapes 1.15
 import QtQml.Models 2.3
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.3
-
+import QtGraphicalEffects 1.15
 
 Item {
     width: Window.width
@@ -49,30 +49,23 @@ Item {
 
                     Image {
                         id: artImage
-                        source: thumb !== "" ? "image://AsyncImage/" + thumb : ""
-                        anchors.fill: parent
+                        source: thumb !== "" ? "image://AsyncImage" + thumb : ""
+                        width: parent.width - 2
+                        height: parent.height - 2
+                        anchors.centerIn: parent
                         fillMode: Image.PreserveAspectCrop
                         smooth: true
-                        visible: thumb !== ""
+                        layer.enabled: true
+                        layer.effect: OpacityMask {
+                            maskSource: mask
+                        }
                     }
 
-                    Canvas {
-                        property int _radPerc: url === 'artists' ? parent.height: parent.height * radiusPercent
-                        anchors.fill: parent
-
-                        antialiasing: true
-                        onPaint: {
-                            var ctx = getContext("2d")
-                            ctx.fillStyle = background_color
-                            ctx.beginPath()
-                            ctx.rect(0, 0, width + 1, height + 1)
-                            ctx.fill()
-
-                            ctx.beginPath()
-                            ctx.globalCompositeOperation = 'source-out'
-                            ctx.roundedRect(0, 0, width, height, _radPerc, _radPerc)
-                            ctx.fill()
-                        }
+                    Rectangle {
+                        id: mask
+                        anchors.fill: artImage
+                        radius: this.height * ((url !== "artists") ? radiusPercent : 1)
+                        visible: false
                     }
                 }
                 Text {
@@ -80,7 +73,7 @@ Item {
                     color: text_color
                     font.family: inter.name
                     font.weight: Font.ExtraBold
-                    font.pixelSize: text_h2 //(parent.height * 0.2) * 0.4
+                    font.pixelSize: text_h2
                     width: parent.width
                     elide: Text.ElideRight
                     horizontalAlignment: Text.AlignHCenter
@@ -111,7 +104,7 @@ Item {
                     if (nav != "") {
                         stack.push("Library.qml", { "url": nav })
                     } else {
-                        if (url != "playlist") {
+                        if (url != "playlists") {
                             // load an album
                             stack.push("Album.qml", { "url": "album/" + encodeURIComponent(artist) + "/" + encodeURIComponent(name) })
                         } else {
@@ -171,11 +164,43 @@ Item {
     }
 
     Item {
-        height: 70
-        width: 70
-        anchors.verticalCenter: parent.verticalCenter
-        x: parent.width - 80
+        height: parent.height * 0.05
+        width: this.height
+        x: 0
+        y: 0
 
+
+        Image {
+            id: filterIcon
+            source: "icons/filter.svg"
+            height: parent.height
+            width: this.height
+            anchors.centerIn: parent
+            smooth: true
+            sourceSize.width: this.width
+            sourceSize.height: this.height
+        }
+
+        ColorOverlay{
+            anchors.fill: filterIcon
+            source: filterIcon
+            color: grid.textFilter === "" ? white : primary_color
+            transform: rotation
+            antialiasing: true
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                if (grid.textFilter === "") {
+                    drawer.open()
+                } else {
+                    grid.textFilter = ""
+                }
+            }
+        }
+
+        /*
         Rectangle {
             anchors.fill: parent
             radius: 35
@@ -222,7 +247,7 @@ Item {
                     grid.textFilter = ""
                 }
             }
-        }
+        }*/
     }
 
     property var alphaNumeric: [ "123", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" ]
@@ -242,8 +267,8 @@ Item {
                 width: this.cellWidth * 5
                 height: this.cellWidth * 6
                 anchors.centerIn: parent
-                cellWidth: parent.width * 0.19
-                cellHeight: this.cellWidth
+                cellWidth: this.cellHeight
+                cellHeight: parent.height / 7
 
                 model: alphaNumeric
 
@@ -254,7 +279,7 @@ Item {
                         height: parent.width - (parent.width * 0.1)
                         width: height
                         anchors.centerIn: parent
-                        color: white
+                        color: "transparent"
                         radius: this.height * 0.08
                     }
 
@@ -264,7 +289,7 @@ Item {
                         font.family: inter.name
                         font.pixelSize: text_h1
                         font.weight: Font.ExtraBold
-                        color: primary_color
+                        color: white
                     }
                     MouseArea {
                         anchors.fill: parent
@@ -295,7 +320,7 @@ Item {
             libraryModel.append({
                 "name": item.name,
                 "artist": item.artist ? item.artist : data.artist ? data.artist : "",
-                "thumb": item.art,
+                "thumb": item.art ? item.art : item.coverart ? item.coverart : "",
                 "id": Object.keys(item).includes("id") ? item.id : ""
             })
         })

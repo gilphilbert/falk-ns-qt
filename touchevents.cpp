@@ -1,4 +1,4 @@
-#include "mouseeventspy.h"
+#include "touchevents.h"
 #include <QQmlEngine>
 #include <QJSEngine>
 #include <QEvent>
@@ -29,13 +29,7 @@ MouseEventSpy* MouseEventSpy::instance()
 bool MouseEventSpy::eventFilter(QObject* watched, QEvent* event)
 {
     QEvent::Type t = event->type();
-    if ((t == QEvent::MouseButtonDblClick
-         || t == QEvent::MouseButtonPress
-         || t == QEvent::MouseButtonRelease
-         || t == QEvent::MouseMove
-         || t == QEvent::TouchEnd)
-            && event->spontaneous() // Take only mouse events from outside of Qt
-            )
+    if (t == QEvent::TouchEnd && event->spontaneous()) // Take only mouse events from outside of Qt
         emit mouseEventDetected();
     return QObject::eventFilter(watched, event);
 }

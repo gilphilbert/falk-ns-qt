@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.15
-
+import QtGraphicalEffects 1.15
 
 Item {
     width: Window.width
@@ -45,7 +45,6 @@ Item {
     }
 
     function processResults(data) {
-
         if (Object.keys(data).includes("id")) {
             isPlaylist = true
 
@@ -88,7 +87,6 @@ Item {
                         musicAPIRequest("enqueue", null, "POST", apiData)
                     }
                     onPressAndHold: {
-                        //additionalOptions.visible = true
                         additionalTrackID = id
                         additionalOptions.open()
                     }
@@ -108,27 +106,23 @@ Item {
 
                     Image {
                         id: artImage
-                        source: "image://AsyncImage/" + coverart
-                        anchors.fill: parent
+                        source: "image://AsyncImage" + coverart
+                        width: parent.width - 2
+                        height: parent.height - 2
+                        anchors.centerIn: parent
                         fillMode: Image.PreserveAspectCrop
                         smooth: true
+                        layer.enabled: true
+                        layer.effect: OpacityMask {
+                            maskSource: mask
+                        }
                     }
 
-                    Canvas {
-                        anchors.fill: parent
-                        antialiasing: true
-                        onPaint: {
-                            var ctx = getContext("2d")
-                            ctx.fillStyle = background_color
-                            ctx.beginPath()
-                            ctx.rect(0, 0, width + 1, height + 1)
-                            ctx.fill()
-
-                            ctx.beginPath()
-                            ctx.globalCompositeOperation = 'source-out'
-                            ctx.roundedRect(0, 0, width, height, parent.height * radiusPercent, parent.height * radiusPercent)
-                            ctx.fill()
-                        }
+                    Rectangle {
+                        id: mask
+                        anchors.fill: artImage
+                        radius: this.height * radiusPercent
+                        visible: false
                     }
                 }
 
@@ -185,27 +179,24 @@ Item {
 
                         Image {
                             id: artImage
-                            source: art !== "" ? "image://AsyncImage/" + art : ""
-                            anchors.fill: parent
+                            source: art !== "" ? "image://AsyncImage" + art : ""
+                            width: parent.width - 2
+                            height: parent.height - 2
+                            anchors.centerIn: parent
                             fillMode: Image.PreserveAspectCrop
                             smooth: true
+                            visible: art !== ""
+                            layer.enabled: true
+                            layer.effect: OpacityMask {
+                                maskSource: mask
+                            }
                         }
 
-                        Canvas {
-                            anchors.fill: parent
-                            antialiasing: true
-                            onPaint: {
-                                var ctx = getContext("2d")
-                                ctx.fillStyle = background_color
-                                ctx.beginPath()
-                                ctx.rect(0, 0, width + 1, height + 1)
-                                ctx.fill()
-
-                                ctx.beginPath()
-                                ctx.globalCompositeOperation = 'source-out'
-                                ctx.roundedRect(0, 0, width, height, parent.height * radiusPercent, parent.height * radiusPercent)
-                                ctx.fill()
-                            }
+                        Rectangle {
+                            id: mask
+                            anchors.fill: artImage
+                            radius: this.height * radiusPercent
+                            visible: false
                         }
                     }
                 }

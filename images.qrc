@@ -17,6 +17,13 @@
         <file>fonts/Inter-Regular.otf</file>
         <file>icons/settings.svg</file>
         <file>icons/close.svg</file>
-        <file>icons/play-pink.svg</file>
+        <file>icons/trash.svg</file>
+        <file>icons/filter.svg</file>
+        <file>icons/battery-charging.svg</file>
+        <file>icons/battery-0.svg</file>
+        <file>icons/battery-100.svg</file>
+        <file>icons/battery-25.svg</file>
+        <file>icons/battery-50.svg</file>
+        <file>icons/battery-75.svg</file>
     </qresource>
 </RCC>

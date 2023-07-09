@@ -5,7 +5,10 @@
 
 #include "events.h"
 #include "aimagecache.h"
-#include "mouseeventspy.h"
+#include "touchevents.h"
+#include "display-controller.h"
+//#include "power-manager.h"
+#include "powerstatus.h"
 
 int main(int argc, char *argv[]) {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -21,6 +24,13 @@ int main(int argc, char *argv[]) {
 
     Network::Manager *manager = Network::Manager::getInstance();
     engine.rootContext()->setContextProperty("sse", manager);
+
+    DisplayController *display = DisplayController::instance();
+    engine.rootContext()->setContextProperty("display", display);
+
+    //PowerManager *power = new PowerManager(); //= PowerManager::instance();
+    PowerStatus *power_status = new PowerStatus();
+    engine.rootContext()->setContextProperty("power", power_status);
 
     engine.addImageProvider("AsyncImage", new AsyncImageCache());
 

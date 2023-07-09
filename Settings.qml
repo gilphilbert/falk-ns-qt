@@ -88,7 +88,7 @@ Rectangle {
 
                     TextInput {
                         id: ipInput
-                        color: "white"
+                        color: white
                         text: getSettings("host")
                         width: parent.width - 30
                         height: parent.height
@@ -118,17 +118,23 @@ Rectangle {
                     width: settingsContainer.width * 0.13
                     height: settingsContainer.height * 0.1
                     color: hostHasChanged ? primary_color : background_pop_color
+                    Behavior on color {
+                        ColorAnimation { duration: 150 }
+                    }
 
                     radius: this.height * radiusPercent
                     Text {
                         anchors.fill: parent
                         text: "Save"
-                        color: "white"
+                        color: hostHasChanged ? background_color : text_color
                         font.pixelSize: text_h2
                         font.family: inter.name
                         font.weight: Font.ExtraBold
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
+                        Behavior on color {
+                            ColorAnimation { duration: 150 }
+                        }
                     }
                     MouseArea {
                         anchors.fill: parent
@@ -148,7 +154,7 @@ Rectangle {
                     Text {
                         anchors.fill: parent
                         text: "Reset"
-                        color: "white"
+                        color: white
                         font.pixelSize: text_h2
                         font.family: inter.name
                         font.weight: Font.ExtraBold

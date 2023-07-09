@@ -3,6 +3,8 @@ import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Shapes 1.15
 import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
+
 
 /* HOME SCREEN */
 Rectangle {
@@ -10,7 +12,7 @@ Rectangle {
     height: Window.height
 
     x: 0
-    y: 0 //- Window.height
+    y: 0 - Window.height
 
     color: background_color
 
@@ -42,16 +44,25 @@ Rectangle {
     function close() {
         this.y = 0 - Window.height
     }
-
-    Image {
-        width: parent.width
-        height: parent.height
-        anchors.centerIn: parent
-        source: "image://AsyncImage/" + currentTrack.art
-        fillMode: Image.PreserveAspectCrop
-        smooth: true
-        visible: currentTrack.art !== ""
+    Item {
+        anchors.fill: parent
+        Image {
+            id: backgroundArt
+            width: parent.width
+            height: parent.height
+            anchors.centerIn: parent
+            source: "image://AsyncImage/blur" + currentTrack.art
+            fillMode: Image.PreserveAspectCrop
+            smooth: true
+            visible: currentTrack.art !== ""
+        }
+        FastBlur {
+            anchors.fill: backgroundArt
+            source: backgroundArt
+            radius: 56
+        }
     }
+
     Rectangle {
         anchors.fill: parent
         color: background_color
@@ -59,112 +70,129 @@ Rectangle {
         visible: currentTrack.art !== ""
     }
 
+    Row {
+        anchors.fill: parent
+        Column {
+            id: artColumn
+            width: parent.width * 0.4
+            anchors.verticalCenter: parent.verticalCenter
+            leftPadding: parent.width * 0.1
+            rightPadding: parent.width * 0.1
 
-    Column {
-        width: parent.width
-        spacing: parent.height * 0.035
-        topPadding: parent.height * 0.07
+            Image {
+                id: playingArt
+                source: "image://AsyncImage/lrge" + currentTrack.art
+                height: parent.width * 0.8
+                width: this.height
+                fillMode: Image.PreserveAspectCrop
+                smooth: true
+                anchors.horizontalCenter: parent.horizontalCenter
 
-        Image {
-            id: playingArt
-            source: "image://AsyncImage/" + currentTrack.art
-            height: artSize
-            width: artSize
-            fillMode: Image.PreserveAspectCrop
-            smooth: true
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
+                layer.enabled: true
+                layer.effect: OpacityMask {
+                    maskSource: mask
+                }
+            }
 
-        Text {
-            id: homeTitle
-            color: text_color
-            font.pixelSize: titleFont
-            font.family: inter.name
-            font.weight: Font.ExtraBold
-            text: currentTrack.title
-            elide: Text.ElideRight
-            width: parent.width
-            anchors.horizontalCenter: parent.horizontalCenter
-            horizontalAlignment: Text.AlignHCenter
+            Rectangle {
+                id: mask
+                anchors.fill: playingArt
+                radius: this.height * radiusPercent
+                visible: false
+            }
         }
-        Text {
-            color: text_color
-            font.pixelSize: mainFont
-            font.family: inter.name
-            font.weight: Font.ExtraBold
-            text: currentTrack.artist + " - " + currentTrack.album
-            elide: Text.ElideRight
-            width: gridWidth - artSize - gridVSpacing
-            anchors.horizontalCenter: parent.horizontalCenter
-            horizontalAlignment: Text.AlignHCenter
-        }
-        Rectangle {
-            color: primary_color
+        Column {
+            width: parent.width * 0.6
+            spacing: parent.height * 0.035
+            leftPadding: 0
+            rightPadding: parent.width * 0.1
+            anchors.top: artColumn.top
+
             Text {
-                text: currentTrack.shortformat
-                font.pixelSize: qualityFont
+                id: homeTitle
+                color: text_color
+                font.pixelSize: titleFont
                 font.family: inter.name
                 font.weight: Font.ExtraBold
-                color: appWindow.color
-                leftPadding: appWindow.height * 0.0172
-                rightPadding: this.leftPadding
-                topPadding: this.leftPadding / 1.8
-                bottomPadding: this.topPadding - 3
+                text: currentTrack.title
+                elide: Text.ElideRight
+                width: parent.width
             }
-            width: childrenRect.width
-            height: childrenRect.height
-            radius: childrenRect.height
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-
-        Column {
-            width: gridWidth - artSize - gridVSpacing * 0.6
-            height: childrenRect.height
-            spacing: gridVSpacing * 0.1
-            anchors.horizontalCenter: parent.horizontalCenter
-            // -------- PROGRESS BAR -------- //
+            Text {
+                color: text_color
+                font.pixelSize: mainFont
+                font.family: inter.name
+                font.weight: Font.ExtraBold
+                text: currentTrack.artist + " - " + currentTrack.album
+                elide: Text.ElideRight
+                width: parent.width
+            }
             Rectangle {
-                id: progressBar
-                height: progressBarHeight
-                width: parent.width
-                color: background_pop_color
-                radius: this.height
-                Rectangle {
-                    height: parent.height
-                    width: parent.width * (playElapsed / currentTrack.duration)
-                    color: primary_color
-                    x: 0
-                    y: 0
-                    radius: this.height
+                color: primary_color
+                Text {
+                    text: currentTrack.shortformat
+                    font.pixelSize: qualityFont
+                    font.family: inter.name
+                    font.weight: Font.ExtraBold
+                    color: appWindow.color
+                    leftPadding: appWindow.height * 0.0172
+                    rightPadding: this.leftPadding
+                    topPadding: this.leftPadding / 1.8
+                    bottomPadding: this.topPadding - 3
                 }
-            }
-
-            Item {
-                width: parent.width
+                width: childrenRect.width
                 height: childrenRect.height
-
-                Text {
-                    color: text_color
-                    font.pixelSize: appWindow.width * 0.017
-                    text: getPrettyTime(playElapsed)
-                    font.family: inter.name
-                    font.weight: Font.ExtraBold
-                    anchors.left: parent.left
-                }
-                Text {
-                    color: text_color
-                    font.pixelSize: appWindow.width * 0.017
-                    text: getPrettyTime(currentTrack.duration)
-                    font.family: inter.name
-                    font.weight: Font.ExtraBold
-                    anchors.right: parent.right
-                }
+                radius: childrenRect.height
             }
-            /* END PROGRESS BAR */
-        }
 
-    } // Column
+            Column {
+                width: parent.width - parent.leftPadding - parent.rightPadding
+                height: childrenRect.height
+                spacing: parent.height * 0.035
+                // -------- PROGRESS BAR -------- //
 
+                Rectangle {
+                    id: progressBar
+                    height: progressBarHeight
+                    width: parent.width
+                    color: background_pop_color
+                    radius: this.height
+                    Rectangle {
+                        height: parent.height
+                        width: parent.width * (playElapsed / currentTrack.duration)
+                        color: primary_color
+                        x: 0
+                        y: 0
+                        radius: this.height
+                    }
+                }
+
+                Item {
+                    width: parent.width
+                    height: childrenRect.height
+
+                    Text {
+                        color: text_color
+                        font.pixelSize: appWindow.width * 0.017
+                        text: getPrettyTime(playElapsed)
+                        font.family: inter.name
+                        font.weight: Font.ExtraBold
+                        anchors.left: parent.left
+                    }
+                    Text {
+                        color: text_color
+                        font.pixelSize: appWindow.width * 0.017
+                        text: getPrettyTime(currentTrack.duration)
+                        font.family: inter.name
+                        font.weight: Font.ExtraBold
+                        anchors.right: parent.right
+                    }
+                }
+                //END PROGRESS BAR
+            }
+
+        } // Column
+    } //Row
 
     MouseArea {
         anchors.fill: parent

@@ -28,7 +28,7 @@ protected:
     QImage m_resultImage;
     QFile output;
     QString filename;
-    bool fromLocal = false;
+    bool cacheImage = true;
 };
 
 class AsyncImageCache : public QQuickAsyncImageProvider {

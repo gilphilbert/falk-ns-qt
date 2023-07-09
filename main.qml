@@ -15,8 +15,8 @@ Window {
     visible: true
     //visibility: "FullScreen"
 
-    readonly property color yellow: "#e3e444" //"#E3B505"
-    readonly property color white: "#FFFFFF"
+    readonly property color yellow: "#F9C22E" //"#E3B505"
+    readonly property color white: "#FCF7F8"
     readonly property color blue: "#4A6FA5"
     readonly property color blue_light: "#353a50"
     readonly property color blue_lighter: "#454c63"
@@ -25,24 +25,25 @@ Window {
     readonly property color gray_light: "#cccccc"
     readonly property color gray_lighter: "#eeeeee"
     readonly property color pink: "#e4447c"
+    readonly property color gray_dark: "#373F47"
+    readonly property color gray_darkish: "#4C5965"
+    readonly property color gray_mid: "#5F6E7B"
 
-    readonly property color background_color: blue_dark
-    readonly property color background_pop_color: blue_light
-    readonly property color primary_color: pink
+    readonly property color background_color: gray_dark
+    readonly property color background_pop_color: gray_darkish
+    readonly property color primary_color: yellow
     readonly property color secondary_color: white
     readonly property color text_color: white
-    readonly property color secondary_text_color: white
+    readonly property color secondary_text_color: gray_dark
 
     readonly property int text_h1: Math.round(this.height * 0.042)
     readonly property int text_h2: Math.round(this.height * 0.028)
     readonly property int text_h3: Math.round(this.height * 0.025)
     readonly property int text_h4: Math.round(this.height * 0.022)
 
-    //property real windowHeight: this.height * 0.866666667
-    //property real footerHeight: this.height * 0.133333333
     property real windowHeight: this.height
 
-    readonly property real radiusPercent: 0.12
+    readonly property real radiusPercent: 0.075
 
 
     FontLoader {
@@ -154,13 +155,27 @@ Window {
         sse.onPaused.connect(function (state) { playPaused = state; playTimer.running = !state })
         //sse.onPosition.connect(function (position) { playPosition = position })
         connectToServer()
+
+        power.onAcChanged.connect(updatePower)
+        power.onBatteryChanged.connect(updateBattery)
+        power.init();
     }
 
+    property bool ac: false;
+    property int batteryPercent: 0;
 
+    function updatePower(value) {
+        console.log("Got AC change :: " + value)
+        ac = value
+    }
+
+    function updateBattery(value) {
+        console.log("Got Battery change :: " + value)
+        batteryPercent = value
+    }
 
     StackView {
         id: stackView
-        //initialItem: "Player.qml"
         width: parent.width
         height: windowHeight
         clip: true

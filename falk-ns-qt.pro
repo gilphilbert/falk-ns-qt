@@ -6,9 +6,12 @@ QT += quick sql svg xml
 
 SOURCES += \
         aimagecache.cpp \
+        display-controller.cpp \
         events.cpp \
         main.cpp \
-        mouseeventspy.cpp
+        power-manager.cpp \
+        powerstatus.cpp \
+        touchevents.cpp
 
 RESOURCES += qml.qrc images.qrc
 
@@ -25,8 +28,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     aimagecache.h \
+    display-controller.h \
     events.h \
-    mouseeventspy.h
+    power-manager.h \
+    powerstatus.h \
+    touchevents.h
 
 INCLUDEPATH += .
 
