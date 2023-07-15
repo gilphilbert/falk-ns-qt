@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>Playing.qml</file>
-        <file>Queue.qml</file>
         <file>Album.qml</file>
         <file>Library.qml</file>
         <file>Settings.qml</file>
@@ -10,5 +9,7 @@
         <file>workout/Add.qml</file>
         <file>workout/Creator.qml</file>
         <file>workout/Workout.qml</file>
+        <file>Welcome.qml</file>
+        <file>Queue.qml</file>
     </qresource>
 </RCC>

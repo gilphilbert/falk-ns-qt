@@ -1,6 +1,6 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Shapes 1.15
+import QtQuick.Controls 2.4
+//import QtQuick.Shapes 1.15
 import QtQml.Models 2.3
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.3
@@ -129,7 +129,12 @@ Item {
             for (let i = 0; i < items.count; i++) {
 
                 let item = items.get(i)
-                if (grid.textFilter === "" || item.model.name.slice(0, 1).toLowerCase() === grid.textFilter) {
+                let startPos = 0
+                if (item.model.name.startsWith("The ")) {
+                    startPos = 4
+                }
+
+                if (textFilter === "" || item.model.name.slice(startPos, startPos + 1).toLowerCase() === textFilter) {
                     items.addGroups(i, 1, "shown")
                 } else {
                     items.removeGroups(i, 1, "shown")
@@ -148,6 +153,12 @@ Item {
 
     }
 
+    property string textFilter: ""
+    onTextFilterChanged: displayDelegateModel.filter()
+
+    function filter(character) {
+        textFilter = character
+    }
 
     GridView {
         id: grid
@@ -157,9 +168,7 @@ Item {
         model: displayDelegateModel
         cellWidth: this.width / 4
         cellHeight: this.cellWidth
-        ScrollBar.vertical: ScrollBar { }
-        property string textFilter: ""
-        onTextFilterChanged: displayDelegateModel.filter()
+        //ScrollBar.vertical: ScrollBar { width: 0 }
         snapMode: GridView.SnapToRow
     }
 
@@ -167,8 +176,8 @@ Item {
         height: parent.height * 0.05
         width: this.height
         x: 0
-        y: 0
-
+        y: 10 - appWindow.height * 0.14
+        z: 2
 
         Image {
             id: filterIcon
@@ -184,7 +193,7 @@ Item {
         ColorOverlay{
             anchors.fill: filterIcon
             source: filterIcon
-            color: grid.textFilter === "" ? white : primary_color
+            color: textFilter === "" ? white : primary_color
             transform: rotation
             antialiasing: true
         }
@@ -192,10 +201,10 @@ Item {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                if (grid.textFilter === "") {
+                if (textFilter === "") {
                     drawer.open()
                 } else {
-                    grid.textFilter = ""
+                    textFilter = ""
                 }
             }
         }
@@ -252,6 +261,10 @@ Item {
 
     property var alphaNumeric: [ "123", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" ]
 
+    function openDrawer() {
+        drawer.open()
+    }
+
     Drawer {
         id: drawer
         width: 0.55 * appWindow.width
@@ -262,48 +275,106 @@ Item {
             anchors.fill: parent
             color: background_pop_color
 
-            GridView {
-                id: letterView
-                width: this.cellWidth * 5
-                height: this.cellWidth * 6
-                anchors.centerIn: parent
-                cellWidth: this.cellHeight
-                cellHeight: parent.height / 7
+            Column {
+                //anchors.fill: parent
+                height: parent.height
+                width: parent.width
 
-                model: alphaNumeric
+                Row {
+                    width: parent.width
+                    topPadding: this.height * 0.5
 
-                delegate: Item {
-                    height: letterView.cellWidth
-                    width: this.height
-                    Rectangle {
-                        height: parent.width - (parent.width * 0.1)
-                        width: height
-                        anchors.centerIn: parent
-                        color: "transparent"
-                        radius: this.height * 0.08
+                    Item {
+                        height: 1
+                        width: parent.width * 0.25
                     }
 
                     Text {
-                        anchors.centerIn: parent
-                        text: model.modelData.toUpperCase()
+                        text: "Filter"
                         font.family: inter.name
                         font.pixelSize: text_h1
                         font.weight: Font.ExtraBold
                         color: white
-                    }
-                    MouseArea {
-                        anchors.fill: parent
+                        horizontalAlignment: Text.AlignHCenter
 
-                        onClicked: {
-                            drawer.close()
-                            grid.textFilter = model.modelData
+                        width: parent.width * 0.5
+                        height: text_h1
+                    }
+
+                    Item {
+                        width: parent.width * 0.25
+                        height: childrenRect.height
+
+                        Rectangle {
+                            color: textFilter === "" ? gray_dark : primary_color
+                            height: clearButtonText.paintedHeight * 1.3
+                            width: clearButtonText.paintedWidth * 1.4
+                            radius: this.height
+
+                            Text {
+                                id: clearButtonText
+                                text: "Clear"
+                                font.family: inter.name
+                                font.pixelSize: text_h2
+                                font.weight: Font.ExtraBold
+                                color: gray_darkish
+                                anchors.centerIn: parent
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    textFilter = ""
+                                    drawer.close()
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                GridView {
+                    id: letterView
+                    width: this.cellWidth * 5
+                    height: this.cellWidth * 6
+                    cellWidth: this.cellHeight
+                    cellHeight: parent.height / 9
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    topMargin: drawer.height * 0.1
+
+                    model: alphaNumeric
+
+                    delegate: Item {
+                        height: letterView.cellWidth
+                        width: this.height
+                        Rectangle {
+                            height: parent.width - (parent.width * 0.1)
+                            width: height
+                            anchors.centerIn: parent
+                            color: "transparent"
+                            radius: this.height * 0.08
+                        }
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: model.modelData.toUpperCase()
+                            font.family: inter.name
+                            font.pixelSize: text_h1
+                            font.weight: Font.ExtraBold
+                            color: white
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+
+                            onClicked: {
+                                drawer.close()
+                                textFilter = model.modelData
+                            }
                         }
                     }
                 }
             }
         }
     }
-
     // this loads the page for the first time (once we know which page we are)
 
     function processResults(data) {

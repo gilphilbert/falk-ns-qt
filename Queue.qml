@@ -1,18 +1,16 @@
 import QtQuick 2.15
-import QtQml.Models 2.15
-import QtQuick.Shapes 1.15
-import QtQuick.Window 2.15
-import QtQuick.Layouts 1.15
+import QtQml.Models 2.3
 import QtGraphicalEffects 1.15
+import QtQuick.Layouts 1.15
+
 
 Rectangle {
-    //anchors.fill: parent
-    height: parent.height - playerFooter
-    width: parent.width
-
     id: queueScreen
 
     color: background_pop_color
+
+    height: parent.height - playerFooter
+    width: parent.width
 
     property bool isActive: false
 
@@ -32,6 +30,9 @@ Rectangle {
         return isActive
     }
 
+    Component.onCompleted: {
+    }
+
     Behavior on y {
         NumberAnimation {
             easing.type: Easing.InOutCubic
@@ -39,119 +40,181 @@ Rectangle {
         }
     }
 
+    function findThisItem(myIndex) {
+        for (let i = 0; i < visualModel.items.count; i++) {
+            let p = visualModel.items.get(i)
+            console.log(p.model.index)
+            if (p.model.index === myIndex) {
+                return i
+            }
+        }
+        return -1
+    }
+
     property int pageHeight: this.height
     property int pageWidth: this.width
     property int pageMargin: this.width * (25 / 1024)
 
     Component {
-        id: queueDelegate
-        Item {
-            height: windowHeight * 0.1667
-            width: queueListView.width
+        id: dragDelegate
 
-            Rectangle {
-                color: playing ? white : "transparent"
-                anchors.fill: parent
-                opacity: 0.07
-                radius: this.height * radiusPercent
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        musicAPIRequest("jump/" + index)
-                    }
-                }
+        MouseArea {
+            id: dragArea
+
+            property bool held: false
+            required property string title
+            required property string artist
+            required property int duration
+            required property string art
+            required property bool playing
+            required property int index
+
+            property int moveFrom: -1
+
+            anchors {
+                left: parent.left
+                right: parent.right
             }
+            height: windowHeight * 0.1667
 
-            Row {
-                leftPadding: parent.height * 0.1
-                anchors.fill: parent
+            drag.target: held ? content : undefined
+            drag.axis: Drag.YAxis
 
-                Item {
-                    height: parent.height * 0.8
-                    width: parent.height * 0.8
-                    anchors.verticalCenter: parent.verticalCenter
-
-                    Item {
-                        anchors.fill: parent
-
-                        Image {
-                            id: artImage
-                            source: "image://AsyncImage" +  art
-                            width: parent.width - 2
-                            height: parent.height - 2
-                            anchors.centerIn: parent
-                            fillMode: Image.PreserveAspectCrop
-                            smooth: true
-
-                            layer.enabled: true
-                            layer.effect: OpacityMask {
-                                maskSource: mask
-                            }
-                        }
-
-                        Rectangle {
-                            id: mask
-                            anchors.fill: artImage
-                            radius: this.height * radiusPercent
-                            visible: false
-                        }
-                    }
-                }
-
-                Column {
-                    leftPadding: queueScreen.width * 0.014648438
-                    bottomPadding: queueScreen.height * 0.008333333
-                    anchors.verticalCenter: parent.verticalCenter
-                    Text {
-                        color: text_color
-                        text: title
-                        font.family: inter.name
-                        font.weight: Font.ExtraBold
-                        font.pixelSize: text_h2
-                    }
-                    Text {
-                        text: artist + " - " + getPrettyTime(duration)
-                        font.family: inter.name
-                        font.weight: Font.Normal
-                        color: text_color
-                        font.pixelSize: text_h3
-                    }
-                }
+            onPressAndHold: {
+                moveFrom = findThisItem(index)
+                held = true
+            }
+            onReleased: {
+                held = false
+                musicAPIRequest("move/" + index + "/" + findThisItem(index))
+            }
+            onClicked: {
+                musicAPIRequest("queue/" + index, null, "DELETE")
             }
 
             Item {
-                height: parent.height * 0.4
-                width: this.height
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.rightMargin: this.height * 0.5
+                id: content
 
-                Image {
-                    id: removeIcon
-                    source: "icons/trash.svg"
-                    height: parent.width * 0.6
-                    width: this.height
-                    fillMode: Image.PreserveAspectCrop
-                    smooth: true
-                    anchors.centerIn: parent
-                }
-
-                ColorOverlay{
-                    anchors.fill: removeIcon
-                    source: removeIcon
-                    color: white
-                    transform: rotation
-                    antialiasing: true
-                }
-
-                MouseArea {
+                Rectangle {
+                    color: held ? "lightsteelblue" : playing ?  background_color : "transparent"
                     anchors.fill: parent
-                    onClicked: {
-                        musicAPIRequest("queue/" + index, null, "DELETE")
+                    radius: this.height * radiusPercent
+                    Behavior on color { ColorAnimation { duration: 250 } }
+                }
+
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    verticalCenter: parent.verticalCenter
+                }
+
+                width: dragArea.width
+                height: dragArea.height
+
+                //color: dragArea.held ? "lightsteelblue" : "transparent"
+
+                Drag.active: dragArea.held
+                Drag.source: dragArea
+                Drag.hotSpot.x: width / 2
+                Drag.hotSpot.y: height / 2
+
+                states: State {
+                    when: dragArea.held
+
+                    ParentChange {
+                        target: content
+                        parent: queueScreen
+                    }
+                    AnchorChanges {
+                        target: content
+                        anchors {
+                            horizontalCenter: undefined
+                            verticalCenter: undefined
+                        }
+                    }
+                }
+
+                Row {
+                    id: row
+                    anchors {
+                        fill: parent
+                        margins: 2
+                    }
+                    leftPadding: parent.height * 0.1
+
+
+                    Item {
+                        height: parent.height * 0.8
+                        width: parent.height * 0.8
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        Item {
+                            anchors.fill: parent
+
+                            Image {
+                                id: artImage
+                                source: "image://AsyncImage" +  dragArea.art
+                                width: parent.width - 2
+                                height: parent.height - 2
+                                anchors.centerIn: parent
+                                fillMode: Image.PreserveAspectCrop
+                                smooth: true
+
+                                layer.enabled: true
+                                layer.effect: OpacityMask {
+                                    maskSource: mask
+                                }
+                            }
+
+                            Rectangle {
+                                id: mask
+                                anchors.fill: artImage
+                                radius: this.height * radiusPercent
+                                visible: false
+                            }
+                        }
+                    }
+
+                    Column {
+                        leftPadding: queueScreen.width * 0.014648438
+                        bottomPadding: queueScreen.height * 0.008333333
+                        anchors.verticalCenter: parent.verticalCenter
+                        Text {
+                            color: text_color
+                            text: title
+                            font.family: inter.name
+                            font.weight: Font.ExtraBold
+                            font.pixelSize: text_h2
+                        }
+                        Text {
+                            text: artist + " - " + getPrettyTime(duration)
+                            font.family: inter.name
+                            font.weight: Font.Normal
+                            color: text_color
+                            font.pixelSize: text_h3
+                        }
                     }
                 }
             }
+
+            DropArea {
+                anchors {
+                    fill: parent
+                    margins: 10
+                }
+
+                onEntered: (drag) => {
+                    visualModel.items.move(
+                        drag.source.DelegateModel.itemsIndex, dragArea.DelegateModel.itemsIndex)
+                }
+            }
         }
+    }
+
+    DelegateModel {
+        id: visualModel
+
+        model: queueList
+        delegate: dragDelegate
     }
 
     Column {
@@ -202,25 +265,33 @@ Rectangle {
             }
         }
 
-
-        ListView {
-            id: queueListView
+        Rectangle {
+            color: "transparent"
 
             width: parent.width - pageMargin * 2
             height: parent.height - row1.height - pageMargin * 2
 
-            clip: true
+            ListView {
+                id: view
 
-            topMargin: pageMargin * 2
-            spacing: queueScreen.height * 0.03
+                anchors {
+                    fill: parent
+                    margins: 2
+                }
 
-            model: queueList
-            delegate: queueDelegate
-            focus: true
-            currentIndex: playPosition > -1 ? playPosition : 0
-            snapMode: ListView.SnapToItem
+                topMargin: pageMargin * 2
+                spacing: queueScreen.height * 0.03
 
-            highlightFollowsCurrentItem: false
+                model: visualModel
+
+                focus: true
+                currentIndex: playPosition > -1 ? playPosition : 0
+                snapMode: ListView.SnapToItem
+
+                highlightFollowsCurrentItem: false
+
+                cacheBuffer: 50
+            }
         }
     }
 }

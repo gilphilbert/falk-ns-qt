@@ -302,7 +302,7 @@ Item {
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
         background: Rectangle {
-            color: blue
+            color: background_pop_color
             radius: 20
         }
 

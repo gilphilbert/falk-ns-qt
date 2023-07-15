@@ -3,6 +3,8 @@
 
 #include <QFile>
 #include <QTimer>
+#include <QDebug>
+#include <QProcess>
 
 class PowerStatus: public QObject
 {
@@ -14,12 +16,18 @@ public slots:
     void init();
     void scan();
 
+    void reboot();
+
 private:
     QTimer *timer;
 
-    int battery_now;
     int battery_max;
     bool ac;
+    int battery_percent;
+
+    QString ac_path;
+    QString batt_path;
+    QString batt_max_path;
 
 signals:
     void acChanged(bool pluggedIn);

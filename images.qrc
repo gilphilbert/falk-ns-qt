@@ -25,5 +25,6 @@
         <file>icons/battery-25.svg</file>
         <file>icons/battery-50.svg</file>
         <file>icons/battery-75.svg</file>
+        <file>icons/alert-circle.svg</file>
     </qresource>
 </RCC>

@@ -9,23 +9,28 @@ Item {
     property real playerFooter: this.height * 0.15
     property real playerHeight: this.height * 0.85
 
-    function musicAPIRequest(urlComponent, callback, action = "GET", data = "") {
+    function musicAPIRequest(urlComponent, callback, action = "GET", data = "", testIP = "") {
         var xhr = new XMLHttpRequest()
         xhr.onreadystatechange = (function (myxhr) {
             return function () {
                 if (xhr.readyState === XMLHttpRequest.DONE)
                     if (callback) {
+                        console.log("in callback processor")
+                        let data = {}
                         try {
-                            callback(JSON.parse(xhr.responseText))
+                            data = JSON.parse(xhr.responseText)
                         } catch (e) {
-                            console.error(e)
-                            console.error(xhr.responseText)
+                            console.log("Parse failed")
                         }
+                        callback(data)
                     }
             }
         })(xhr)
 
-        let fullURL = "http://" + getSettings("host") + "/api/" + urlComponent
+        let _host = testIP !== "" ? testIP : getSettings("host")
+
+        console.log(_host)
+        let fullURL = "http://" + _host + "/api/" + urlComponent
 
         xhr.open(action, fullURL, true)
 
@@ -64,6 +69,7 @@ Item {
         anchors.fill: parent
 
         Item {
+            id: iconRow
             width: parent.width
             height: parent.height * 0.14
 
@@ -226,10 +232,19 @@ Item {
 
     }
 
-    Component.onCompleted: {
+    function startPlayer() {
         stack.pop(null)
+        sse.setServer("http://" + getSettings("host") + "/events")
         stack.push("Library.qml", { "url": "artists" })
-        mouseSpy.onMouseEventDetected.connect(resetTouchTimer)
+    }
+
+    Component.onCompleted: {
+        touchEvents.onTouchDetected.connect(resetTouchTimer)
+        if (typeof getSettings("host") !== "undefined" && getSettings("host") !== "") {
+            startPlayer()
+        } else {
+            welcomeScreen.open()
+        }
     }
 
     Timer {
@@ -252,43 +267,73 @@ Item {
         touchTimer.restart()
     }
 
-    Item {
-        height: parent.height * 0.083
-        width: this.height
-        anchors.left: parent.left
-        anchors.top: parent.top
 
-        Image {
-            source: ac ? "icons/battery-charging.svg" : batteryPercent > 83 ? "icons/battery-100.svg" : batteryPercent > 66 ? "icons/battery-75.svg" :  batteryPercent > 33  ? "icons/battery-50.svg" : batteryPercent > 15 ? "icons/battery-25.svg" : "icons/battery-0.svg"
-            height: parent.height * 0.45
-            width: this.height
-            anchors.centerIn: parent
-            smooth: true
-            sourceSize.width: 24
-            sourceSize.height: 24
-        }
-    }
-
-    Item {
-        height: parent.height * 0.083
-        width: this.height
+    Row {
+        height: parent.height * 0.14
         anchors.right: parent.right
         anchors.top: parent.top
+        rightPadding: this.height * 0.2
 
-        Image {
-            source: "icons/settings.svg"
-            height: parent.height * 0.45
+        Item {
+            height: player.height * 0.083
             width: this.height
-            anchors.centerIn: parent
-            smooth: true
-            sourceSize.width: 24
-            sourceSize.height: 24
+            anchors.verticalCenter: parent.verticalCenter
+
+            Image {
+                source: "icons/filter.svg"
+                height: parent.height * .45
+                width: this.height
+                anchors.centerIn: parent
+                smooth: true
+                sourceSize.width: this.width
+                sourceSize.height: this.height
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    stack.currentItem.openDrawer()
+                }
+            }
         }
 
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-               mainSettings.open()
+        Item {
+            height: player.height * 0.083
+            width: this.height
+            anchors.verticalCenter: parent.verticalCenter
+            visible: !(!ac && batteryPercent === 0)
+
+            Image {
+                source: ac ? "icons/battery-charging.svg" : batteryPercent > 83 ? "icons/battery-100.svg" : batteryPercent > 66 ? "icons/battery-75.svg" :  batteryPercent > 33  ? "icons/battery-50.svg" : batteryPercent > 15 ? "icons/battery-25.svg" : "icons/battery-0.svg"
+                height: parent.height * .45
+                width: this.height
+                anchors.centerIn: parent
+                smooth: true
+                sourceSize.width: this.width
+                sourceSize.height: this.height
+            }
+        }
+
+        Item {
+            height: player.height * 0.083
+            width: this.height
+            anchors.verticalCenter: parent.verticalCenter
+
+            Image {
+                source: "icons/settings.svg"
+                height: parent.height * .45
+                width: this.height
+                anchors.centerIn: parent
+                smooth: true
+                sourceSize.width: this.width
+                sourceSize.height: this.height
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                   mainSettings.open()
+                }
             }
         }
     }
@@ -297,6 +342,9 @@ Item {
       id: mainQueue
     }
 
+//    DragDropTest {
+//        id: mainQueue
+//    }
 
     Item {
         height: playerFooter
@@ -576,6 +624,10 @@ Item {
                 screenCover.visible = false
             }
         }
+    }
+
+    Welcome {
+        id: welcomeScreen
     }
 
     function animateEnqueue() {

@@ -17,14 +17,12 @@ WantedBy=multi-user.target
 #include <QObject>
 #include <QtQml>
 #include <QQmlEngine>
-#include <QJSEngine>
 #include <QGuiApplication>
 
 #ifndef DPMSCONTROL_H
 #define DPMSCONTROL_H
 
-class DisplayController : public QObject
-{
+class DisplayController : public QObject {
     Q_OBJECT
 public:
     explicit DisplayController(QObject *parent = 0);

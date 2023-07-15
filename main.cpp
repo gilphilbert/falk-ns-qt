@@ -4,11 +4,11 @@
 #include <QtPlugin>
 
 #include "events.h"
-#include "aimagecache.h"
+#include "imagecache.h"
 #include "touchevents.h"
-#include "display-controller.h"
-//#include "power-manager.h"
+#include "displaycontroller.h"
 #include "powerstatus.h"
+
 
 int main(int argc, char *argv[]) {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -34,8 +34,8 @@ int main(int argc, char *argv[]) {
 
     engine.addImageProvider("AsyncImage", new AsyncImageCache());
 
-    MouseEventSpy *mouseSpy = MouseEventSpy::instance();
-    engine.rootContext()->setContextProperty("mouseSpy", mouseSpy);
+    TouchEvents *touchEvents = TouchEvents::instance();
+    engine.rootContext()->setContextProperty("touchEvents", touchEvents);
 
     if (! QDir("art").exists() ) {
         QDir().mkdir("art");

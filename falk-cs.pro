@@ -1,15 +1,14 @@
-QT += quick sql svg xml
+QT += quick svg xml widgets
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        aimagecache.cpp \
-        display-controller.cpp \
+        displaycontroller.cpp \
         events.cpp \
+        imagecache.cpp \
         main.cpp \
-        power-manager.cpp \
         powerstatus.cpp \
         touchevents.cpp
 
@@ -27,16 +26,15 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    aimagecache.h \
-    display-controller.h \
+    displaycontroller.h \
     events.h \
-    power-manager.h \
+    imagecache.h \
     powerstatus.h \
     touchevents.h
 
 INCLUDEPATH += .
 
-QTPLUGIN += qlinuxfb
-CONFIG += static
+#QTPLUGIN += qlinuxfb
+#CONFIG += static
 
 DISTFILES +=

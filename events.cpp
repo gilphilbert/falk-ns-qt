@@ -18,7 +18,6 @@
 
 #include <QJsonDocument>
 #include <QJsonObject>
-
 #include <QJsonValue>
 #include <QJsonArray>
 

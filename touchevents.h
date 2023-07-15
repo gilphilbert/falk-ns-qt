@@ -2,25 +2,20 @@
 #define TOUCHEVENTS_H
 
 #include <QObject>
-#include <QtQml>
-#include <QQmlEngine>
-#include <QJSEngine>
 #include <QGuiApplication>
 
-
-class MouseEventSpy : public QObject
-{
+class TouchEvents : public QObject {
     Q_OBJECT
 public:
-    explicit MouseEventSpy(QObject *parent = 0);
+    explicit TouchEvents(QObject *parent = 0);
 
-    static MouseEventSpy* instance();
+    static TouchEvents* instance();
 
 protected:
     bool eventFilter(QObject* watched, QEvent* event);
 
 signals:
-    void mouseEventDetected(/*Pass meaningfull information to QML?*/);
+    void touchDetected();
 
 };
 

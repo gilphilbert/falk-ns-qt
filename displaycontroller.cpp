@@ -1,4 +1,4 @@
-#include "display-controller.h"
+#include "displaycontroller.h"
 
 DisplayController *DisplayController::m_instance = nullptr;
 QString DisplayController::m_brightness_path = "";
@@ -8,8 +8,7 @@ bool DisplayController::m_act = false;
 QString DisplayController::m_off_val = "off";
 QString DisplayController::m_on_val = "on";
 
-DisplayController::DisplayController(QObject *parent) : QObject(parent)
-{
+DisplayController::DisplayController(QObject *parent) : QObject(parent) {
     QByteArray _ba_path = qgetenv("FALK_DISPLAY_SYSFS");
     QStringList components = QString(_ba_path.constData()).split(':');
 

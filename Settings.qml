@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
+import QtGraphicalEffects 1.15
 
 
 Rectangle {
@@ -89,7 +90,7 @@ Rectangle {
                     TextInput {
                         id: ipInput
                         color: white
-                        text: getSettings("host")
+                        text: typeof getSettings("host") === "undefined" ? "" : getSettings("host")
                         width: parent.width - 30
                         height: parent.height
                         anchors.centerIn: parent
@@ -118,11 +119,12 @@ Rectangle {
                     width: settingsContainer.width * 0.13
                     height: settingsContainer.height * 0.1
                     color: hostHasChanged ? primary_color : background_pop_color
+                    radius: this.height * radiusPercent
+
                     Behavior on color {
                         ColorAnimation { duration: 150 }
                     }
 
-                    radius: this.height * radiusPercent
                     Text {
                         anchors.fill: parent
                         text: "Save"
@@ -132,16 +134,28 @@ Rectangle {
                         font.weight: Font.ExtraBold
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
+
                         Behavior on color {
                             ColorAnimation { duration: 150 }
                         }
                     }
+
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            setSettings("host", ipInput.text)
-                            connectToServer()
-                            settingsContainer.focus = true
+                            showWaitingmodal()
+                            musicAPIRequest("version", function (data) {
+                                console.info(JSON.stringify(data))
+                                if (Object.keys(data).includes("name") && data.name === "falkdp" ) {
+                                    checkModal.folded = true
+                                    setSettings("host", ipInput.text)
+                                    connectToServer(ipInput.text)
+                                    settingsContainer.focus = true
+                                    settings.close()
+                                } else {
+                                    showConnectErrorModal()
+                                }
+                            }, "GET", null, ipInput.text)
                         }
                     }
                 }
@@ -170,8 +184,67 @@ Rectangle {
                     }
                 }
             }
+            Row {
+                topPadding: 30
+                Text {
+                    color: text_color
+                    font.pixelSize: text_h2
+                    font.family: inter.name
+                    font.weight: Font.ExtraBold
+                    text: 'System Power'
+                    height: 30
+                    width: 100
+                }
+            }
+            Row {
+                Rectangle {
+                    width: settingsContainer.width * 0.13
+                    height: settingsContainer.height * 0.1
+                    color: danger_color
+
+                    radius: this.height * radiusPercent
+                    Text {
+                        anchors.fill: parent
+                        text: "Reboot"
+                        color: white
+                        font.pixelSize: text_h2
+                        font.family: inter.name
+                        font.weight: Font.ExtraBold
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            power.reboot()
+                        }
+                    }
+                }
+            }
         }
         // button to save
+    }
+
+    function showWaitingmodal() {
+        checkModalMain.color = primary_color
+        checkModalTitle.text = "Connecting"
+        checkModalIndicator.visible = true
+        checkModalText.visible = false
+        checkModalbutton.visible = false
+        checkModal.folded = false
+    }
+
+    function closeModal() {
+        checkModal.folded = true
+    }
+
+    function showConnectErrorModal() {
+        checkModalTitle.text = "Shucks"
+        checkModalIndicator.visible = false
+        checkModalText.visible = true
+        checkModalText.text = "Could't find a FALK DP at this address. Did you get the correct address?"
+        checkModalbutton.visible = true
+        checkModalButtonText.text = "Close"
     }
 
 
@@ -337,5 +410,170 @@ Rectangle {
                mainSettings.close()
             }
         }
+    }
+
+    Item {
+        id: checkModal
+        anchors.fill: parent
+        //visible: false
+        //opacity: 0.0
+
+        property bool folded: true
+        state: !folded ? "Visible" : "Invisible"
+        states: [
+            State{
+                name: "Visible"
+                PropertyChanges{target: checkModal; opacity: 1.0}
+                PropertyChanges{target: checkModal; visible: true}
+            },
+            State{
+                name:"Invisible"
+                PropertyChanges{target: checkModal; opacity: 0.0}
+                PropertyChanges{target: checkModal; visible: false}
+            }
+        ]
+
+        transitions: [
+            Transition {
+                from: "Visible"
+                to: "Invisible"
+
+                SequentialAnimation{
+                    NumberAnimation {
+                        target: checkModal
+                        property: "opacity"
+                        duration: 500
+                        easing.type: Easing.InOutQuad
+                    }
+                    NumberAnimation {
+                        target: checkModal
+                        property: "visible"
+                        duration: 0
+                    }
+                }
+            },
+
+            Transition {
+                from: "Invisible"
+                to: "Visible"
+                SequentialAnimation{
+                    NumberAnimation {
+                        target: checkModal
+                        property: "visible"
+                        duration: 0
+                    }
+                    NumberAnimation {
+                        target: checkModal
+                        property: "opacity"
+                        duration: 500
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+            }
+        ]
+
+        Rectangle {
+            anchors.fill: parent
+            color: background_color
+            opacity: 0.7
+        }
+
+        Rectangle {
+            id: checkModalMain
+            height: parent.height * 0.4
+            width: parent.width * 0.4
+            anchors.centerIn: parent
+            color: primary_color
+            radius: this.height * 0.04
+
+            Column {
+                width: parent.width
+                height: childrenRect.height
+                anchors.centerIn: parent
+                leftPadding: this.width * 0.15
+                rightPadding: this.leftPadding
+
+                Text {
+                    id: checkModalTitle
+                    text: "Connecting"
+                    color: gray_darkish
+                    font.pixelSize: text_h1
+                    font.family: inter.name
+                    font.weight: Font.ExtraBold
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+
+                BusyIndicator {
+                    id: checkModalIndicator
+                    running: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    topPadding: text_h1
+                }
+
+                Image {
+                    id: checkModalAlert
+                    height: checkModalIndicator.height
+                    width: this.height
+                    source: "icons/alert-circle.svg"
+                    smooth: true
+                    sourceSize.width: this.width
+                    sourceSize.height: this.height
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    ColorOverlay{
+                        anchors.fill: checkModalAlert
+                        source: checkModalAlert
+                        color: gray_darkish
+                        transform: rotation
+                        antialiasing: true
+                    }
+                }
+
+                Text {
+                    id: checkModalText
+                    width: parent.width * .8
+                    text: ""
+                    color: gray_darkish
+                    wrapMode: Text.WordWrap
+                    font.pixelSize: text_h4
+                    font.family: inter.name
+                    font.weight: Font.Bold
+                    bottomPadding: text_h4 * 2
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    visible: false
+                }
+
+                Rectangle {
+                    id: checkModalbutton
+                    color: gray_darkish
+                    width: parent.width * 0.3
+                    height: text_h2 * 3
+                    radius: this.height
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    visible: false
+
+                    Text {
+                        id: checkModalButtonText
+                        text: ""
+                        color: white
+                        anchors.fill: parent
+                        font.pixelSize: text_h2
+                        font.family: inter.name
+                        font.weight: Font.ExtraBold
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            checkModal.folded = true
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

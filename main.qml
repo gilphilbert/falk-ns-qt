@@ -4,18 +4,14 @@ import QtQuick.Controls 2.15
 import Qt.labs.settings 1.0
 import QtQml.Models 2.15
 
-//import "ns-script.js" as NSScript
-//Component.onCompleted: NSScript.createTiles()
-
 Window {
     width: 1024
     height: 600
     color: background_color
     id: appWindow
     visible: true
-    //visibility: "FullScreen"
 
-    readonly property color yellow: "#F9C22E" //"#E3B505"
+    readonly property color yellow: "#F9C22E"
     readonly property color white: "#FCF7F8"
     readonly property color blue: "#4A6FA5"
     readonly property color blue_light: "#353a50"
@@ -28,6 +24,7 @@ Window {
     readonly property color gray_dark: "#373F47"
     readonly property color gray_darkish: "#4C5965"
     readonly property color gray_mid: "#5F6E7B"
+    readonly property color red: "#F9682E"
 
     readonly property color background_color: gray_dark
     readonly property color background_pop_color: gray_darkish
@@ -35,6 +32,7 @@ Window {
     readonly property color secondary_color: white
     readonly property color text_color: white
     readonly property color secondary_text_color: gray_dark
+    readonly property color danger_color: red
 
     readonly property int text_h1: Math.round(this.height * 0.042)
     readonly property int text_h2: Math.round(this.height * 0.028)
@@ -64,7 +62,7 @@ Window {
     property int playPosition: -1
     property int playElapsed: 0
 
-    property var currentTrack: { "title":"", "artist":"", "duration":0, "album":"", "art":"", "discart":"", "playing":false, "shortformat":"" }
+    property var currentTrack: { "title":"", "artist":"", "duration":0, "album":"", "art":"", "discart":"", "artistart": "", "backgroundart": "", "playing":false, "shortformat":"" }
 
     ListModel {
         id: queueList
@@ -86,16 +84,27 @@ Window {
                     evtData = JSON.parse(evt.slice(evt.indexOf(" ")).trim())
 
                 if (evtName === "queue") {
-                    queue = evtData.queue
 
-                                      // <!------------------------------- super rudimentary, we need to actually check the items to make sure it's an enqueue
-                    if (queue.length === queueList.count + 1 && playPosition > -1) {
-                        try {
-                            stackView.currentItem.animateEnqueue()
-                        } catch (e) {
-                            // don't really need this, it means that the player isn't active
+                    // check to see if the queue is the same other than one new item, then show the enqueue animation
+                    if (evtData.queue.length === queue.length + 1) {
+                        let matchCount = 0
+                        evtData.queue.forEach(function (nqi) {
+                            queue.forEach(function (oqi) {
+                                if (nqi.title === oqi.title && nqi.artist === oqi.artist && nqi.album === oqi.album) {
+                                    matchCount++
+                                }
+                            })
+                        })
+                        if (matchCount == queue.length) {
+                            try {
+                                stackView.currentItem.animateEnqueue()
+                            } catch (e) {
+                                // don't really need this, it means that the player isn't active
+                            }
                         }
                     }
+
+                    queue = evtData.queue
 
                     queueList.clear()
                     queue.forEach(item => {
@@ -126,7 +135,7 @@ Window {
 
     Settings {
         id: settings
-        property string host: "127.0.0.1"
+        property string host: ""
     }
 
     function setSettings(key, value) {
@@ -139,14 +148,15 @@ Window {
     }
 
     function connectToServer() {
-        currentTrack = { "title":"", "artist":"", "duration":0, "album":"", "art":"", "discart":"", "playing":false, "shortformat":"" }
+        currentTrack = { "title":"", "artist":"", "duration":0, "album":"", "art":"", "discart":"", "artistart": "", "backgroundart": "", "playing":false, "shortformat":"" }
         queue = []
         playPaused = true
         playPosition = -1
         playElapsed = 0
         stackView.clear();
-        sse.setServer("http://" + getSettings("host") + "/events")
+
         stackView.push("Player.qml")
+
     }
 
     Component.onCompleted: {
@@ -154,6 +164,7 @@ Window {
         sse.onDisconnected.connect(eventDisconnect)
         sse.onPaused.connect(function (state) { playPaused = state; playTimer.running = !state })
         //sse.onPosition.connect(function (position) { playPosition = position })
+
         connectToServer()
 
         power.onAcChanged.connect(updatePower)
@@ -165,12 +176,10 @@ Window {
     property int batteryPercent: 0;
 
     function updatePower(value) {
-        console.log("Got AC change :: " + value)
         ac = value
     }
 
     function updateBattery(value) {
-        console.log("Got Battery change :: " + value)
         batteryPercent = value
     }
 

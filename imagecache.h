@@ -5,13 +5,35 @@
 #include <QImage>
 #include <QQuickImageProvider>
 #include <QImageReader>
+#include <QtCore>
 
-#include "downloader.h"
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
-class CachedImageProvider : public QQuickImageProvider {
+#include <QSettings>
+
+class AsyncImageResponse : public QQuickImageResponse {
+    Q_OBJECT
 public:
-    CachedImageProvider(): QQuickImageProvider(QQuickImageProvider::Image) {};
-    virtual QImage requestImage ( const QString &id, QSize *size, const QSize &requestedSize );
+    explicit AsyncImageResponse(const QString &id, QSize const& requestedSize);
+    QQuickTextureFactory *textureFactory() const override;
+
+public slots:
+    void onResponseFinished();
+
+protected:
+    QNetworkAccessManager m_imageLoader;
+    QNetworkReply* m_reply;
+    QSize m_requestedSize;
+    QImage m_resultImage;
+    QFile output;
+    QString filename;
+    bool cacheImage = true;
+};
+
+class AsyncImageCache : public QQuickAsyncImageProvider {
+    public:
+    QQuickImageResponse *requestImageResponse(const QString &id, const QSize &requestedSize) override;
 };
 
 #endif // IMAGECACHE_H

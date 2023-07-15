@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Shapes 1.15
 import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.15
 
@@ -37,6 +36,8 @@ Rectangle {
     //progress bar
     readonly property real progressBarHeight: this.height * 0.015
 
+    property bool hasBigArt: currentTrack.backgroundart !== "" || currentTrack.artistart !== ""
+
     function open() {
         this.y = 0
     }
@@ -44,6 +45,7 @@ Rectangle {
     function close() {
         this.y = 0 - Window.height
     }
+
     Item {
         anchors.fill: parent
         Image {
@@ -51,15 +53,15 @@ Rectangle {
             width: parent.width
             height: parent.height
             anchors.centerIn: parent
-            source: "image://AsyncImage/blur" + currentTrack.art
+            source: "image://AsyncImage/lrge" + ((currentTrack.backgroundart !== "") ? currentTrack.backgroundart : ((currentTrack.artistart !== "") ? currentTrack.artistart : currentTrack.art))
             fillMode: Image.PreserveAspectCrop
             smooth: true
-            visible: currentTrack.art !== ""
+            visible: true
         }
         FastBlur {
             anchors.fill: backgroundArt
             source: backgroundArt
-            radius: 56
+            radius: hasBigArt ? 0 : 56
         }
     }
 
@@ -67,46 +69,79 @@ Rectangle {
         anchors.fill: parent
         color: background_color
         opacity: 0.8
-        visible: currentTrack.art !== ""
+        visible: backgroundArt.visible
     }
 
     Row {
-        anchors.fill: parent
+        height: Window.height
+        width: Window.width
+
         Column {
             id: artColumn
-            width: parent.width * 0.4
-            anchors.verticalCenter: parent.verticalCenter
+            width: parent.width * ((hasBigArt) ? 0.25 : 0.4)
+            //anchors.verticalCenter: parent.verticalCenter
             leftPadding: parent.width * 0.1
             rightPadding: parent.width * 0.1
+            y: ((hasBigArt) ? Window.height - this.width * 0.1 - playingArt.height : (Window.height / 2 - playingArt.height / 2))
 
-            Image {
-                id: playingArt
-                source: "image://AsyncImage/lrge" + currentTrack.art
-                height: parent.width * 0.8
-                width: this.height
-                fillMode: Image.PreserveAspectCrop
-                smooth: true
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                layer.enabled: true
-                layer.effect: OpacityMask {
-                    maskSource: mask
+            Behavior on y {
+                NumberAnimation {
+                    easing.type: Easing.InOutCubic
+                    duration: 300
                 }
             }
 
-            Rectangle {
-                id: mask
-                anchors.fill: playingArt
-                radius: this.height * radiusPercent
-                visible: false
+            Behavior on width {
+                NumberAnimation {
+                    easing.type: Easing.InOutCubic
+                    duration: 300
+                }
             }
+
+                Image {
+                    id: playingArt
+                    source: "image://AsyncImage/lrge" + currentTrack.art
+                    height: this.width
+                    width: parent.width * 0.8
+                    fillMode: Image.PreserveAspectCrop
+                    smooth: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    layer.enabled: true
+                    layer.effect: OpacityMask {
+                        maskSource: mask
+                    }
+                }
+
+                Rectangle {
+                    id: mask
+                    anchors.fill: playingArt
+                    radius: this.height * radiusPercent
+                    visible: false
+                }
+
+
         }
         Column {
-            width: parent.width * 0.6
-            spacing: parent.height * 0.035
+            width: parent.width * ((hasBigArt) ? 0.75 : 0.6) - artColumn.width * 0.1
+            spacing: parent.height * 0.025
             leftPadding: 0
             rightPadding: parent.width * 0.1
-            anchors.top: artColumn.top
+            anchors.verticalCenter: artColumn.verticalCenter
+
+            Behavior on y {
+                NumberAnimation {
+                    easing.type: Easing.InOutCubic
+                    duration: 400
+                }
+            }
+
+            Behavior on width {
+                NumberAnimation {
+                    easing.type: Easing.InOutCubic
+                    duration: 300
+                }
+            }
 
             Text {
                 id: homeTitle
@@ -116,7 +151,7 @@ Rectangle {
                 font.weight: Font.ExtraBold
                 text: currentTrack.title
                 elide: Text.ElideRight
-                width: parent.width
+                width: parent.width - anchors.LeftAnchor
             }
             Text {
                 color: text_color
@@ -138,7 +173,7 @@ Rectangle {
                     leftPadding: appWindow.height * 0.0172
                     rightPadding: this.leftPadding
                     topPadding: this.leftPadding / 1.8
-                    bottomPadding: this.topPadding - 3
+                    bottomPadding: this.topPadding - 2
                 }
                 width: childrenRect.width
                 height: childrenRect.height
@@ -146,7 +181,7 @@ Rectangle {
             }
 
             Column {
-                width: parent.width - parent.leftPadding - parent.rightPadding
+                width: parent.width// - parent.rightPadding
                 height: childrenRect.height
                 spacing: parent.height * 0.035
                 // -------- PROGRESS BAR -------- //
@@ -193,6 +228,25 @@ Rectangle {
 
         } // Column
     } //Row
+
+    Item {
+        height: Window.height * 0.083
+        width: this.height
+        x: Window.width - this.width
+        y: 0
+
+        visible: !(!ac && batteryPercent === 0)
+
+        Image {
+            source: ac ? "icons/battery-charging.svg" : batteryPercent > 83 ? "icons/battery-100.svg" : batteryPercent > 66 ? "icons/battery-75.svg" :  batteryPercent > 33  ? "icons/battery-50.svg" : batteryPercent > 15 ? "icons/battery-25.svg" : "icons/battery-0.svg"
+            height: parent.height * .45
+            width: this.height
+            anchors.centerIn: parent
+            smooth: true
+            sourceSize.width: this.width
+            sourceSize.height: this.height
+        }
+    }
 
     MouseArea {
         anchors.fill: parent
