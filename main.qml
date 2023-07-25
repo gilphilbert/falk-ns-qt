@@ -101,7 +101,7 @@ Window {
     }
 
     function pausedChanged(state) {
-        if (playPaused && !state) {
+        if (!playPaused && state) {
             resetTouchTimer()
             mainPlaying.close()
         }

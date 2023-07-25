@@ -23,7 +23,7 @@ DisplayController::DisplayController(QObject *parent) : QObject(parent) {
     if (m_brightness_path != "" && QFile::exists(m_brightness_path)) { //need to check that it's writeable, too
         m_act = true;
         on();
-        //qInfo() << "Display control file found";
+        //found a control file, turn the display on
     } else {
         qInfo() << "Display control file not provided or doesn't exist";
     }
