@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.15
 Rectangle {
     id: queueScreen
 
-    color: background_pop_color
+    color: blue
 
     height: parent.height - playerFooter
     width: parent.width
@@ -92,14 +92,24 @@ Rectangle {
                 musicAPIRequest("queue/" + index, null, "DELETE")
             }
 
-            Item {
+            Rectangle {
                 id: content
+                color: held ? "lightsteelblue" : "transparent"
+                clip: true
 
                 Rectangle {
-                    color: held ? "lightsteelblue" : playing ?  background_color : "transparent"
                     anchors.fill: parent
+                    color: white
+                    opacity: held ? 0 : 0.08
                     radius: this.height * radiusPercent
-                    Behavior on color { ColorAnimation { duration: 250 } }
+                //    radius: this.height * radiusPercent
+                //    Behavior on color { ColorAnimation { duration: 250 } }
+                }
+                radius: this.height * radiusPercent
+
+                border {
+                    color: playing ? primary_color : "transparent"
+                    width: 2
                 }
 
                 anchors {

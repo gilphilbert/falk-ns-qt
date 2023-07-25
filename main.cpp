@@ -22,8 +22,8 @@ int main(int argc, char *argv[]) {
 
     QQmlApplicationEngine engine;
 
-    Network::Manager *manager = Network::Manager::getInstance();
-    engine.rootContext()->setContextProperty("sse", manager);
+    Events *events= Events::getInstance();
+    engine.rootContext()->setContextProperty("sse", events);
 
     DisplayController *display = DisplayController::instance();
     engine.rootContext()->setContextProperty("display", display);

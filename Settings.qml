@@ -118,8 +118,12 @@ Rectangle {
                 Rectangle {
                     width: settingsContainer.width * 0.13
                     height: settingsContainer.height * 0.1
-                    color: hostHasChanged ? primary_color : background_pop_color
-                    radius: this.height * radiusPercent
+                    color: hostHasChanged ? primary_color : "transparent"//background_pop_color
+                    radius: this.height// * radiusPercent
+                    border {
+                        width: 2
+                        color: primary_color
+                    }
 
                     Behavior on color {
                         ColorAnimation { duration: 150 }
@@ -162,9 +166,14 @@ Rectangle {
                 Rectangle {
                     width: settingsContainer.width * 0.13
                     height: settingsContainer.height * 0.1
-                    color: background_pop_color
+                    color: "transparent" //background_pop_color
+                    border {
+                        width: 2
+                        color: primary_color
+                    }
 
-                    radius: this.height * radiusPercent
+                    radius: this.height //* radiusPercent
+
                     Text {
                         anchors.fill: parent
                         text: "Reset"
@@ -201,8 +210,12 @@ Rectangle {
                     width: settingsContainer.width * 0.13
                     height: settingsContainer.height * 0.1
                     color: danger_color
+                    border {
+                        width: 2
+                        color: danger_color
+                    }
 
-                    radius: this.height * radiusPercent
+                    radius: this.height// * radiusPercent
                     Text {
                         anchors.fill: parent
                         text: "Reboot"

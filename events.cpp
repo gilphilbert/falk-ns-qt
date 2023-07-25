@@ -1,19 +1,3 @@
-/*
- *   This file is part of Qt-SSE-Demo.
- *
- *   Qt-SSE-Demo is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   Qt-SSE-Demo is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Qt-SSE-Demo.  If not, see <http://www.gnu.org/licenses/>.
- */
 #include "events.h"
 
 #include <QJsonDocument>
@@ -21,9 +5,9 @@
 #include <QJsonValue>
 #include <QJsonArray>
 
-Network::Manager *Network::Manager::m_instance = nullptr;
+Events *Events::m_instance = nullptr;
 
-Network::Manager::Manager(QObject *parent): QObject(parent) {
+Events::Events(QObject *parent): QObject(parent) {
     this->setQNAM(new QNetworkAccessManager(this));
 
     connect(
@@ -31,29 +15,27 @@ Network::Manager::Manager(QObject *parent): QObject(parent) {
         SIGNAL(finished(QNetworkReply *)),
         this,
         SLOT(streamFinished(QNetworkReply *))
-    );
+        );
 
     m_retries = 0;
-    _paused = 1;
-    _position = 0;
 }
 
 
-Network::Manager *Network::Manager::getInstance() {
+Events *Events::getInstance() {
     if (m_instance == nullptr) {
-        m_instance = new Manager();
+        m_instance = new Events();
     }
     return m_instance;
 }
 
 
-void Network::Manager::setServer(const QUrl &url) {
+void Events::setServer(const QUrl &url) {
     QNetworkRequest request = this->prepareRequest(url);
     m_reply = this->QNAM()->get(request);
     connect(m_reply, SIGNAL(readyRead()), this, SLOT(streamReceived()));
 }
 
-void Network::Manager::streamFinished(QNetworkReply *reply) {
+void Events::streamFinished(QNetworkReply *reply) {
     if(m_retries < MAX_RETRIES) {
         m_retries++;
         this->setServer(reply->url());
@@ -65,10 +47,9 @@ void Network::Manager::streamFinished(QNetworkReply *reply) {
 }
 
 
-void Network::Manager::streamReceived() {
+void Events::streamReceived() {
     QString event = QString(m_reply->readAll()).simplified().replace("data: ", "");
     m_retries = 0;
-    emit eventData(event);
 
     QStringList eventList;
     eventList = event.split("event: ");
@@ -79,53 +60,43 @@ void Network::Manager::streamReceived() {
         QString _evtName = _evt.left(_spacePos).trimmed();
 
         if (_evtName.length() > 0) {
-            _evt.remove(0, _spacePos).trimmed();
-            //qInfo() << _evtName;
-            //qInfo() << _evt;
+            QString discard = _evt.remove(0, _spacePos).trimmed();
 
             if (_evtName == "status") {
                 QByteArray json_bytes = _evt.toLocal8Bit();
                 auto json_doc = QJsonDocument::fromJson(json_bytes);
                 QJsonObject object = json_doc.object();
 
-                bool __paused = object.value("paused").toBool();
-                if (__paused != _paused) {
-                    _paused = __paused;
-                    emit paused(_paused);
-                }
+                bool _paused = object.value("paused").toBool();
+                emit paused(_paused);
 
-                bool __position = object.value("position").toInt();
-                if (__position != _position) {
-                    _position = __position;
-                    emit position(_position);
-                }
+                int _position = object.value("position").toInt();
+                emit position(_position);
+
+                int _elapsed = object.value("elapsed").toInt();
+                emit elapsed(_elapsed);
+
+                //int _repeat = object.value("repeat").toInt();
+                //emit repeat(_repeat);
+
+                int _random = object.value("random").toInt();
+                emit random(_random);
+
             }  else if (_evtName == "queue") {
                 QByteArray json_bytes = _evt.toLocal8Bit();
                 auto json_doc = QJsonDocument::fromJson(json_bytes);
                 QJsonObject object = json_doc.object();
 
-                QJsonObject status = object["state"].toObject();
-
-                bool __paused = status["paused"].toBool();
-                if (__paused != _paused) {
-                    _paused = __paused;
-                    emit paused(_paused);
-                }
-
-                bool __position = status["position"].toInt();
-                if (__position != _position) {
-                    _position = __position;
-                    emit position(_position);
-                }
+                QJsonArray _queue = object["queue"].toArray();
+                emit queue(_queue);
             }
-
         }
     }
 
 }
 
 
-QNetworkRequest Network::Manager::prepareRequest(const QUrl &url) {
+QNetworkRequest Events::prepareRequest(const QUrl &url) {
     QNetworkRequest request(url);
     request.setRawHeader(QByteArray("Accept"), QByteArray(ACCEPT_HEADER));
     request.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
@@ -135,11 +106,11 @@ QNetworkRequest Network::Manager::prepareRequest(const QUrl &url) {
 }
 
 
-QNetworkAccessManager *Network::Manager::QNAM() const {
+QNetworkAccessManager *Events::QNAM() const {
     return m_QNAM;
 }
 
 
-void Network::Manager::setQNAM(QNetworkAccessManager *value) {
+void Events::setQNAM(QNetworkAccessManager *value) {
     m_QNAM = value;
 }

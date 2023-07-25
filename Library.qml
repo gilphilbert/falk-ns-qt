@@ -8,7 +8,7 @@ import QtGraphicalEffects 1.15
 
 Item {
     width: Window.width
-    height: playerHeight
+    height: playerHeight - playerFooter
     clip: true
 
     property int thumbSize: Math.round(width / 5)

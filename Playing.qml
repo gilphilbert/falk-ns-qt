@@ -186,12 +186,17 @@ Rectangle {
                 spacing: parent.height * 0.035
                 // -------- PROGRESS BAR -------- //
 
-                Rectangle {
+                Item {
                     id: progressBar
                     height: progressBarHeight
                     width: parent.width
-                    color: background_pop_color
-                    radius: this.height
+                    Rectangle {
+                        anchors.fill: parent
+                        color: white
+                        opacity: 0.2
+                        radius: this.height
+                    }
+
                     Rectangle {
                         height: parent.height
                         width: parent.width * (playElapsed / currentTrack.duration)

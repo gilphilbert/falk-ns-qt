@@ -106,7 +106,7 @@ Item {
                 spacing: this.height * 0.3
 
                 Rectangle {
-                    color: currentPage === "playlists" ? primary_color : background_pop_color
+                    color: currentPage === "playlists" ? primary_color : "transparent" //background_pop_color
                     Behavior on color {
                         ColorAnimation { duration: 200 }
                     }
@@ -119,12 +119,19 @@ Item {
                         leftPadding: parent.parent.height * 0.22
                         rightPadding: this.leftPadding
                         topPadding: this.leftPadding / 1.8
-                        bottomPadding: this.topPadding - 3
+                        bottomPadding: this.topPadding// - 3
+                        Behavior on color {
+                            ColorAnimation { duration: 200 }
+                        }
                     }
                     width: childrenRect.width
                     height: childrenRect.height
-                    radius: childrenRect.height * radiusPercent
+                    radius: childrenRect.height //* radiusPercent
                     anchors.verticalCenter: parent.verticalCenter
+                    border {
+                        width: 2
+                        color: primary_color
+                    }
 
                     MouseArea {
                         anchors.fill: parent
@@ -135,7 +142,7 @@ Item {
                 }
 
                 Rectangle {
-                    color: currentPage === "artists" ? primary_color : background_pop_color
+                    color: currentPage === "artists" ? primary_color : "transparent" //background_pop_color
                     Behavior on color {
                         ColorAnimation { duration: 200 }
                     }
@@ -148,12 +155,19 @@ Item {
                         leftPadding: parent.parent.height * 0.22
                         rightPadding: this.leftPadding
                         topPadding: this.leftPadding / 1.8
-                        bottomPadding: this.topPadding - 3
+                        bottomPadding: this.topPadding// - 3
+                        Behavior on color {
+                            ColorAnimation { duration: 200 }
+                        }
                     }
                     width: childrenRect.width
                     height: childrenRect.height
-                    radius: childrenRect.height * radiusPercent
+                    radius: childrenRect.height //* radiusPercent
                     anchors.verticalCenter: parent.verticalCenter
+                    border {
+                        width: 2
+                        color: primary_color
+                    }
 
                     MouseArea {
                         anchors.fill: parent
@@ -164,7 +178,7 @@ Item {
                 }
 
                 Rectangle {
-                    color: currentPage === "albums" ? primary_color : background_pop_color
+                    color: currentPage === "albums" ? primary_color : "transparent" //background_pop_color
                     Behavior on color {
                         ColorAnimation { duration: 200 }
                     }
@@ -177,12 +191,19 @@ Item {
                         leftPadding: parent.parent.height * 0.22
                         rightPadding: this.leftPadding
                         topPadding: this.leftPadding / 1.8
-                        bottomPadding: this.topPadding - 3
+                        bottomPadding: this.topPadding// - 3
+                        Behavior on color {
+                            ColorAnimation { duration: 200 }
+                        }
                     }
                     width: childrenRect.width
                     height: childrenRect.height
-                    radius: childrenRect.height * radiusPercent
+                    radius: childrenRect.height //* radiusPercent
                     anchors.verticalCenter: parent.verticalCenter
+                    border {
+                        width: 2
+                        color: primary_color
+                    }
 
                     MouseArea {
                         anchors.fill: parent
@@ -193,7 +214,7 @@ Item {
                 }
 
                 Rectangle {
-                    color: currentPage === "genres" ? primary_color : background_pop_color
+                    color: currentPage === "genres" ? primary_color : "transparent" //background_pop_color
                     Behavior on color {
                         ColorAnimation { duration: 200 }
                     }
@@ -206,12 +227,19 @@ Item {
                         leftPadding: parent.parent.height * 0.22
                         rightPadding: this.leftPadding
                         topPadding: this.leftPadding / 1.8
-                        bottomPadding: this.topPadding - 3
+                        bottomPadding: this.topPadding// - 3
+                        Behavior on color {
+                            ColorAnimation { duration: 200 }
+                        }
                     }
                     width: childrenRect.width
                     height: childrenRect.height
-                    radius: childrenRect.height * radiusPercent
+                    radius: childrenRect.height// * radiusPercent
                     anchors.verticalCenter: parent.verticalCenter
+                    border {
+                        width: 2
+                        color: primary_color
+                    }
 
                     MouseArea {
                         anchors.fill: parent
@@ -353,13 +381,13 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            color: background_pop_color
+            color: blue //background_pop_color
         }
 
         Rectangle {
             width: parent.width
             height: parent.height * 0.04
-            color: gray_mid
+            color: "transparent"//gray_mid
 
             Rectangle {
                 width: parent.width * (playElapsed / currentTrack.duration)
@@ -461,7 +489,7 @@ Item {
             Rectangle {
                 height: parent.height * 0.6
                 width: this.height
-                color: appWindow.playPaused ? gray_mid : primary_color
+                color: appWindow.playPaused ? blue_dark : primary_color
                 radius: this.height * 0.5
                 anchors.centerIn: parent
 
