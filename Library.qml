@@ -134,7 +134,20 @@ Item {
                     startPos = 4
                 }
 
-                if (textFilter === "" || item.model.name.slice(startPos, startPos + 1).toLowerCase() === textFilter) {
+                let showThis = true
+
+                if (textFilter.length === 1) {
+                    if (item.model.name.slice(startPos, startPos + 1).toLowerCase() !== textFilter) {
+                        showThis = false
+                        //scroll to?
+                    }
+                } else if (textFilter.length > 1) {
+                    if (! item.model.name.slice(startPos, item.model.name.length).toLowerCase().includes(textFilter)) {
+                        showThis = false
+                    }
+                }
+
+                if (showThis) {
                     items.addGroups(i, 1, "shown")
                 } else {
                     items.removeGroups(i, 1, "shown")
@@ -155,10 +168,6 @@ Item {
 
     property string textFilter: ""
     onTextFilterChanged: displayDelegateModel.filter()
-
-    function filter(character) {
-        textFilter = character
-    }
 
     GridView {
         id: grid
@@ -201,62 +210,13 @@ Item {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                if (textFilter === "") {
+                //if (textFilter === "") {
                     drawer.open()
-                } else {
-                    textFilter = ""
-                }
+                //} else {
+                //    textFilter = ""
+                //}
             }
         }
-
-        /*
-        Rectangle {
-            anchors.fill: parent
-            radius: 35
-            color: white
-            visible: grid.textFilter === ""
-
-            Text {
-                text: "A-Z"
-                color: primary_color
-                font.family: inter.name
-                font.pixelSize: text_h2
-                font.weight: Font.ExtraBold
-                anchors.centerIn: parent
-                topPadding: 3
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    drawer.open()
-                }
-            }
-
-        }
-        Rectangle {
-            anchors.fill: parent
-            radius: 35
-            color: primary_color
-            visible: grid.textFilter !== ""
-
-            Text {
-                text: "X"
-                color: white
-                font.family: inter.name
-                font.pixelSize: text_h2
-                font.weight: Font.ExtraBold
-                anchors.centerIn: parent
-                topPadding: 3
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    grid.textFilter = ""
-                }
-            }
-        }*/
     }
 
     property var alphaNumeric: [ "123", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" ]
@@ -367,7 +327,7 @@ Item {
 
                             onClicked: {
                                 drawer.close()
-                                textFilter = model.modelData
+                                textFilter += model.modelData
                             }
                         }
                     }

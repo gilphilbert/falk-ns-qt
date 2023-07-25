@@ -28,8 +28,8 @@ Window {
     readonly property color gray_mid: "#5F6E7B"
     readonly property color red: "#B76163"
 
-    readonly property color background_color: blue_dark //gray_dark
-    readonly property color background_pop_color: blue_darkish //gray_darkish
+    readonly property color background_color: blue_dark
+    readonly property color background_pop_color: blue_darkish
     readonly property color primary_color: yellow
     readonly property color secondary_color: white
     readonly property color text_color: white
