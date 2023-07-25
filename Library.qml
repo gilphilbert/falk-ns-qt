@@ -326,7 +326,7 @@ Item {
                             anchors.fill: parent
 
                             onClicked: {
-                                drawer.close()
+                                //drawer.close()
                                 textFilter += model.modelData
                             }
                         }
