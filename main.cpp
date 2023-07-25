@@ -28,7 +28,6 @@ int main(int argc, char *argv[]) {
     DisplayController *display = DisplayController::instance();
     engine.rootContext()->setContextProperty("display", display);
 
-    //PowerManager *power = new PowerManager(); //= PowerManager::instance();
     PowerStatus *power_status = new PowerStatus();
     engine.rootContext()->setContextProperty("power", power_status);
 

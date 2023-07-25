@@ -151,8 +151,9 @@ Rectangle {
                 font.weight: Font.ExtraBold
                 text: currentTrack.title
                 elide: Text.ElideRight
-                width: parent.width - anchors.LeftAnchor
+                width: parent.width - parent.rightPadding
             }
+
             Text {
                 color: text_color
                 font.pixelSize: mainFont
@@ -160,7 +161,7 @@ Rectangle {
                 font.weight: Font.ExtraBold
                 text: currentTrack.artist + " - " + currentTrack.album
                 elide: Text.ElideRight
-                width: parent.width
+                width: parent.width - parent.rightPadding
             }
             Rectangle {
                 color: primary_color
@@ -199,7 +200,7 @@ Rectangle {
 
                     Rectangle {
                         height: parent.height
-                        width: parent.width * (playElapsed / currentTrack.duration)
+                        width: parent.width * (playElapsed / (currentTrack.duration * 1000))
                         color: primary_color
                         x: 0
                         y: 0
@@ -214,7 +215,7 @@ Rectangle {
                     Text {
                         color: text_color
                         font.pixelSize: appWindow.width * 0.017
-                        text: getPrettyTime(playElapsed)
+                        text: getPrettyTimeMs(playElapsed)
                         font.family: inter.name
                         font.weight: Font.ExtraBold
                         anchors.left: parent.left

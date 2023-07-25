@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.15
 Rectangle {
     id: queueScreen
 
-    color: blue
+    color: blue_subdued
 
     height: parent.height - playerFooter
     width: parent.width
@@ -89,7 +89,7 @@ Rectangle {
                 musicAPIRequest("move/" + index + "/" + findThisItem(index))
             }
             onClicked: {
-                musicAPIRequest("queue/" + index, null, "DELETE")
+                musicAPIRequest("jump/" + index)
             }
 
             Rectangle {
@@ -201,6 +201,31 @@ Rectangle {
                             font.weight: Font.Normal
                             color: text_color
                             font.pixelSize: text_h3
+                        }
+                    }
+                }
+                Rectangle {
+                    height: 46
+                    width: 46
+                    color: red
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.rightMargin: 30
+                    radius: 46
+
+                    Image {
+                        source: "icons/trash.svg"
+                        width: parent.width * 0.5
+                        height: parent.height * 0.5
+                        sourceSize.width: this.width
+                        sourceSize.height: this.height
+                        anchors.centerIn: parent
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            musicAPIRequest("queue/" + index, null, "DELETE")
                         }
                     }
                 }

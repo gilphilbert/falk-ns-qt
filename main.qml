@@ -14,8 +14,9 @@ Window {
     readonly property color yellow: "#EFCB68"
     readonly property color white: "#FCF7F8"
     readonly property color blue: "#4A6FA5"
-    readonly property color blue_light: "#353a50"
-    readonly property color blue_lighter: "#454c63"
+    readonly property color blue_light: "#517ab5"
+    readonly property color blue_lighter: "#617fab"
+    readonly property color blue_subdued: "#416291"
     readonly property color blue_dark: "#465b7a"
     readonly property color blue_darkish: "#596c88"
     readonly property color black: "#444"
@@ -58,20 +59,6 @@ Window {
         source: "fonts/Inter-Black.otf"
     }
 
-    property var queue: []
-    property bool playPaused: true
-    property int playPosition: -1
-    property int playElapsed: 0
-    property var currentTrack: { "title":"", "artist":"", "duration":0, "album":"", "art":"", "discart":"", "artistart": "", "backgroundart": "", "playing":false, "shortformat":"" }
-
-    Timer {
-        id: playTimer
-        interval: 1000
-        running: !playPaused
-        repeat: true
-        onTriggered: if (currentTrack.duration > 0 && playElapsed < currentTrack.duration) playElapsed++
-    }
-
     Settings {
         id: settings
         property string host: ""
@@ -85,60 +72,10 @@ Window {
     function getSettings(key) {
         return settings.value(key)
     }
-    function eventDisconnect(event){
-        //server connection lost (couldn't connect/reconnect)
-    }
 
-    function connectToServer() {
-        currentTrack = { "title":"", "artist":"", "duration":0, "album":"", "art":"", "discart":"", "artistart": "", "backgroundart": "", "playing":false, "shortformat":"" }
-        queue = []
-        playPaused = true
-        playPosition = -1
-        playElapsed = 0
-        stackView.clear();
-
-        stackView.push("Player.qml")
-    }
-
-    function pausedChanged(state) {
-        if (!playPaused && state) {
-            resetTouchTimer()
-            mainPlaying.close()
-        }
-        playPaused = state
-    }
-
-    ListModel {
-        id: queueList
-    }
-
-    function queueUpdated(newQueue) {
-        queue = newQueue
-
-        queueList.clear()
-        queue.forEach(item => {
-            queueList.append(item)
-        })
-        //stackView.currentItem.animateEnqueue()
-    }
-
-    function elapsedChanged(seconds) {
-        playElapsed = seconds
-    }
-
-    function positionChanged(index) {
-        playPosition = index
-        currentTrack = queue[index]
-    }
     Component.onCompleted: {
-        sse.onDisconnected.connect(eventDisconnect)
-        sse.onPaused.connect(pausedChanged)
-        sse.onElapsed.connect(elapsedChanged)
-        sse.onPosition.connect(positionChanged)
-        sse.onQueue.connect(queueUpdated)
-
-        connectToServer()
-
+        stackView.clear();
+        stackView.push("Player.qml")
         power.onAcChanged.connect(updatePower)
         power.onBatteryChanged.connect(updateBattery)
         power.init();
