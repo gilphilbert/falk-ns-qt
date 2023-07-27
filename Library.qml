@@ -1,6 +1,5 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.4
-//import QtQuick.Shapes 1.15
 import QtQml.Models 2.3
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.3
@@ -185,7 +184,7 @@ Item {
         height: parent.height * 0.05
         width: this.height
         x: 0
-        y: 10 - appWindow.height * 0.14
+        y: 10 - player.height * 0.14
         z: 2
 
         Image {
@@ -227,8 +226,8 @@ Item {
 
     Drawer {
         id: drawer
-        width: 0.55 * appWindow.width
-        height: appWindow.height
+        width: 0.55 * player.width
+        height: player.height
         edge: Qt.RightEdge
 
         Rectangle {

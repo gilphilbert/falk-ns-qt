@@ -170,8 +170,8 @@ Rectangle {
                     font.pixelSize: qualityFont
                     font.family: inter.name
                     font.weight: Font.ExtraBold
-                    color: appWindow.color
-                    leftPadding: appWindow.height * 0.0172
+                    color: player.color
+                    leftPadding: player.height * 0.0172
                     rightPadding: this.leftPadding
                     topPadding: this.leftPadding / 1.8
                     bottomPadding: this.topPadding - 2
@@ -214,7 +214,7 @@ Rectangle {
 
                     Text {
                         color: text_color
-                        font.pixelSize: appWindow.width * 0.017
+                        font.pixelSize: player.width * 0.017
                         text: getPrettyTimeMs(playElapsed)
                         font.family: inter.name
                         font.weight: Font.ExtraBold
@@ -222,7 +222,7 @@ Rectangle {
                     }
                     Text {
                         color: text_color
-                        font.pixelSize: appWindow.width * 0.017
+                        font.pixelSize: player.width * 0.017
                         text: getPrettyTime(currentTrack.duration)
                         font.family: inter.name
                         font.weight: Font.ExtraBold

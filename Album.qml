@@ -127,8 +127,8 @@ Item {
                 }
 
                 Column {
-                    leftPadding: appWindow.width * 0.014648438
-                    bottomPadding: appWindow.height * 0.008333333
+                    leftPadding: player.width * 0.014648438
+                    bottomPadding: player.height * 0.008333333
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width
 
@@ -236,7 +236,7 @@ Item {
                             font.pixelSize: text_h3
                             font.family: inter.name
                             font.weight: Font.ExtraBold
-                            color: appWindow.color
+                            color: player.color
                             leftPadding: qualityPadding
                             rightPadding: qualityPadding
                             topPadding: qualityPadding / 2.05
@@ -270,24 +270,6 @@ Item {
 
         }
     } // scrollview
-
-    /*
-    Component {
-        id: playlistButton
-        RadioButton {
-            //height: 200
-            //width: parent.width
-            text: name
-            onClicked: {
-                selectedPlaylist = id
-            }
-        }
-    }
-
-    onSelectedPlaylistChanged: {
-        console.info(selectedPlaylist)
-    }
-    */
 
     Popup {
         id: additionalOptions
@@ -365,7 +347,7 @@ Item {
 //                Layout.preferredHeight: parent.height * 0.7
 //                Layout.preferredWidth: parent.width
 
-//                spacing: appWindow.height * 0.03
+//                spacing: player.height * 0.03
 
 //                model: playlistList
 //                delegate: playlistButton
@@ -402,17 +384,4 @@ Item {
             }
         }
     }
-/*
-    function playlistHandler(data) {
-        console.info(JSON.stringify(data))
-        playlistList.clear()
-        data.forEach(item => {
-            playlistList.append(item)
-        })
-    }
-
-    Component.onCompleted: {
-        musicAPIRequest("playlist", playlistHandler)
-    }
-*/
 }

@@ -19,13 +19,25 @@ Item {
     states: [
         State{
             name: "Visible"
-            PropertyChanges{target: welcome; opacity: 1.0}
-            PropertyChanges{target: welcome; visible: true}
+            PropertyChanges {
+                target: welcome
+                opacity: 1.0
+            }
+            PropertyChanges {
+                target: welcome
+                visible: true
+            }
         },
         State{
             name:"Invisible"
-            PropertyChanges{target: welcome; opacity: 0.0}
-            PropertyChanges{target: welcome; visible: false}
+            PropertyChanges {
+                target: welcome
+                opacity: 0.0
+            }
+            PropertyChanges {
+                target: welcome
+                visible: false
+            }
         }
     ]
 

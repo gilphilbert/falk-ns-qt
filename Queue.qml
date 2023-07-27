@@ -15,7 +15,7 @@ Rectangle {
     property bool isActive: false
 
     x: 0
-    y: isActive ? 0 : this.height
+    y: isActive ? 0 : player.height
 
     function open() {
         isActive = true
@@ -28,9 +28,6 @@ Rectangle {
     }
     function isOpen() {
         return isActive
-    }
-
-    Component.onCompleted: {
     }
 
     Behavior on y {
@@ -94,23 +91,23 @@ Rectangle {
 
             Rectangle {
                 id: content
-                color: held ? "lightsteelblue" : "transparent"
+                color: "transparent"
                 clip: true
 
                 Rectangle {
                     anchors.fill: parent
                     color: white
-                    opacity: held ? 0 : 0.08
+                    opacity: held ? .25 : playing ? 0.15 : .07
                     radius: this.height * radiusPercent
-                //    radius: this.height * radiusPercent
-                //    Behavior on color { ColorAnimation { duration: 250 } }
+                    Behavior on opacity {
+                        NumberAnimation {
+                            easing.type: Easing.InOutCubic
+                            duration: 300
+                        }
+                    }
                 }
-                radius: this.height * radiusPercent
 
-                border {
-                    color: playing ? primary_color : "transparent"
-                    width: 2
-                }
+                radius: this.height * radiusPercent
 
                 anchors {
                     horizontalCenter: parent.horizontalCenter
@@ -119,8 +116,6 @@ Rectangle {
 
                 width: dragArea.width
                 height: dragArea.height
-
-                //color: dragArea.held ? "lightsteelblue" : "transparent"
 
                 Drag.active: dragArea.held
                 Drag.source: dragArea
@@ -274,7 +269,7 @@ Rectangle {
                 color: primary_color
                 height: childrenRect.height
                 width: childrenRect.width
-                radius: this.height * radiusPercent
+                radius: this.height
 
                 Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
 
@@ -285,10 +280,10 @@ Rectangle {
                     font.weight: Font.ExtraBold
                     font.pixelSize: parent.parent.height * 0.5
 
-                    topPadding: (parent.parent.height - this.font.pixelSize) / 2
+                    topPadding: (parent.parent.height - this.font.pixelSize) / 1.5
                     bottomPadding: topPadding
 
-                    leftPadding: this.topPadding * 1.3
+                    leftPadding: this.topPadding * 1.5
                     rightPadding: this.leftPadding
                 }
                 MouseArea {

@@ -95,5 +95,5 @@ void PowerStatus::scan() {
 
 void PowerStatus::reboot() {
     QProcess *process = new QProcess();
-    process->start("shutdown", QStringList() << "-r" << "0");
+    process->start("systemctl", QStringList() << "reboot");
 }

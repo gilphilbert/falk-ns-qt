@@ -153,9 +153,9 @@ Rectangle {
                                 if (Object.keys(data).includes("name") && data.name === "falkdp" ) {
                                     checkModal.folded = true
                                     setSettings("host", ipInput.text)
-                                    connectToServer(ipInput.text)
+                                    startPlayer(ipInput.text)
                                     settingsContainer.focus = true
-                                    settings.close()
+                                    close()
                                 } else {
                                     showConnectErrorModal()
                                 }
