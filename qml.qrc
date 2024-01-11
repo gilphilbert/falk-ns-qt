@@ -3,7 +3,7 @@
         <file>Playing.qml</file>
         <file>Album.qml</file>
         <file>Library.qml</file>
-        <file>Settings.qml</file>
+        <file>Configure.qml</file>
         <file>Player.qml</file>
         <file>Welcome.qml</file>
         <file>Queue.qml</file>

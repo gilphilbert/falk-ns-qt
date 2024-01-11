@@ -1,24 +1,21 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.15
-
 
 Rectangle {
     width: Window.width
     height: parent.height
+
     color: background_color
 
-    property bool isActive: false
-
-    property bool hostHasChanged: false
-
-    function setHostHasChanged(state) {
-        hostHasChanged = state
-    }
+    id: parentItem
 
     x: isActive ? 0 : this.width
     y: 0
+
+    property bool isActive: false
 
     Behavior on x {
         NumberAnimation {
@@ -32,6 +29,12 @@ Rectangle {
     }
     function close() {
         isActive = false
+    }
+
+    property bool hostHasChanged: false
+
+    function setHostHasChanged(state) {
+        hostHasChanged = state
     }
 
     Item {
@@ -155,7 +158,7 @@ Rectangle {
                                     setSettings("host", ipInput.text)
                                     startPlayer(ipInput.text)
                                     settingsContainer.focus = true
-                                    close()
+                                    settingsScreen.close()
                                 } else {
                                     showConnectErrorModal()
                                 }
@@ -420,7 +423,8 @@ Rectangle {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-               mainSettings.close()
+                console.info("here")
+               parentItem.close()
             }
         }
     }

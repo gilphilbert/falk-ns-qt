@@ -325,7 +325,7 @@ Window {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                   mainSettings.open()
+                   settingsScreen.open()
                 }
             }
         }
@@ -510,6 +510,99 @@ Window {
             }
 
             Item {
+                id: volumeButton
+                height: parent.height
+                width: parent.height
+                anchors.right: queueButton.left
+
+                Image {
+                    source: "icons/volume.svg"
+                    height: parent.height * 0.32
+                    width: this.height
+
+                    sourceSize.width: this.width
+                    sourceSize.height: this.height
+
+                    anchors.centerIn: parent
+                }
+
+                ColorOverlay{
+                    anchors.fill: volumeButton
+                    source: volumeButton
+                    color: volumeControl.visible ? yellow : white
+                    transform: rotation
+                    antialiasing: true
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        volumeControl.visible = !volumeControl.visible
+                    }
+                }
+            }
+
+            Rectangle {
+                id: volumeControl
+                color: blue
+                width: volumeButton.width
+                height: Window.height / 3
+                anchors.bottom: volumeButton.top
+                anchors.left: volumeButton.left
+                anchors.bottomMargin: -10
+
+                visible: false
+
+                radius: 10
+
+                Slider {
+                    id: volumeSlider
+                    height: parent.height - 40
+                    width: parent.width
+                    from: 0
+                    value: 25
+                    to: 100
+                    orientation: Qt.Vertical
+                    anchors.centerIn: parent
+
+                    onMoved: {
+                        musicAPIRequest("volume/" + Math.round(volumeSlider.value))
+                    }
+
+                    background: Rectangle {
+                        implicitWidth: volumeSlider.width * .1
+                        implicitHeight: volumeSlider.height - volumeSlider.topPadding - volumeSlider.bottomPadding
+                        width: implicitWidth
+                        height: implicitHeight
+
+                        radius: this.width
+                        color: blue_lighter
+                        anchors.centerIn: parent
+
+                        Rectangle {
+                            width: parent.width
+                            height: (1 - volumeSlider.visualPosition) * volumeSlider.availableHeight
+                            color: yellow
+                            radius: this.width
+                            anchors.bottom: parent.bottom
+                        }
+
+                    }
+
+                    handle: Rectangle {
+                        implicitWidth: 20
+                        implicitHeight: 20
+                        color: primary_color
+                        x: volumeSlider.leftPadding + volumeSlider.availableWidth / 2 - width / 2
+                        y: volumeSlider.topPadding + volumeSlider.visualPosition * (volumeSlider.availableHeight - height)
+                        radius: 20
+                    }
+
+                }
+            }
+
+
+            Item {
                 id: queueButton
                 height: parent.height
                 width: parent.height
@@ -582,8 +675,8 @@ Window {
         }
     }
 
-    Settings {
-      id: mainSettings
+    Configure {
+        id: settingsScreen
     }
 
     Playing {

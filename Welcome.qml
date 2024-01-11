@@ -158,7 +158,7 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        mainSettings.open()
+                        settingsScreen.open()
                         welcome.close()
                     }
                 }
