@@ -32,6 +32,7 @@ signals:
     void elapsed(int position);
     void random(bool random);
     void repeat(int mode);
+    void volume(int volume);
     void queue(QJsonArray queue);
 
 public slots:

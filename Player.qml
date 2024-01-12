@@ -566,7 +566,7 @@ Window {
                     anchors.centerIn: parent
 
                     onMoved: {
-                        musicAPIRequest("volume/" + Math.round(volumeSlider.value))
+                        musicAPIRequest("volume/" + Math.round(volumeSlider.value), null, "PUT", null)
                     }
 
                     background: Rectangle {
@@ -787,6 +787,7 @@ Window {
         sse.onElapsed.connect(elapsedChanged)
         sse.onPosition.connect(positionChanged)
         sse.onQueue.connect(queueUpdated)
+        sse.onVolume.connect(volumeChanged)
 
         power.onAcChanged.connect(updatePower)
         power.onBatteryChanged.connect(updateBattery)
@@ -868,6 +869,10 @@ Window {
     function positionChanged(index) {
         playPosition = index
         currentTrack = queue[index]
+    }
+
+    function volumeChanged(vol) {
+        volumeSlider.value = vol
     }
 
     //when we're disconnected from the server

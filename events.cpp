@@ -82,6 +82,9 @@ void Events::streamReceived() {
                 int _random = object.value("random").toInt();
                 emit random(_random);
 
+                int _volume = object.value("volume").toInt();
+                emit volume(_volume);
+
             }  else if (_evtName == "queue") {
                 QByteArray json_bytes = _evt.toLocal8Bit();
                 auto json_doc = QJsonDocument::fromJson(json_bytes);
