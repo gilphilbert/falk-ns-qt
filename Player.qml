@@ -514,6 +514,7 @@ Window {
                 height: parent.height
                 width: parent.height
                 anchors.right: queueButton.left
+                visible: volSupport
 
                 Image {
                     source: "icons/volume.svg"
@@ -775,8 +776,16 @@ Window {
 
     //clears the player and connects to the event server
     function startPlayer() {
+        // clear screens from stack
         stack.pop(null)
+
+        // reset the player
+        resetPlayer()
+
+        // connect to the socket server
         sse.setServer("http://" + getSettings("host") + "/events")
+
+        // load the library
         stack.push("Library.qml", { "url": "artists" })
     }
 
@@ -792,9 +801,6 @@ Window {
         power.onAcChanged.connect(updatePower)
         power.onBatteryChanged.connect(updateBattery)
         power.init();
-
-        //reset the player
-        resetPlayer()
 
         //attach the touch event handler
         touchEvents.onTouchDetected.connect(resetTouchTimer)
@@ -816,6 +822,7 @@ Window {
     property int playElapsed: 0
     //holds the current playing item
     property var currentTrack: { "title":"", "artist":"", "duration":0, "album":"", "art":"", "discart":"", "artistart": "", "backgroundart": "", "playing":false, "shortformat":"" }
+    property bool volSupport: true
 
     //timer increments the play
     Timer {
@@ -833,6 +840,7 @@ Window {
         playPaused = true
         playPosition = -1
         playElapsed = 0
+        volSupport = true
     }
 
     //event fired when the server tells us about play/pause
@@ -872,6 +880,11 @@ Window {
     }
 
     function volumeChanged(vol) {
+        console.info(vol)
+        if (vol === -1) {
+            volSupport = false
+            return
+        }
         volumeSlider.value = vol
     }
 
