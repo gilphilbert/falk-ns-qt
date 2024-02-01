@@ -588,8 +588,12 @@ Rectangle {
                 id: volumeButton
                 height: parent.height
                 width: parent.height
+<<<<<<< HEAD
                 anchors.right: parent.right
 
+=======
+                anchors.right: queueButton.left
+>>>>>>> 1a27ace6bc8e5b005761d26a0bc1e5800fcd3480
                 visible: volSupport
 
                 Image {
@@ -794,6 +798,12 @@ Rectangle {
 
         // connect to the socket server
         sse.setServer("http://" + getSettings("host") + "/events")
+<<<<<<< HEAD
+=======
+
+        // load the library
+        stack.push("Library.qml", { "url": "artists" })
+>>>>>>> 1a27ace6bc8e5b005761d26a0bc1e5800fcd3480
     }
 
     Component.onCompleted: {
