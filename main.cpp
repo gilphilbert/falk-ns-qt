@@ -22,6 +22,12 @@ int main(int argc, char *argv[]) {
 
     QQmlApplicationEngine engine;
 
+    int rotate = 0;
+    if (!qgetenv("FALK_CS_ROTATE").isEmpty()) {
+        rotate = qgetenv("FALK_CS_ROTATE").toInt();
+    }
+    engine.rootContext()->setContextProperty("rotate", rotate);
+
     Events *events= Events::getInstance();
     engine.rootContext()->setContextProperty("sse", events);
 

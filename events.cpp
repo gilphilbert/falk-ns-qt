@@ -7,8 +7,10 @@
 
 Events *Events::m_instance = nullptr;
 
+
 Events::Events(QObject *parent): QObject(parent) {
     this->setQNAM(new QNetworkAccessManager(this));
+    this->m_connected = false;
 
     connect(
         this->QNAM(),
@@ -42,6 +44,7 @@ void Events::streamFinished(QNetworkReply *reply) {
     }
     else {
         //qCritical() << "Unable to reconnect, max retries reached";
+        this->m_connected = false;
         emit disconnected();
     }
 }
@@ -50,6 +53,11 @@ void Events::streamFinished(QNetworkReply *reply) {
 void Events::streamReceived() {
     QString event = QString(m_reply->readAll()).simplified().replace("data: ", "");
     m_retries = 0;
+
+    if (this->m_connected == false) {
+        this->m_connected = true;
+        emit connected();
+    }
 
     QStringList eventList;
     eventList = event.split("event: ");

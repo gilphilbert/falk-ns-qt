@@ -4,7 +4,7 @@ import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 import Qt.labs.settings 1.0
 
-Window {
+ApplicationWindow {
     width: 1024
     height: 600
     visible: true
@@ -64,6 +64,10 @@ Window {
 
     property real playerFooter: this.height * 0.15
     property real playerHeight: this.height * 0.85
+
+Rectangle {
+    color: 'transparent'
+    anchors.fill: parent
 
     Column {
         anchors.fill: parent
@@ -510,10 +514,83 @@ Window {
             }
 
             Item {
+                id: queueButton
+                height: parent.height
+                width: parent.height
+                anchors.right: volumeButton.left
+
+                Image {
+                    source: "icons/list.svg"
+                    height: parent.height * 0.32
+                    width: this.height
+
+                    sourceSize.width: this.width
+                    sourceSize.height: this.height
+
+                    anchors.centerIn: parent
+                }
+
+                ColorOverlay{
+                    anchors.fill: queueButton
+                    source: queueButton
+                    color: mainQueue.isActive ? primary_color : white
+                    transform: rotation
+                    antialiasing: true
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        mainQueue.toggle()
+                    }
+                }
+            }
+
+
+            Rectangle {
+                id: enqueueReaction
+                width: 30
+                height: 30
+                color: primary_color
+                anchors.left: queueButton.left
+                y: queueButton.y
+                opacity: 0
+                radius: this.width / 2
+
+                Text {
+                    text: "+1"
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 2
+                    color: white
+                    font.pixelSize: text_h3
+                    font.family: inter.name
+                    font.weight: Font.ExtraBold
+                }
+
+                ParallelAnimation {
+                    id: enqueueAnimation
+                    NumberAnimation {
+                        target: enqueueReaction
+                        property: "y"
+                        to: 0
+                        duration: 500
+                    }
+                    NumberAnimation {
+                        target: enqueueReaction
+                        property: "opacity"
+                        to: 0
+                        duration: 500
+                    }
+                }
+            }
+
+            Item {
                 id: volumeButton
                 height: parent.height
                 width: parent.height
-                anchors.right: queueButton.left
+                anchors.right: parent.right
+
+                visible: volSupport
 
                 Image {
                     source: "icons/volume.svg"
@@ -600,78 +677,6 @@ Window {
 
                 }
             }
-
-
-            Item {
-                id: queueButton
-                height: parent.height
-                width: parent.height
-                anchors.right: parent.right
-
-                Image {
-                    source: "icons/list.svg"
-                    height: parent.height * 0.32
-                    width: this.height
-
-                    sourceSize.width: this.width
-                    sourceSize.height: this.height
-
-                    anchors.centerIn: parent
-                }
-
-                ColorOverlay{
-                    anchors.fill: queueButton
-                    source: queueButton
-                    color: mainQueue.isActive ? primary_color : white
-                    transform: rotation
-                    antialiasing: true
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        mainQueue.toggle()
-                    }
-                }
-            }
-
-
-            Rectangle {
-                id: enqueueReaction
-                width: 30
-                height: 30
-                color: primary_color
-                anchors.left: queueButton.left
-                y: queueButton.y
-                opacity: 0
-                radius: this.width / 2
-
-                Text {
-                    text: "+1"
-                    anchors.centerIn: parent
-                    anchors.verticalCenterOffset: 2
-                    color: white
-                    font.pixelSize: text_h3
-                    font.family: inter.name
-                    font.weight: Font.ExtraBold
-                }
-
-                ParallelAnimation {
-                    id: enqueueAnimation
-                    NumberAnimation {
-                        target: enqueueReaction
-                        property: "y"
-                        to: 0
-                        duration: 500
-                    }
-                    NumberAnimation {
-                        target: enqueueReaction
-                        property: "opacity"
-                        to: 0
-                        duration: 500
-                    }
-                }
-            }
         }
     }
 
@@ -701,6 +706,12 @@ Window {
     Welcome {
         id: welcomeScreen
     }
+
+    Connecting {
+        id: connectingScreen
+    }
+
+}
 
     //api requests to the server
     function musicAPIRequest(urlComponent, callback, action = "GET", data = "", testIP = "") {
@@ -775,13 +786,19 @@ Window {
 
     //clears the player and connects to the event server
     function startPlayer() {
+        // clear screens from stack
         stack.pop(null)
+
+        // reset the player
+        resetPlayer()
+
+        // connect to the socket server
         sse.setServer("http://" + getSettings("host") + "/events")
-        stack.push("Library.qml", { "url": "artists" })
     }
 
     Component.onCompleted: {
         //configure the event handlers
+        sse.onConnected.connect(eventConnect)
         sse.onDisconnected.connect(eventDisconnect)
         sse.onPaused.connect(pausedChanged)
         sse.onElapsed.connect(elapsedChanged)
@@ -792,9 +809,6 @@ Window {
         power.onAcChanged.connect(updatePower)
         power.onBatteryChanged.connect(updateBattery)
         power.init();
-
-        //reset the player
-        resetPlayer()
 
         //attach the touch event handler
         touchEvents.onTouchDetected.connect(resetTouchTimer)
@@ -816,6 +830,7 @@ Window {
     property int playElapsed: 0
     //holds the current playing item
     property var currentTrack: { "title":"", "artist":"", "duration":0, "album":"", "art":"", "discart":"", "artistart": "", "backgroundart": "", "playing":false, "shortformat":"" }
+    property bool volSupport: true
 
     //timer increments the play
     Timer {
@@ -833,6 +848,7 @@ Window {
         playPaused = true
         playPosition = -1
         playElapsed = 0
+        volSupport = true
     }
 
     //event fired when the server tells us about play/pause
@@ -857,7 +873,7 @@ Window {
         queue.forEach(item => {
             queueList.append(item)
         })
-        //stackView.currentItem.animateEnqueue()
+        player.animateEnqueue()
     }
 
     //play elapsed time has changed (sent with play/pause/new track, etc.)
@@ -872,12 +888,41 @@ Window {
     }
 
     function volumeChanged(vol) {
+        console.info(vol)
+        if (vol === -1) {
+            volSupport = false
+            return
+        }
         volumeSlider.value = vol
     }
 
+    function eventConnect(event) {
+        // we're connected to the server, let's get started!
+
+        // load the library
+        stack.push("Library.qml", { "url": "artists" })
+        connectTimer.stop()
+        connectingScreen.close()
+    }
+
     //when we're disconnected from the server
-    function eventDisconnect(event){
+    function eventDisconnect(event) {
         //server connection lost (couldn't connect/reconnect)
+        console.info('Couldn\'t connect');
+
+        // wait five seconds and retry...
+        resetPlayer()
+        //startPlayer();
+        connectTimer.start()
+    }
+    Timer {
+        id: connectTimer
+        interval: 5000
+        running: false
+        onTriggered: {
+            startPlayer()
+            connectTimer.stop()
+        }
     }
 
     // timer to hold the "now playing" screen

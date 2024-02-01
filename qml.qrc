@@ -7,5 +7,6 @@
         <file>Player.qml</file>
         <file>Welcome.qml</file>
         <file>Queue.qml</file>
+        <file>Connecting.qml</file>
     </qresource>
 </RCC>

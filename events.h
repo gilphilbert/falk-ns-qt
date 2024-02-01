@@ -26,6 +26,7 @@ public:
 
 signals:
     void eventData(QString message);
+    void connected();
     void disconnected();
     void paused(bool state);
     void position(int position);
@@ -44,6 +45,7 @@ private slots:
 
 private:
     qint16 m_retries;
+    bool m_connected;
     QNetworkReply *m_reply;
     QNetworkAccessManager *m_QNAM;
     static Events *m_instance;
