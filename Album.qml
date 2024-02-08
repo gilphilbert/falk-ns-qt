@@ -73,84 +73,180 @@ Item {
     Component {
         id: trackDelegate
         Rectangle {
+            id: container
             height: windowHeight * 0.1666
-            width: Window.width
-            color: 'transparent'
+            width: flickContainer.width - pageItemPadding * 2
+            color: background_pop_color
+            readonly property int dragRange: 75
 
-            Item {
-                width: parent.width
+            radius: 12
+
+            Image {
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.rightMargin: 20
+                source: "icons/chevrons-right.svg"
+                height: parent.height * 0.3
+                width: this.height
+
+                sourceSize.width: this.width
+                sourceSize.height: this.height
+            }
+
+            Rectangle {
+                color: background_pop_color
+                width: parent.dragRange * 2
                 height: parent.height
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        const apiData = JSON.stringify({ tracks: [ id ] })
-                        musicAPIRequest("enqueue", null, "POST", apiData)
-                    }
-                    onPressAndHold: {
-                        additionalTrackID = id
-                        additionalOptions.open()
-                    }
+                radius: 12
+
+                Image {
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.leftMargin: 20
+                    source: "icons/zap.svg"
+                    height: parent.height * 0.3
+                    width: this.height
+
+                    sourceSize.width: this.width
+                    sourceSize.height: this.height
                 }
             }
 
-            Row {
-                height: parent.height
+            Rectangle {
+                id: rect
                 width: parent.width
+                height: parent.height
+                color: background_color
+                radius: 12
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: 'white'
+                    opacity: 0
+                    radius: 12
+
+                    SequentialAnimation on opacity {
+                        id: highlight
+                        running: false
+                        loops: 1
+                        PropertyAnimation {
+                            to: 0.21
+                            duration: 200
+                        }
+                        PropertyAnimation {
+                            to: 0
+                            duration: 200
+                        }
+                    }
+                }
+
+                property int beginDrag
+                Drag.active: dragArea.drag.active
 
                 Item {
-                    height: parent.height * 0.8
-                    width: parent.height * 0.8
-                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width
+                    height: parent.height
+                }
 
-                    visible: isPlaylist
+                Row {
+                    height: parent.height
+                    width: parent.width
 
-                    Image {
-                        id: artImage
-                        source: "image://AsyncImage" + coverart
-                        width: parent.width - 2
-                        height: parent.height - 2
-                        anchors.centerIn: parent
-                        fillMode: Image.PreserveAspectCrop
-                        smooth: true
-                        layer.enabled: true
-                        layer.effect: OpacityMask {
-                            maskSource: mask
+                    Item {
+                        height: parent.height * 0.8
+                        width: parent.height * 0.8
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        visible: isPlaylist
+
+                        Image {
+                            id: artImage
+                            source: "image://AsyncImage" + coverart
+                            width: parent.width - 2
+                            height: parent.height - 2
+                            anchors.centerIn: parent
+                            fillMode: Image.PreserveAspectCrop
+                            smooth: true
+                            layer.enabled: true
+                            layer.effect: OpacityMask {
+                                maskSource: mask
+                            }
+                        }
+
+                        Rectangle {
+                            id: mask
+                            anchors.fill: artImage
+                            radius: this.height * radiusPercent
+                            visible: false
                         }
                     }
 
-                    Rectangle {
-                        id: mask
-                        anchors.fill: artImage
-                        radius: this.height * radiusPercent
-                        visible: false
+                    Column {
+                        leftPadding: player.width * 0.014648438
+                        bottomPadding: player.height * 0.008333333
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: parent.width
+
+                        Text {
+                            color: text_color
+                            text: title
+                            font.family: inter.name
+                            font.weight: Font.ExtraBold
+                            font.pixelSize: text_h2
+                            width: parent.parent.width
+                        }
+                        Text {
+                            text: artist + " - " + getPrettyTime(duration)
+                            font.family: inter.name
+                            font.weight: Font.Normal
+                            color: text_color
+                            font.pixelSize: text_h3
+                            width: parent.parent.width
+                        }
                     }
                 }
 
-                Column {
-                    leftPadding: player.width * 0.014648438
-                    bottomPadding: player.height * 0.008333333
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width
+                MouseArea {
+                    id: dragArea
+                    anchors.fill: parent
+                    drag.target: parent
+                    drag.axis: Drag.XAxis
+                    drag.maximumX: container.dragRange
+                    drag.minimumX: x - container.dragRange
+                    onPressed: {
+                        rect.beginDrag = rect.x;
+                    }
+                    onReleased: {
+                        backAnimX.from = rect.x
+                        backAnimX.to = rect.beginDrag
+                        backAnimX.start()
 
-                    Text {
-                        color: text_color
-                        text: title
-                        font.family: inter.name
-                        font.weight: Font.ExtraBold
-                        font.pixelSize: text_h2
-                        width: parent.parent.width
+                        if (rect.x > rect.beginDrag && rect.x - rect.beginDrag === container.dragRange) {
+                            // moved right by 50px
+                            musicAPIRequest('replaceAndPlay', null, "POST", JSON.stringify({ tracks: [ id ], index: 0  }))
+                            highlight.running = true
+                        } else if (rect.x < rect.beginDrag && rect.x + container.dragRange === rect.beginDrag) {
+                            // moved left by 50px
+                            musicAPIRequest('playNext', null, "POST", JSON.stringify({ tracks: [ id ] }))
+                            highlight.running = true
+                        }
                     }
-                    Text {
-                        text: artist + " - " + getPrettyTime(duration)
-                        font.family: inter.name
-                        font.weight: Font.Normal
-                        color: text_color
-                        font.pixelSize: text_h3
-                        width: parent.parent.width
+                    onClicked: {
+                        const apiData = JSON.stringify({ tracks: [ id ] })
+                        musicAPIRequest("enqueue", null, "POST", apiData)
+                        // this should happen on successful return
+                        highlight.running = true
                     }
+                }
+                SpringAnimation {
+                  id: backAnimX
+                  target: rect
+                  property: "x"
+                  duration: 300
+                  spring: 1
+                  damping: 0.2
                 }
             }
-
         }
     }
 
@@ -367,14 +463,14 @@ Item {
 
             radius: iconSize * 0.8
 
-            Image {
+            /*Image {
                 source: 'icons/x-blue.svg'
                 height: iconSize * 0.5
                 width: iconSize * 0.5
                 sourceSize.width: this.width
                 sourceSize.height: this.height
                 anchors.centerIn: parent
-            }
+            }*/
 
             MouseArea {
                 anchors.fill: parent

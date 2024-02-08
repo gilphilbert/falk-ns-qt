@@ -517,7 +517,8 @@ Rectangle {
                 id: queueButton
                 height: parent.height
                 width: parent.height
-                anchors.right: volumeButton.left
+                //anchors.right: volSupport ? volumeButton.left : parent.right
+                anchors.right: parent.right
 
                 Image {
                     source: "icons/list.svg"
@@ -588,12 +589,9 @@ Rectangle {
                 id: volumeButton
                 height: parent.height
                 width: parent.height
-<<<<<<< HEAD
-                anchors.right: parent.right
-
-=======
+                //anchors.right: parent.right
                 anchors.right: queueButton.left
->>>>>>> 1a27ace6bc8e5b005761d26a0bc1e5800fcd3480
+
                 visible: volSupport
 
                 Image {
@@ -735,6 +733,10 @@ Rectangle {
             }
         })(xhr)
 
+        if (testIP !== "") {
+            console.info("http://" + testIP + "/api/" + urlComponent)
+        }
+
         let _host = testIP !== "" ? testIP : getSettings("host")
 
         let fullURL = "http://" + _host + "/api/" + urlComponent
@@ -798,12 +800,9 @@ Rectangle {
 
         // connect to the socket server
         sse.setServer("http://" + getSettings("host") + "/events")
-<<<<<<< HEAD
-=======
 
         // load the library
-        stack.push("Library.qml", { "url": "artists" })
->>>>>>> 1a27ace6bc8e5b005761d26a0bc1e5800fcd3480
+        //stack.push("Library.qml", { "url": "artists" })
     }
 
     Component.onCompleted: {
@@ -869,7 +868,6 @@ Rectangle {
         playPaused = state
 
         if (playPaused) {
-            console.info("play has been stopped!")
             resetTouchTimer()
             mainPlaying.close()
         }
@@ -879,10 +877,17 @@ Rectangle {
     function queueUpdated(newQueue) {
         queue = newQueue
 
+        console.log(JSON.stringify(queue))
+
         queueList.clear()
-        queue.forEach(item => {
-            queueList.append(item)
-        })
+        if (queue.length > 0) {
+            queueList.clear()
+            queue.forEach(item => {
+                queueList.append(item)
+            })
+        } else {
+            currentTrack = { "title":"", "artist":"", "duration":0, "album":"", "art":"", "discart":"", "artistart": "", "backgroundart": "", "playing":false, "shortformat":"" }
+        }
         player.animateEnqueue()
     }
 
@@ -894,11 +899,12 @@ Rectangle {
     //when the currently playing track has changed
     function positionChanged(index) {
         playPosition = index
-        currentTrack = queue[index]
+        if (queue.length > 0) {
+            currentTrack = queue[index]
+        }
     }
 
     function volumeChanged(vol) {
-        console.info(vol)
         if (vol === -1) {
             volSupport = false
             return
