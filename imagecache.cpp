@@ -10,15 +10,15 @@ AsyncImageResponse::AsyncImageResponse(const QString &id, QSize const& requested
     bool large = id.startsWith("lrge");
 
     cacheImage = true;
-    filename = id;
+    QString imgURL = id;
 
     if (blur || large) {
         // if we're sourcing a large image, we won't cache it
-        filename.remove(0, 5);
+        imgURL.remove(0, 5);
         cacheImage = false;
     }
 
-    if (filename == "") {
+    if (imgURL == "") {
         QImage _img(200, 200, QImage::Format_ARGB32);
         _img.fill("#ffffff");
         m_resultImage = _img;
@@ -28,7 +28,8 @@ AsyncImageResponse::AsyncImageResponse(const QString &id, QSize const& requested
 
     if (!blur && !large){
         // otherwise, let's see if we have it in cache
-        filename = id;
+        //filename = id;
+        filename = id.right(id.length() - id.indexOf('/') - 1);
         QImageReader reader(filename);
         QImage _img(200, 200, QImage::Format_ARGB32);
         if (reader.read(&_img)) {
@@ -40,7 +41,7 @@ AsyncImageResponse::AsyncImageResponse(const QString &id, QSize const& requested
     }
 
     // construct the url
-    QUrl url = "http://" + host + "/" + filename + ((blur || large) ? "?size=600" : "?size=200") + ((blur) ? "&blur=true" : "");
+    QUrl url = "http://" + host + "/" + imgURL + ((blur || large) ? "?size=600" : "?size=200") + ((blur) ? "&blur=true" : "");
     //create request
     QNetworkRequest request(url);
     //issue request
@@ -69,6 +70,14 @@ void AsyncImageResponse::onResponseFinished() {
         if (output.open(QIODevice::WriteOnly)) {
             output.write(myImageData);
             output.close();
+            qDebug() << "Wrote cache file";
+        } else {
+            qDebug() << "Could not open file for writing";
+            qDebug() << "exists?              " << output.exists();
+            qDebug() << "writable?            " << output.isWritable();
+            qDebug() << "permissions?         " << output.permissions();
+            qDebug() << "errors?              " << output.errorString();
+            qDebug() << "errnum?              " << output.error();
         }
     }
 
