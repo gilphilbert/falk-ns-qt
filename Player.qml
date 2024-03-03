@@ -1,8 +1,10 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
-import QtGraphicalEffects 1.15
-import Qt.labs.settings 1.0
+import QtQuick.Effects
+import QtCore
+
+//import Qt.labs.settings 1.0
 
 ApplicationWindow {
     width: 1024
@@ -380,26 +382,38 @@ Rectangle {
                         height: parent.height * 0.7
                         width: this.height
                         anchors.verticalCenter: parent.verticalCenter
-
                         Image {
-                            id: playingArt
-                            source: currentTrack.art !== "" ? "image://AsyncImage" + currentTrack.art : ""
-                            fillMode: Image.PreserveAspectCrop
-                            width: parent.width - 2
-                            height: parent.height - 2
-                            anchors.centerIn: parent
-                            layer.enabled: true
-                            layer.effect: OpacityMask {
+                                id: playingArt
+                                source: currentTrack.art !== "" ? "image://AsyncImage/" + currentTrack.art : ""
+                                width: parent.width - 2
+                                height: parent.height - 2
+                                anchors.centerIn: parent
+                                visible: false
+                            }
+
+                            MultiEffect {
+                                source: playingArt
+                                anchors.fill: playingArt
+                                maskEnabled: true
                                 maskSource: mask
                             }
-                        }
 
-                        Rectangle {
-                            id: mask
-                            anchors.fill: playingArt
-                            radius: this.height * radiusPercent
-                            visible: false
-                        }
+                            Item {
+                                id: mask
+                                width: playingArt.width
+                                height: playingArt.height
+                                layer.enabled: true
+                                visible: false
+
+                                Rectangle {
+                                    width: playingArt.width
+                                    height: playingArt.height
+                                    radius: this.height * radiusPercent
+                                    color: "black"
+                                }
+                            }
+
+
                     }
                 }
                 Column {
@@ -462,7 +476,7 @@ Rectangle {
                     ColorAnimation { duration: 200 }
                 }
 
-                Image {
+                IconImage {
                     id: playPauseIcon
                     source: playPaused ? "icons/play.svg" : "icons/pause.svg"
                     height: parent.height * 0.45
@@ -471,14 +485,7 @@ Rectangle {
                     smooth: true
                     sourceSize.width: this.width
                     sourceSize.height: this.height
-                }
-
-                ColorOverlay{
-                    anchors.fill: playPauseIcon
-                    source: playPauseIcon
                     color: playPaused ? white : background_pop_color
-                    transform: rotation
-                    antialiasing: true
                 }
 
                 MouseArea {
@@ -520,7 +527,7 @@ Rectangle {
                 //anchors.right: volSupport ? volumeButton.left : parent.right
                 anchors.right: parent.right
 
-                Image {
+                IconImage {
                     source: "icons/list.svg"
                     height: parent.height * 0.32
                     width: this.height
@@ -529,14 +536,8 @@ Rectangle {
                     sourceSize.height: this.height
 
                     anchors.centerIn: parent
-                }
 
-                ColorOverlay{
-                    anchors.fill: queueButton
-                    source: queueButton
                     color: mainQueue.isActive ? primary_color : white
-                    transform: rotation
-                    antialiasing: true
                 }
 
                 MouseArea {
@@ -594,7 +595,7 @@ Rectangle {
 
                 visible: volSupport
 
-                Image {
+                IconImage {
                     source: "icons/volume.svg"
                     height: parent.height * 0.32
                     width: this.height
@@ -603,14 +604,8 @@ Rectangle {
                     sourceSize.height: this.height
 
                     anchors.centerIn: parent
-                }
 
-                ColorOverlay{
-                    anchors.fill: volumeButton
-                    source: volumeButton
                     color: volumeControl.visible ? yellow : white
-                    transform: rotation
-                    antialiasing: true
                 }
 
                 MouseArea {
@@ -876,8 +871,6 @@ Rectangle {
     //new items in the queue
     function queueUpdated(newQueue) {
         queue = newQueue
-
-        console.log(JSON.stringify(queue))
 
         queueList.clear()
         if (queue.length > 0) {

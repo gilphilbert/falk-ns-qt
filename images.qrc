@@ -26,5 +26,6 @@
         <file>icons/volume.svg</file>
         <file>icons/chevrons-right.svg</file>
         <file>icons/zap.svg</file>
+        <file>icons/placeholder.png</file>
     </qresource>
 </RCC>

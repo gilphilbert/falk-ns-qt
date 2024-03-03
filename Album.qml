@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.15
+import QtQuick.Effects
 
 Item {
     width: Window.width
@@ -161,23 +161,35 @@ Item {
 
                         Image {
                             id: artImage
-                            source: "image://AsyncImage" + coverart
+                            source: "image://AsyncImage/" + coverart
                             width: parent.width - 2
                             height: parent.height - 2
                             anchors.centerIn: parent
                             fillMode: Image.PreserveAspectCrop
                             smooth: true
-                            layer.enabled: true
-                            layer.effect: OpacityMask {
-                                maskSource: mask
-                            }
+                            visible: false
                         }
 
-                        Rectangle {
-                            id: mask
+                        MultiEffect {
+                            source: artImage
                             anchors.fill: artImage
-                            radius: this.height * radiusPercent
+                            maskEnabled: true
+                            maskSource: mask
+                        }
+
+                        Item {
+                            id: mask
+                            width: artImage.width
+                            height: artImage.height
+                            layer.enabled: true
                             visible: false
+
+                            Rectangle {
+                                width: artImage.width
+                                height: artImage.height
+                                radius: this.height * radiusPercent
+                                color: "black"
+                            }
                         }
                     }
 
@@ -273,27 +285,39 @@ Item {
                         height: parent.height * 0.8
                         width: parent.height * 0.8
 
+
                         Image {
                             id: artImage
-                            source: art !== "" ? "image://AsyncImage" + art : ""
+                            source: art !== "" ? "image://AsyncImage/" + art : ""
                             width: parent.width - 2
                             height: parent.height - 2
                             anchors.centerIn: parent
                             fillMode: Image.PreserveAspectCrop
                             smooth: true
-                            visible: art !== ""
-                            layer.enabled: true
-                            layer.effect: OpacityMask {
+                                visible: false
+                            }
+
+                            MultiEffect {
+                                source: artImage
+                                anchors.fill: artImage
+                                maskEnabled: true
                                 maskSource: mask
                             }
-                        }
 
-                        Rectangle {
-                            id: mask
-                            anchors.fill: artImage
-                            radius: this.height * radiusPercent
-                            visible: false
-                        }
+                            Item {
+                                id: mask
+                                width: artImage.width
+                                height: artImage.height
+                                layer.enabled: true
+                                visible: false
+
+                                Rectangle {
+                                    width: artImage.width
+                                    height: artImage.height
+                                    radius: this.height * radiusPercent
+                                    color: "black"
+                                }
+                            }
                     }
                 }
 

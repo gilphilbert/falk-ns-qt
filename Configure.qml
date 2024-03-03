@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.15
+//import QtGraphicalEffects 1.15
 
 Rectangle {
     width: Window.width
@@ -527,7 +527,7 @@ Rectangle {
                     topPadding: text_h1
                 }
 
-                Image {
+                IconImage {
                     id: checkModalAlert
                     height: checkModalIndicator.height
                     width: this.height
@@ -536,14 +536,7 @@ Rectangle {
                     sourceSize.width: this.width
                     sourceSize.height: this.height
                     anchors.horizontalCenter: parent.horizontalCenter
-
-                    ColorOverlay{
-                        anchors.fill: checkModalAlert
-                        source: checkModalAlert
-                        color: gray_darkish
-                        transform: rotation
-                        antialiasing: true
-                    }
+                    color: gray_darkish
                 }
 
                 Text {

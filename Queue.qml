@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQml.Models 2.3
-import QtGraphicalEffects 1.15
 import QtQuick.Layouts 1.15
+import QtQuick.Effects
 
 
 Rectangle {
@@ -154,29 +154,39 @@ Rectangle {
 
                         Item {
                             anchors.fill: parent
-
-                            Image {
+                        }
+                        Image {
                                 id: artImage
-                                source: "image://AsyncImage" +  dragArea.art
+                                source: "image://AsyncImage/" +  dragArea.art
                                 width: parent.width - 2
                                 height: parent.height - 2
                                 anchors.centerIn: parent
                                 fillMode: Image.PreserveAspectCrop
                                 smooth: true
-
-                                layer.enabled: true
-                                layer.effect: OpacityMask {
-                                    maskSource: mask
-                                }
-                            }
-
-                            Rectangle {
-                                id: mask
-                                anchors.fill: artImage
-                                radius: this.height * radiusPercent
                                 visible: false
                             }
-                        }
+
+                            MultiEffect {
+                                source: artImage
+                                anchors.fill: artImage
+                                maskEnabled: true
+                                maskSource: mask
+                            }
+
+                            Item {
+                                id: mask
+                                width: artImage.width
+                                height: artImage.height
+                                layer.enabled: true
+                                visible: false
+
+                                Rectangle {
+                                    width: artImage.width
+                                    height: artImage.height
+                                    radius: this.height * radiusPercent
+                                    color: "black"
+                                }
+                            }
                     }
 
                     Column {

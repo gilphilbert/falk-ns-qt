@@ -18,9 +18,9 @@ AsyncImageResponse::AsyncImageResponse(const QString &id, QSize const& requested
         cacheImage = false;
     }
 
-    if (imgURL == "") {
-        QImage _img(200, 200, QImage::Format_ARGB32);
-        _img.fill("#ffffff");
+    if (imgURL == "/api/art/" || imgURL == "/art/") {
+        QImage _img(m_requestedSize, QImage::Format_ARGB32);
+        _img.fill(QColor(255, 255, 255));
         m_resultImage = _img;
         emit finished();
         return;
@@ -28,18 +28,23 @@ AsyncImageResponse::AsyncImageResponse(const QString &id, QSize const& requested
 
     if (!blur && !large){
         // otherwise, let's see if we have it in cache
-        //filename = id;
-        filename = id.right(id.length() - id.indexOf('/') - 1);
+        //extract the file name and append with art
+        filename = "art/" + id.right(id.length() - id.lastIndexOf('/') - 1);
+        //create file reader
         QImageReader reader(filename);
+        //image to populate
         QImage _img(200, 200, QImage::Format_ARGB32);
+        //if we can read the file (it exists)
         if (reader.read(&_img)) {
+            //open the cached file
             m_resultImage = _img;
+            //emit that we're done
             emit finished();
             return;
         }
-        // it's not in cache, let's make sure we cache it this time
     }
 
+    // it's not in cache, let's make sure we cache it this time
     // construct the url
     QUrl url = "http://" + host + "/" + imgURL + ((blur || large) ? "?size=600" : "?size=200") + ((blur) ? "&blur=true" : "");
     //create request
@@ -70,8 +75,9 @@ void AsyncImageResponse::onResponseFinished() {
         if (output.open(QIODevice::WriteOnly)) {
             output.write(myImageData);
             output.close();
-            qDebug() << "Wrote cache file";
+            //qDebug() << "Wrote cache file";
         } else {
+            qDebug() << filename;
             qDebug() << "Could not open file for writing";
             qDebug() << "exists?              " << output.exists();
             qDebug() << "writable?            " << output.isWritable();

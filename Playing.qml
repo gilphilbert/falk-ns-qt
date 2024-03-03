@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.15
+import QtQuick.Effects
 
 
 /* HOME SCREEN */
@@ -58,11 +58,15 @@ Rectangle {
             smooth: true
             visible: true
         }
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        /*
         FastBlur {
             anchors.fill: backgroundArt
             source: backgroundArt
             radius: hasBigArt ? 0 : 56
         }
+        */
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     }
 
     Rectangle {
@@ -79,7 +83,6 @@ Rectangle {
         Column {
             id: artColumn
             width: parent.width * ((hasBigArt) ? 0.25 : 0.4)
-            //anchors.verticalCenter: parent.verticalCenter
             leftPadding: parent.width * 0.1
             rightPadding: parent.width * 0.1
             y: ((hasBigArt) ? Window.height - this.width * 0.1 - playingArt.height : (Window.height / 2 - playingArt.height / 2))
@@ -98,7 +101,7 @@ Rectangle {
                 }
             }
 
-                Image {
+            Image {
                     id: playingArt
                     source: "image://AsyncImage/lrge" + currentTrack.art
                     height: this.width
@@ -106,18 +109,32 @@ Rectangle {
                     fillMode: Image.PreserveAspectCrop
                     smooth: true
                     anchors.horizontalCenter: parent.horizontalCenter
-
-                    layer.enabled: true
-                    layer.effect: OpacityMask {
-                        maskSource: mask
-                    }
+                    visible: false
                 }
 
-                Rectangle {
+                MultiEffect {
+                    source: playingArt
+                    x: playingArt.x
+                    y: playingArt.y
+                    height: playingArt.height
+                    width: playingArt.width
+                    maskEnabled: true
+                    maskSource: mask
+                }
+
+                Item {
                     id: mask
-                    anchors.fill: playingArt
-                    radius: this.height * radiusPercent
+                    width: playingArt.width
+                    height: playingArt.height
+                    layer.enabled: true
                     visible: false
+
+                    Rectangle {
+                        width: playingArt.width
+                        height: playingArt.height
+                        radius: this.height * radiusPercent
+                        color: "black"
+                    }
                 }
 
 

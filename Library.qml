@@ -3,7 +3,7 @@ import QtQuick.Controls 2.4
 import QtQml.Models 2.3
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.15
+import QtQuick.Effects
 
 Item {
     width: Window.width
@@ -47,25 +47,37 @@ Item {
                     }
 
                     Image {
-                        id: artImage
-                        source: thumb !== "" ? "image://AsyncImage" + thumb : ""
-                        width: parent.width - 2
-                        height: parent.height - 2
-                        anchors.centerIn: parent
-                        fillMode: Image.PreserveAspectCrop
-                        smooth: true
-                        layer.enabled: true
-                        layer.effect: OpacityMask {
+                            id: artImage
+                            source: thumb !== "" ? "image://AsyncImage/" + thumb : "icons/placeholder.png"
+                            width: parent.width - 2
+                            height: parent.height - 2
+                            anchors.centerIn: parent
+                            fillMode: Image.PreserveAspectCrop
+                            smooth: true
+                            visible: false
+                        }
+
+                        MultiEffect {
+                            source: artImage
+                            anchors.fill: artImage
+                            maskEnabled: true
                             maskSource: mask
                         }
-                    }
 
-                    Rectangle {
-                        id: mask
-                        anchors.fill: artImage
-                        radius: this.height * ((url !== "artists") ? radiusPercent : 1)
-                        visible: false
-                    }
+                        Item {
+                            id: mask
+                            width: artImage.width
+                            height: artImage.height
+                            layer.enabled: true
+                            visible: false
+
+                            Rectangle {
+                                width: artImage.width
+                                height: artImage.height
+                                radius: this.height * ((url !== "artists") ? radiusPercent : 1)
+                                color: "black"
+                            }
+                        }
                 }
                 Text {
                     text: name
@@ -187,7 +199,7 @@ Item {
         y: 10 - player.height * 0.14
         z: 2
 
-        Image {
+        IconImage {
             id: filterIcon
             source: "icons/filter.svg"
             height: parent.height
@@ -196,14 +208,7 @@ Item {
             smooth: true
             sourceSize.width: this.width
             sourceSize.height: this.height
-        }
-
-        ColorOverlay{
-            anchors.fill: filterIcon
-            source: filterIcon
             color: textFilter === "" ? white : primary_color
-            transform: rotation
-            antialiasing: true
         }
 
         MouseArea {
