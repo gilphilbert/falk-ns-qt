@@ -1,8 +1,18 @@
+// <!------------ QT5 ------------!> //
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick.Layouts 1.11
+import QtGraphicalEffects 1.15
+
+/*
+// <!------------ QT6 ------------!> //
+import QtQuick
+import QtQuick.Window
+import QtQuick.Controls
+import QtQuick.Layouts
 import QtQuick.Effects
+*/
 
 
 /* HOME SCREEN */
@@ -101,41 +111,67 @@ Rectangle {
                 }
             }
 
+            // <!------------ QT5 ------------!> //
             Image {
-                    id: playingArt
-                    source: "image://AsyncImage/lrge" + currentTrack.art
-                    height: this.width
-                    width: parent.width * 0.8
-                    fillMode: Image.PreserveAspectCrop
-                    smooth: true
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    visible: false
-                }
+                id: playingArt
+                source: "image://AsyncImage/lrge" + currentTrack.art
+                height: this.width
+                width: parent.width * 0.8
+                fillMode: Image.PreserveAspectCrop
+                smooth: true
+                anchors.horizontalCenter: parent.horizontalCenter
 
-                MultiEffect {
-                    source: playingArt
-                    x: playingArt.x
-                    y: playingArt.y
-                    height: playingArt.height
-                    width: playingArt.width
-                    maskEnabled: true
+                layer.enabled: true
+                layer.effect: OpacityMask {
                     maskSource: mask
                 }
+            }
 
-                Item {
-                    id: mask
+            Rectangle {
+                id: mask
+                anchors.fill: playingArt
+                radius: this.height * radiusPercent
+                visible: false
+            }
+
+            /*
+            // <!------------ QT6 ------------!> //
+            Image {
+                id: playingArt
+                source: "image://AsyncImage/lrge" + currentTrack.art
+                height: this.width
+                width: parent.width * 0.8
+                fillMode: Image.PreserveAspectCrop
+                smooth: true
+                anchors.horizontalCenter: parent.horizontalCenter
+                visible: false
+            }
+
+            MultiEffect {
+                source: playingArt
+                x: playingArt.x
+                y: playingArt.y
+                height: playingArt.height
+                width: playingArt.width
+                maskEnabled: true
+                maskSource: mask
+            }
+
+            Item {
+                id: mask
+                width: playingArt.width
+                height: playingArt.height
+                layer.enabled: true
+                visible: false
+
+                Rectangle {
                     width: playingArt.width
                     height: playingArt.height
-                    layer.enabled: true
-                    visible: false
-
-                    Rectangle {
-                        width: playingArt.width
-                        height: playingArt.height
-                        radius: this.height * radiusPercent
-                        color: "black"
-                    }
+                    radius: this.height * radiusPercent
+                    color: "black"
                 }
+            }
+            */
 
 
         }

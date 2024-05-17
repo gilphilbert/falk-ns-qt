@@ -1,4 +1,11 @@
+// <!------------ QT5 ------------!> //
 import QtQuick 2.15
+
+/*
+// <!------------ QT6 ------------!> //
+import QtQuick
+*/
+
 
 Item {
     id: welcome

@@ -34,7 +34,8 @@ HEADERS += \
 
 INCLUDEPATH += .
 
-#QTPLUGIN += qlinuxfb
+#QTPLUGIN += eglfs
+#QTPLUGIN += wayland
 #CONFIG += static
 
 DISTFILES +=

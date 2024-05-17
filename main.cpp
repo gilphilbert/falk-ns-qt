@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     }
     engine.rootContext()->setContextProperty("rotate", rotate);
 
-    Events *events= Events::getInstance();
+    Events *events = Events::getInstance();
     engine.rootContext()->setContextProperty("sse", events);
 
     DisplayController *display = DisplayController::instance();

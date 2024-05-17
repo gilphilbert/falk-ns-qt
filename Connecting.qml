@@ -1,5 +1,12 @@
+// <!------------ QT5 ------------!> //
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+
+/*
+// <!------------ QT6 ------------!> //
+import QtQuick
+import QtQuick.Controls
+*/
 
 Item {
     id: connecting

@@ -18,7 +18,7 @@ AsyncImageResponse::AsyncImageResponse(const QString &id, QSize const& requested
         cacheImage = false;
     }
 
-    if (imgURL == "/api/art/" || imgURL == "/art/") {
+    if (imgURL == "/api/art/" || imgURL == "/art/" || imgURL == "") {
         QImage _img(m_requestedSize, QImage::Format_ARGB32);
         _img.fill(QColor(255, 255, 255));
         m_resultImage = _img;

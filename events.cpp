@@ -100,6 +100,12 @@ void Events::streamReceived() {
 
                 QJsonArray _queue = object["queue"].toArray();
                 emit queue(_queue);
+            } else if (_evtName == "scanner") {
+                QByteArray json_bytes = _evt.toLocal8Bit();
+                auto json_doc = QJsonDocument::fromJson(json_bytes);
+                QJsonObject object = json_doc.object();
+
+                emit scanState(object);
             }
         }
     }

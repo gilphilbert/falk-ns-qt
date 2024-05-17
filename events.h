@@ -1,7 +1,9 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
+#include <QJsonObject>
 #include <QJsonArray>
+#include <QJsonDocument>
 #include <QtCore/QList>
 #include <QtCore/QObject>
 #include <QtCore/QString>
@@ -24,6 +26,9 @@ class Events : public QObject {
 public:
     static Events *getInstance();
 
+public slots:
+    void setServer(const QUrl &url);
+
 signals:
     void eventData(QString message);
     void connected();
@@ -35,9 +40,7 @@ signals:
     void repeat(int mode);
     void volume(int volume);
     void queue(QJsonArray queue);
-
-public slots:
-    void setServer(const QUrl &url);
+    void scanState(QJsonObject state);
 
 private slots:
     void streamFinished(QNetworkReply *reply);

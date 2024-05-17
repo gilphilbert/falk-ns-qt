@@ -1,10 +1,19 @@
+// <!------------ QT5 ------------!> //
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
+import Qt.labs.settings 1.0
+import QtGraphicalEffects 1.15
+import QtWebSockets 1.15
+
+/*
+// <!------------ QT6 ------------!> //
+import QtQuick
+import QtQuick.Window
+import QtQuick.Controls
 import QtQuick.Effects
 import QtCore
-
-//import Qt.labs.settings 1.0
+*/
 
 ApplicationWindow {
     width: 1024
@@ -29,6 +38,7 @@ ApplicationWindow {
 
     property bool ac: false
     property int batteryPercent: 0
+    property bool scanState: false
 
     readonly property color yellow: "#EFCB68"
     readonly property color white: "#FCF7F8"
@@ -382,37 +392,61 @@ Rectangle {
                         height: parent.height * 0.7
                         width: this.height
                         anchors.verticalCenter: parent.verticalCenter
-                        Image {
-                                id: playingArt
-                                source: currentTrack.art !== "" ? "image://AsyncImage/" + currentTrack.art : ""
-                                width: parent.width - 2
-                                height: parent.height - 2
-                                anchors.centerIn: parent
-                                visible: false
-                            }
 
-                            MultiEffect {
-                                source: playingArt
-                                anchors.fill: playingArt
-                                maskEnabled: true
+                        // <!------------ QT5 ------------!> //
+                        Image {
+                            id: playingArt
+                            source: currentTrack.art !== "" ? "image://AsyncImage" + currentTrack.art : ""
+                            fillMode: Image.PreserveAspectCrop
+                            width: parent.width - 2
+                            height: parent.height - 2
+                            anchors.centerIn: parent
+                            layer.enabled: true
+                            layer.effect: OpacityMask {
                                 maskSource: mask
                             }
+                        }
 
-                            Item {
-                                id: mask
+                        Rectangle {
+                            id: mask
+                            anchors.fill: playingArt
+                            radius: this.height * radiusPercent
+                            visible: false
+                        }
+
+                        /*
+                        // <!------------ QT6 ------------!> //
+                        Image {
+                            id: playingArt
+                            source: currentTrack.art !== "" ? "image://AsyncImage/" + currentTrack.art : ""
+                            width: parent.width - 2
+                            height: parent.height - 2
+                            anchors.centerIn: parent
+                            visible: false
+                        }
+
+                        MultiEffect {
+                            source: playingArt
+                            anchors.fill: playingArt
+                            maskEnabled: true
+                            maskSource: mask
+                        }
+
+                        Item {
+                            id: mask
+                            width: playingArt.width
+                            height: playingArt.height
+                            layer.enabled: true
+                            visible: false
+
+                            Rectangle {
                                 width: playingArt.width
                                 height: playingArt.height
-                                layer.enabled: true
-                                visible: false
-
-                                Rectangle {
-                                    width: playingArt.width
-                                    height: playingArt.height
-                                    radius: this.height * radiusPercent
-                                    color: "black"
-                                }
+                                radius: this.height * radiusPercent
+                                color: "black"
                             }
-
+                        }
+                        */
 
                     }
                 }
@@ -476,6 +510,28 @@ Rectangle {
                     ColorAnimation { duration: 200 }
                 }
 
+                // <!------------ QT5 ------------!> //
+                Image {
+                    id: playPauseIcon
+                    source: playPaused ? "icons/play.svg" : "icons/pause.svg"
+                    height: parent.height * 0.45
+                    width: this.height
+                    anchors.centerIn: parent
+                    smooth: true
+                    sourceSize.width: this.width
+                    sourceSize.height: this.height
+                }
+
+                ColorOverlay{
+                    anchors.fill: playPauseIcon
+                    source: playPauseIcon
+                    color: playPaused ? white : background_pop_color
+                    transform: rotation
+                    antialiasing: true
+                }
+
+                /*
+                // <!------------ QT6 ------------!> //
                 IconImage {
                     id: playPauseIcon
                     source: playPaused ? "icons/play.svg" : "icons/pause.svg"
@@ -487,6 +543,7 @@ Rectangle {
                     sourceSize.height: this.height
                     color: playPaused ? white : background_pop_color
                 }
+                */
 
                 MouseArea {
                     anchors.fill: parent
@@ -527,6 +584,28 @@ Rectangle {
                 //anchors.right: volSupport ? volumeButton.left : parent.right
                 anchors.right: parent.right
 
+                // <!------------ QT5 ------------!> //
+                Image {
+                    source: "icons/list.svg"
+                    height: parent.height * 0.32
+                    width: this.height
+
+                    sourceSize.width: this.width
+                    sourceSize.height: this.height
+
+                    anchors.centerIn: parent
+                }
+
+                ColorOverlay{
+                    anchors.fill: queueButton
+                    source: queueButton
+                    color: mainQueue.isActive ? primary_color : white
+                    transform: rotation
+                    antialiasing: true
+                }
+
+                /*
+                // <!------------ QT6 ------------!> //
                 IconImage {
                     source: "icons/list.svg"
                     height: parent.height * 0.32
@@ -539,6 +618,7 @@ Rectangle {
 
                     color: mainQueue.isActive ? primary_color : white
                 }
+                */
 
                 MouseArea {
                     anchors.fill: parent
@@ -595,6 +675,28 @@ Rectangle {
 
                 visible: volSupport
 
+                // <!------------ QT5 ------------!> //
+                Image {
+                    source: "icons/volume.svg"
+                    height: parent.height * 0.32
+                    width: this.height
+
+                    sourceSize.width: this.width
+                    sourceSize.height: this.height
+
+                    anchors.centerIn: parent
+                }
+
+                ColorOverlay{
+                    anchors.fill: volumeButton
+                    source: volumeButton
+                    color: volumeControl.visible ? yellow : white
+                    transform: rotation
+                    antialiasing: true
+                }
+
+                /*
+                // <!------------ QT6 ------------!> //
                 IconImage {
                     source: "icons/volume.svg"
                     height: parent.height * 0.32
@@ -607,6 +709,7 @@ Rectangle {
 
                     color: volumeControl.visible ? yellow : white
                 }
+                */
 
                 MouseArea {
                     anchors.fill: parent
@@ -664,6 +767,8 @@ Rectangle {
                     }
 
                     handle: Rectangle {
+                        width: 20
+                        height: 20
                         implicitWidth: 20
                         implicitHeight: 20
                         color: primary_color
@@ -679,6 +784,20 @@ Rectangle {
 
     Configure {
         id: settingsScreen
+    }
+
+    Rectangle {
+        anchors.bottom: player.bottom
+        anchors.top: player.top
+        anchors.bottomMargin: player.height * 0.05
+        anchors.leftMargin: player.height * 0.05
+
+        height: 60
+        width: 200
+
+        color: primary_color
+
+        visible: scanState
     }
 
     Playing {
@@ -795,9 +914,24 @@ Rectangle {
 
         // connect to the socket server
         sse.setServer("http://" + getSettings("host") + "/events")
+    }
 
-        // load the library
-        //stack.push("Library.qml", { "url": "artists" })
+    function scanStarted(data) {
+        if (data.status === 'started') {
+            scanState = true
+            switch (data.type) {
+              case 'scan':
+              case 'rescan':
+                scanToastText = "Updating library"
+                break;
+              case 'art':
+                scanToastText = "Updating art"
+                  break;
+            }
+        } else {
+            scanState = false
+        }
+
     }
 
     Component.onCompleted: {
@@ -807,8 +941,9 @@ Rectangle {
         sse.onPaused.connect(pausedChanged)
         sse.onElapsed.connect(elapsedChanged)
         sse.onPosition.connect(positionChanged)
-        sse.onQueue.connect(queueUpdated)
         sse.onVolume.connect(volumeChanged)
+        sse.scanState.connect(scanStarted)
+        sse.onQueue.connect(queueUpdated)
 
         power.onAcChanged.connect(updatePower)
         power.onBatteryChanged.connect(updateBattery)
@@ -825,7 +960,7 @@ Rectangle {
         }
     }
 
-    //these hold the queue (the list model is required for rearranging the queue)
+    //these hold the  (the list model is required for rearranging the queue)
     property var queue: []
     ListModel { id: queueList }
     //general state information for the player

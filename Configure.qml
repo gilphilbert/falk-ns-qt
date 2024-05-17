@@ -1,8 +1,17 @@
+// <!------------ QT5 ------------!> //
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-//import QtGraphicalEffects 1.15
+import QtQuick.Layouts 1.11
+import QtGraphicalEffects 1.15
+
+/*
+// <!------------ QT6 ------------!> //
+import QtQuick
+import QtQuick.Window
+import QtQuick.Controls
+import QtQuick.Layouts
+*/
 
 Rectangle {
     width: Window.width
@@ -203,32 +212,81 @@ Rectangle {
                     font.pixelSize: text_h2
                     font.family: inter.name
                     font.weight: Font.ExtraBold
+                    text: 'Library'
+                    height: 30
+                    width: 100
+                }
+            }
+            Row {
+                spacing: 20
+
+                Rectangle {
+                    width: childrenRect.width
+                    height: childrenRect.height
+                    color: primary_color
+                    radius: this.height// * radiusPercent
+                    border {
+                        width: 2
+                        color: primary_color
+                    }
+
+                    Text {
+                        text: "Update Library"
+                        color: background_color
+                        font.pixelSize: text_h2
+                        font.family: inter.name
+                        font.weight: Font.ExtraBold
+                        topPadding: text_h2
+                        bottomPadding: text_h2
+                        leftPadding: this.topPadding * 1.5
+                        rightPadding: this.leftPadding
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            musicAPIRequest('update')
+                        }
+                    }
+                }
+            }
+            Row {
+                topPadding: 30
+                Text {
+                    color: text_color
+                    font.pixelSize: text_h2
+                    font.family: inter.name
+                    font.weight: Font.ExtraBold
                     text: 'System Power'
                     height: 30
                     width: 100
                 }
             }
             Row {
+                spacing: 20
+
                 Rectangle {
-                    width: settingsContainer.width * 0.13
-                    height: settingsContainer.height * 0.1
+                    width: childrenRect.width
+                    height: childrenRect.height
                     color: danger_color
+                    radius: this.height// * radiusPercent
                     border {
                         width: 2
                         color: danger_color
                     }
 
-                    radius: this.height// * radiusPercent
                     Text {
-                        anchors.fill: parent
                         text: "Reboot"
                         color: white
                         font.pixelSize: text_h2
                         font.family: inter.name
                         font.weight: Font.ExtraBold
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignHCenter
+                        topPadding: text_h2
+                        bottomPadding: text_h2
+                        leftPadding: this.topPadding * 1.5
+                        rightPadding: this.leftPadding
                     }
+
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
@@ -527,6 +585,28 @@ Rectangle {
                     topPadding: text_h1
                 }
 
+                // <!------------ QT5 ------------!> //
+                Image {
+                    id: checkModalAlert
+                    height: checkModalIndicator.height
+                    width: this.height
+                    source: "icons/alert-circle.svg"
+                    smooth: true
+                    sourceSize.width: this.width
+                    sourceSize.height: this.height
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    ColorOverlay{
+                        anchors.fill: checkModalAlert
+                        source: checkModalAlert
+                        color: gray_darkish
+                        transform: rotation
+                        antialiasing: true
+                    }
+                }
+
+                /*
+                // <!------------ QT6 ------------!> //
                 IconImage {
                     id: checkModalAlert
                     height: checkModalIndicator.height
@@ -538,6 +618,7 @@ Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: gray_darkish
                 }
+                */
 
                 Text {
                     id: checkModalText

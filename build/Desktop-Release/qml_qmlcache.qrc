@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<RCC>
+    <qresource prefix="/">
+        <file alias="Playing.qml">../../Playing.qml</file>
+        <file alias="Album.qml">../../Album.qml</file>
+        <file alias="Library.qml">../../Library.qml</file>
+        <file alias="Configure.qml">../../Configure.qml</file>
+        <file alias="Player.qml">../../Player.qml</file>
+        <file alias="Welcome.qml">../../Welcome.qml</file>
+        <file alias="Queue.qml">../../Queue.qml</file>
+        <file alias="Connecting.qml">../../Connecting.qml</file>
+    </qresource>
+</RCC>

@@ -1,8 +1,18 @@
+// <!------------ QT5 ------------!> //
 import QtQuick 2.15
 import QtQuick.Window 2.15
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.11
+import QtGraphicalEffects 1.15
+
+/*
+// <!------------ QT6 ------------!> //
+import QtQuick
+import QtQuick.Window
+import QtQuick.Controls
+import QtQuick.Layouts
 import QtQuick.Effects
+*/
 
 Item {
     width: Window.width
@@ -159,6 +169,30 @@ Item {
 
                         visible: isPlaylist
 
+                        // <!------------ QT5 ------------!> //
+                        Image {
+                            id: artImage
+                            source: "image://AsyncImage/" + coverart
+                            width: parent.width - 2
+                            height: parent.height - 2
+                            anchors.centerIn: parent
+                            fillMode: Image.PreserveAspectCrop
+                            smooth: true
+                            layer.enabled: true
+                            layer.effect: OpacityMask {
+                                maskSource: mask
+                            }
+                        }
+
+                        Rectangle {
+                            id: mask
+                            anchors.fill: artImage
+                            radius: this.height * radiusPercent
+                            visible: false
+                        }
+
+                        /*
+                        // <!------------ QT6 ------------!> //
                         Image {
                             id: artImage
                             source: "image://AsyncImage/" + coverart
@@ -191,6 +225,7 @@ Item {
                                 color: "black"
                             }
                         }
+                        */
                     }
 
                     Column {
@@ -285,7 +320,30 @@ Item {
                         height: parent.height * 0.8
                         width: parent.height * 0.8
 
+                        // <!------------ QT5 ------------!> //
+                        Image {
+                            id: artImage
+                            source: art !== "" ? "image://AsyncImage" + art : ""
+                            width: parent.width - 2
+                            height: parent.height - 2
+                            anchors.centerIn: parent
+                            fillMode: Image.PreserveAspectCrop
+                            smooth: true
+                            visible: art !== ""
+                            layer.enabled: true
+                            layer.effect: OpacityMask {
+                                maskSource: mask
+                            }
+                        }
 
+                        Rectangle {
+                            id: mask
+                            anchors.fill: artImage
+                            radius: this.height * radiusPercent
+                            visible: false
+                        }
+                        /*
+                        // <!------------ QT6 ------------!> //
                         Image {
                             id: artImage
                             source: art !== "" ? "image://AsyncImage/" + art : ""
@@ -294,30 +352,31 @@ Item {
                             anchors.centerIn: parent
                             fillMode: Image.PreserveAspectCrop
                             smooth: true
-                                visible: false
-                            }
+                            visible: false
+                        }
 
-                            MultiEffect {
-                                source: artImage
-                                anchors.fill: artImage
-                                maskEnabled: true
-                                maskSource: mask
-                            }
+                        MultiEffect {
+                            source: artImage
+                            anchors.fill: artImage
+                            maskEnabled: true
+                            maskSource: mask
+                        }
 
-                            Item {
-                                id: mask
+                        Item {
+                            id: mask
+                            width: artImage.width
+                            height: artImage.height
+                            layer.enabled: true
+                            visible: false
+
+                            Rectangle {
                                 width: artImage.width
                                 height: artImage.height
-                                layer.enabled: true
-                                visible: false
-
-                                Rectangle {
-                                    width: artImage.width
-                                    height: artImage.height
-                                    radius: this.height * radiusPercent
-                                    color: "black"
-                                }
+                                radius: this.height * radiusPercent
+                                color: "black"
                             }
+                        }
+                        */
                     }
                 }
 
